@@ -1,12 +1,12 @@
 
 ###> symfony/framework-bundle ###
-/.env.local
-/.env.local.php
-/.env.*.local
-/config/secrets/prod/prod.decrypt.private.php
-/public/bundles/
-/var/
-/vendor/
+/back/.env.local
+/back/.env.local/.env.local.php
+/back/.env.local/.env.*.local
+/back/config/secrets/prod/prod.decrypt.private.php
+/back/public/bundles/
+/back/var/
+/back/vendor/
 ###< symfony/framework-bundle ###
 
 ###> phpunit/phpunit ###
@@ -20,8 +20,8 @@
 ###< symfony/phpunit-bridge ###
 
 ###> symfony/webpack-encore-bundle ###
-/node_modules/
-/public/build/
-npm-debug.log
-yarn-error.log
+/back/node_modules/
+/back/public/build/
+/backnpm-debug.log
+/backyarn-error.log
 ###< symfony/webpack-encore-bundle ###
