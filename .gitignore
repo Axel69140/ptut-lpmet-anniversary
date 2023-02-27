@@ -25,3 +25,5 @@
 /backnpm-debug.log
 /backyarn-error.log
 ###< symfony/webpack-encore-bundle ###
+
+/front/node_modules/
