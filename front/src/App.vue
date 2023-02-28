@@ -1,4 +1,7 @@
 <template>
+  <header>
+  </header>
+  
   <main>
     <div>
       <router-view></router-view>
