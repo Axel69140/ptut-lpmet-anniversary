@@ -1,3 +1,19 @@
+<script>
+    export default {
+        name: 'app',
+        data: () => ({user: null}),       
+        computed: {            
+        },
+        methods: {      
+        },
+        mounted() {        
+          this.user = {
+            name: "Marie"
+          };
+        }
+    }
+</script>
+
 <template>
   <header>
     <nav class="navbar navbar-expand-lg navbar-dark">
@@ -33,7 +49,8 @@
         </ul>
 
         <div class="form-inline my-2 my-md-0">
-          <a class="nav-link" href="/">Connexion</a>
+          <a v-if="user === null" class="nav-link" href="/">Connexion</a>
+          <a v-if="user !== null" class="nav-link" href="/">{{user.name}}</a>
         </div>
       </div>
     </nav>
