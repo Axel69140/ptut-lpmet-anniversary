@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserController extends AbstractController
 {
-    /*#[Route('/', name: 'app_user_index', methods: ['GET'])]
+    #[Route('/', name: 'app_user_index', methods: ['GET'])]
     public function index(UserRepository $userRepository): Response
     {
         return $this->render('user/index.html.twig', [
@@ -75,18 +75,17 @@ class UserController extends AbstractController
         }
 
         return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
-    }*/
+    }
 
 
     /**
      * @Route("/api/user", methods={"GET"})
      */
-    public function index(SerializerInterface $serializer, UserRepository $userRepository): Response
+    public function getUsers(SerializerInterface $serializer, UserRepository $userRepository): Response
     {
         $users = $userRepository->findAll();
 
-        $json = $serializer->serialize($users, 'json', ['groups' => 'users']);
-
+        $json = $serializer->serialize($users, 'json');
         return new Response($json, 200, [
             'Content-Type' => 'application/json'
         ]);
@@ -151,26 +150,12 @@ class UserController extends AbstractController
     /**
      * @Route("/api/user/{id}", methods={"DELETE"})
      */
-    public function delete(User $user): Response
+    public function deleteUser(User $user): Response
     {
         $em = $this->getDoctrine()->getManager();
         $em->remove($user);
         $em->flush();
 
         return new Response(null, 204);
-    }
-
-    /**
-     * @Route("/user/users", name="api_users")
-     */
-    public function getUsers()
-    {
-        $users = [
-            ['id' => 1, 'name' => 'John'],
-            ['id' => 2, 'name' => 'Jane'],
-            ['id' => 3, 'name' => 'Bob']
-        ];
-
-        return new JsonResponse($users);
     }
 }
