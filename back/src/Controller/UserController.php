@@ -75,4 +75,18 @@ class UserController extends AbstractController
 
         return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
     }
+
+    /**
+     * @Route("/user/users", name="api_users")
+     */
+    public function getUsers()
+    {
+        $users = [
+            ['id' => 1, 'name' => 'John'],
+            ['id' => 2, 'name' => 'Jane'],
+            ['id' => 3, 'name' => 'Bob']
+        ];
+
+        return new JsonResponse($users);
+    }
 }
