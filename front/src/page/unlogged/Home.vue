@@ -20,10 +20,8 @@
 
 <template>
     <h1>Home</h1>
-    <ul>
-        <li v-for="user in users" :key="user.id">
+    <ul v-for="user in users" :key="user.id">
             {{ user.firstName }}
-        </li>
     </ul>
 </template>
 
