@@ -50,6 +50,18 @@ class User
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $link = null;
 
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    private ?Guest $guests = null;
+
+    #[ORM\ManyToOne(inversedBy: 'user')]
+    private ?Activity $activities = null;
+
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?Media $picture = null;
+
+    #[ORM\ManyToOne(inversedBy: 'user')]
+    private ?Article $articles = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -195,6 +207,54 @@ class User
     public function setLink(?string $link): self
     {
         $this->link = $link;
+
+        return $this;
+    }
+
+    public function getGuests(): ?Guest
+    {
+        return $this->guests;
+    }
+
+    public function setGuests(?Guest $guests): self
+    {
+        $this->guests = $guests;
+
+        return $this;
+    }
+
+    public function getActivities(): ?Activity
+    {
+        return $this->activities;
+    }
+
+    public function setActivities(?Activity $activities): self
+    {
+        $this->activities = $activities;
+
+        return $this;
+    }
+
+    public function getPicture(): ?Media
+    {
+        return $this->picture;
+    }
+
+    public function setPicture(?Media $picture): self
+    {
+        $this->picture = $picture;
+
+        return $this;
+    }
+
+    public function getArticles(): ?Article
+    {
+        return $this->articles;
+    }
+
+    public function setArticles(?Article $articles): self
+    {
+        $this->articles = $articles;
 
         return $this;
     }

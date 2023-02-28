@@ -2,14 +2,14 @@
 
 namespace App\Entity;
 
-use App\Repository\ActivityRepository;
+use App\Repository\ArticleRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: ActivityRepository::class)]
-class Activity
+#[ORM\Entity(repositoryClass: ArticleRepository::class)]
+class Article
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -20,18 +20,12 @@ class Activity
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    private ?string $description = null;
-
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $startHour = null;
-
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $duration = null;
+    private ?string $content = null;
 
     #[ORM\Column]
     private ?bool $isValidate = null;
 
-    #[ORM\OneToMany(mappedBy: 'activities', targetEntity: User::class)]
+    #[ORM\OneToMany(mappedBy: 'articles', targetEntity: User::class)]
     private Collection $user;
 
     #[ORM\ManyToOne]
@@ -59,38 +53,14 @@ class Activity
         return $this;
     }
 
-    public function getDescription(): ?string
+    public function getContent(): ?string
     {
-        return $this->description;
+        return $this->content;
     }
 
-    public function setDescription(string $description): self
+    public function setContent(string $content): self
     {
-        $this->description = $description;
-
-        return $this;
-    }
-
-    public function getStartHour(): ?\DateTimeInterface
-    {
-        return $this->startHour;
-    }
-
-    public function setStartHour(?\DateTimeInterface $startHour): self
-    {
-        $this->startHour = $startHour;
-
-        return $this;
-    }
-
-    public function getDuration(): ?\DateTimeInterface
-    {
-        return $this->duration;
-    }
-
-    public function setDuration(\DateTimeInterface $duration): self
-    {
-        $this->duration = $duration;
+        $this->content = $content;
 
         return $this;
     }
@@ -119,7 +89,7 @@ class Activity
     {
         if (!$this->user->contains($user)) {
             $this->user->add($user);
-            $user->setActivities($this);
+            $user->setArticles($this);
         }
 
         return $this;
@@ -129,8 +99,8 @@ class Activity
     {
         if ($this->user->removeElement($user)) {
             // set the owning side to null (unless already changed)
-            if ($user->getActivities() === $this) {
-                $user->setActivities(null);
+            if ($user->getArticles() === $this) {
+                $user->setArticles(null);
             }
         }
 
