@@ -77,10 +77,7 @@ class UserController extends AbstractController
         return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
     }
 
-
-    /**
-     * @Route("/api/user", methods={"GET"})
-     */
+    #[Route('/api/user', name: 'app_api_user_get', methods: ['GET'])]
     public function getUsers(SerializerInterface $serializer, UserRepository $userRepository): Response
     {
         $users = $userRepository->findAll();
@@ -91,9 +88,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/api/user", methods={"POST"})
-     */
+    #[Route('/api/user', name: 'app_api_user_post', methods: ['POST'])]
     public function create(Request $request, SerializerInterface $serializer, ValidatorInterface $validator): Response
     {
         $json = $request->getContent();
@@ -119,9 +114,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/api/user/{id}", methods={"PUT"})
-     */
+    #[Route('/api/{id}/user', name: 'app_api_user_put', methods: ['PUT'])]
     public function update(Request $request, SerializerInterface $serializer, ValidatorInterface $validator, User $user): Response
     {
         $json = $request->getContent();
@@ -147,9 +140,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/api/user/{id}", methods={"DELETE"})
-     */
+    #[Route('/api/{id}/user', name: 'app_api_user_delete', methods: ['DELETE'])]
     public function deleteUser(User $user): Response
     {
         $em = $this->getDoctrine()->getManager();
