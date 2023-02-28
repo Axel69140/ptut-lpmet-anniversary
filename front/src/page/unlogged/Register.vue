@@ -2,20 +2,22 @@
     import axios from 'axios';    
 
     export default {
-        name: '',
-        data: () => ({}),       
+        name: 'register',
+        data: () => ({ users: [] }),       
         computed: {            
         },
-        methods: {                
+        methods: {      
         },
-        mounted() { 
+        mounted() {       
         }
     }
 </script>
 
+
 <template>
-    
+    <h1>Register</h1>    
 </template>
 
 <style scoped>
+
 </style>
