@@ -6,6 +6,7 @@ import Articles from '../page/unlogged/Articles.vue';
 import Contact from '../page/unlogged/Contact.vue';
 import Event from '../page/unlogged/Event.vue';
 import Users from '../page/logged/Users.vue';
+import User from '../page/logged/User.vue';
 import EventForm from '../page/logged/EventForm.vue';
 import ArticleForm from '../page/logged/ArticleForm.vue';
 import AnecdoteForm from '../page/logged/AnecdoteForm.vue';
@@ -27,6 +28,7 @@ const routes = [
     { path: '/contact', name: 'Contact', component: Contact },
     { path: '/event', name: 'Event', component: Event },
     { path: '/users', name: 'Users', component: Users },
+    { path: '/user', name: 'User', component: User },
     { path: '/event/registration', name: 'EventForm', component: EventForm },
     { path: '/article/form', name: 'ArticleForm', component: ArticleForm },
     { path: '/anecdote/form', name: 'AnecdoteForm', component: AnecdoteForm },
