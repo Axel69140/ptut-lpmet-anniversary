@@ -24,8 +24,9 @@ class Guest
     #[ORM\Column(length: 255)]
     private ?string $email = null;
 
-    #[ORM\OneToMany(mappedBy: 'guests', targetEntity: User::class)]
-    private Collection $users;
+    #[ORM\ManyToOne(inversedBy: 'guests')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $invitedBy = null;
 
     public function __construct()
     {
@@ -73,32 +74,14 @@ class Guest
         return $this;
     }
 
-    /**
-     * @return Collection<int, User>
-     */
-    public function getUsers(): Collection
+    public function getInvitedBy(): ?User
     {
-        return $this->users;
+        return $this->invitedBy;
     }
 
-    public function addUser(User $user): self
+    public function setInvitedBy(?User $invitedBy): self
     {
-        if (!$this->users->contains($user)) {
-            $this->users->add($user);
-            $user->setGuests($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUser(User $user): self
-    {
-        if ($this->users->removeElement($user)) {
-            // set the owning side to null (unless already changed)
-            if ($user->getGuests() === $this) {
-                $user->setGuests(null);
-            }
-        }
+        $this->invitedBy = $invitedBy;
 
         return $this;
     }

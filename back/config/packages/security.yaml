@@ -1,3 +1,6 @@
+parameters:
+    upload_user_img: '%kernel.project_dir%/public/uploadedFiles/user'
+
 security:
     # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
