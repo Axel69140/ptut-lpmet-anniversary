@@ -108,6 +108,35 @@
 </template>
 
 <style scoped>
+    li{
+        list-style: none;
+        margin: 5px;
+    }
+
+    ul.users{
+        display: flex;
+    }
+
+    .user{
+        border: solid black 1px;
+    }
+
+    .isParticipated{
+        color: green;
+    }
+
+    .isNotParticipated{
+        color: red;
+    }
+
+    .fullName {
+        display: flex;
+        margin: 20px 5px 0 5px;
+    }
+
+    .firstName{
+        margin-right:7px;
+    }
 
 .fullPage{
     margin: 0 5%;
