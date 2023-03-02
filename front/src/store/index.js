@@ -29,8 +29,8 @@ const store = createStore({
     status: '',
     user: user,
     userInfos: {
-      nom:'',
-      prenom: '',
+      firstName:'',
+      lastName: '',
       email: '',
       photo: '',
     },

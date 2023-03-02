@@ -29,3 +29,5 @@
 ###< symfony/webpack-encore-bundle ###
 
 /front/node_modules/
+
+.idea
