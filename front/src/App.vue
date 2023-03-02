@@ -1,4 +1,5 @@
 <script>
+    import Loader from './components/Loader.vue'
     export default {
         name: 'app',
         data: () => ({user: null}),       
@@ -7,9 +8,12 @@
         methods: {      
         },
         mounted() {        
-          this.user = {
+          /*this.user = {
             name: "Marie"
-          };
+          };*/
+        },
+        components: {
+          Loader
         }
     }
 </script>
@@ -18,7 +22,7 @@
   <header>
     <nav class="navbar navbar-expand-lg navbar-dark">
       <a class="navbar-brand" href="/">LOGO</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
 
@@ -48,18 +52,21 @@
           </li>
         </ul>
 
-        <div class="form-inline my-2 my-md-0">
-          <a v-if="user === null" class="nav-link" href="/">Connexion</a>
-          <a v-if="user !== null" class="nav-link" href="/">{{user.name}}</a>
+        <div class="form-inline  my-md-0">
+          <a v-if="user === null" class="nav-link" href="/login">Connexion</a>
+          <div v-if="user !== null" class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="/" id="dropdown3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{user.name}}</a>
+            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown3">
+              <a class="dropdown-item" href="/logout">Déconnexion</a>
+            </div>
+          </div>
         </div>
       </div>
     </nav>
   </header>
   
   <main>
-    <div>
       <router-view></router-view>
-    </div>
   </main>
 
   <footer class="py-3 mt-4">
@@ -80,16 +87,29 @@
     --primary : #e75112;
     --secondary: #FDAF17;    
     --third: #9B9B9B;
+    --loading-secondary: #ff8d5c;
+    --loading-fourth: #ffda8f;
     --bg-primary: #FFFFFF;
     --bg-secondary: #F7F7F7;
     --bg-third: #CCCCCC;
     --bg-navbar: #403E3F;
+    --subtitle: #666;
+    --button-bg-disable: #cecece;
+    --button-color-disable: #ececec;
+    --input-bg: #f2f2f2;
+    --input-placeholder:#aaaaaa; 
 }
 
 * {
   padding: 0;
   margin: 0;
+  box-sizing: border-box;
   --color_foeee: #fff;
+}
+
+main {
+  min-height: 80vh !important;
+  padding:32px;
 }
 
 #app {
@@ -99,6 +119,7 @@
   text-align: center;
   color: #2c3e50;
   min-height: 100%;
+  max-width: 100%;
 }
 
 body {
@@ -106,7 +127,7 @@ body {
 	min-height: 100vh;
 	display: grid;
 	grid-template-rows: auto 1fr auto;
-  background-color: #f0f0f0 !important;
+  background-image: linear-gradient(12deg, var(--bg-secondary) 0%, var(--bg-third) 100%);
 }
 
 main {
@@ -149,5 +170,9 @@ footer{
 
 .footer-text {
   color: #e0dcdc;
+}
+
+h1 {
+  margin-top: 40px !important;
 }
 </style>
