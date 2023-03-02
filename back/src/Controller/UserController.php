@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Doctrine\ORM\EntityManagerInterface;
 
 #[Route('/user')]
 class UserController extends AbstractController
@@ -84,19 +85,20 @@ class UserController extends AbstractController
         $users = $userRepository->findAll();
 
         $json = $serializer->serialize($users, 'json');
+
         return new Response($json, 200, [
             'Content-Type' => 'application/json'
         ]);
     }
 
     #[Route('/api/user', name: 'app_api_user_post', methods: ['POST'])]
-    public function create(Request $request, SerializerInterface $serializer, ValidatorInterface $validator): Response
+    public function create(Request $request, SerializerInterface $serializer, ValidatorInterface $validator, EntityManagerInterface $entityManager): Response
     {
         $json = $request->getContent();
 
         $user = $serializer->deserialize($json, User::class, 'json');
 
-        $errors = $validator->validate($produit);
+        $errors = $validator->validate($user);
 
         if (count($errors) > 0) {
             return new Response($serializer->serialize($errors, 'json'), 400, [
@@ -104,9 +106,8 @@ class UserController extends AbstractController
             ]);
         }
 
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($user);
-        $em->flush();
+        $entityManager->persist($user);
+        $entityManager->flush();
 
         $json = $serializer->serialize($user, 'json', ['groups' => 'user']);
 
@@ -115,8 +116,8 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/api/{id}/user', name: 'app_api_user_put', methods: ['PUT'])]
-    public function update(Request $request, SerializerInterface $serializer, ValidatorInterface $validator, User $user): Response
+    #[Route('/api/user/{id}', name: 'app_api_user_patch', methods: ['PATCH'])]
+    public function update(Request $request, SerializerInterface $serializer, ValidatorInterface $validator, User $user, EntityManagerInterface $entityManager): Response
     {
         $json = $request->getContent();
 
@@ -130,9 +131,8 @@ class UserController extends AbstractController
             ]);
         }
 
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($user);
-        $em->flush();
+        $entityManager->persist($user);
+        $entityManager->flush();
 
         $json = $serializer->serialize($user, 'json', ['groups' => 'user']);
 
@@ -141,12 +141,11 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/api/{id}/user', name: 'app_api_user_delete', methods: ['DELETE'])]
-    public function deleteUser(User $user): Response
+    #[Route('/api/user/{id}', name: 'app_api_user_delete', methods: ['DELETE'])]
+    public function deleteUser(User $user, EntityManagerInterface $entityManager): Response
     {
-        $em = $this->getDoctrine()->getManager();
-        $em->remove($user);
-        $em->flush();
+        $entityManager->remove($user);
+        $entityManager->flush();
 
         return new Response(null, 204);
     }
