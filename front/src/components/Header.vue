@@ -5,15 +5,17 @@
         computed: {            
         },
         methods: {  
-          logout: function () {
-            this.$store.commit('logout');
+          logout: async function () {
+            await this.$store.commit('logout');
             this.$router.push('/');
             this.checkLog();
           },
           checkLog() {
             if (this.$store.state.user.userId != -1) {
               this.user = this.$store.state.user;
-            }   
+            } else {
+              this.user = null;
+            }
           } 
         },
         mounted() {  
