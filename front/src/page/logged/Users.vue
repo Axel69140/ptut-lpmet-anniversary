@@ -8,7 +8,7 @@
         data: () => ({ 
             selectedOption: 'tous',
             eventOption: false,
-            minNumber: 2000,
+            minNumber: 1993,
             maxNumber: 2023,
             users: []
          }),       
@@ -28,7 +28,7 @@
                     if(this.minNumber < this.maxNumber){
                         filtered = filtered.filter(user => (user.activeYears.substring(0,4) >= this.minNumber && user.activeYears.substring(0,4) <= this.maxNumber)||(user.activeYears.substring(user.activeYears.length - 4) >= this.minNumber && user.activeYears.substring(user.activeYears.length - 4) <= this.maxNumber));
                     }else if(this.minNumber > this.maxNumber){
-                        this.minNumber = 2000;
+                        this.minNumber = 1993;
                         this.maxNumber = 2023;
                     }else{
                         filtered = filtered.filter(user => (user.activeYears.substring(0,4) <= this.minNumber && user.activeYears.substring(user.activeYears.length - 4) >= this.minNumber));
@@ -73,31 +73,31 @@
             </div>
             <div class="filterFunction">
                 <label>fonction au sein de l'IUT</label>
-                <select id="inpuFunction" v-model="selectedOption" name="inputFunction">
+                <select id="inputFunction" v-model="selectedOption" name="inputFunction">
                     <option value="tous">tous</option>
                     <option value="élève">élève</option>
                     <option value="enseignant">enseignant</option>
                     <option value="autre">autre</option>
                 </select>
             </div>
-            <div class="filterYears">
+            <div class="filterYear form-row">
                 <label for="inputYear1">Année au sein de l'IUT de</label>
-                <input id="monInput" type="number" name="monInput" min="2000" max="2023" v-model="minNumber">
+                <input id="monInput" type="number" name="monInput" min="1993" max="2023" class="form-row__input" v-model="minNumber">
                 <label for="inputYear1">à</label>
-                <input id="monInput" type="number" name="monInput" min="2000" max="2023" v-model="maxNumber">
+                <input id="monInput" type="number" name="monInput" min="1993" max="2023" class="form-row__input" v-model="maxNumber">
             </div>
         </div>
         <div class="users">
             <ul v-for="(chunk, index) in test(filteredUsers, 6)" :key="index" class="usersPart">
                 <li v-for="(user, i) in chunk" :key="i" class="user">
-                    <img src="https://media.istockphoto.com/id/1200677760/fr/photo/verticale-de-jeune-homme-de-sourire-beau-avec-des-bras-crois%C3%A9s.jpg?s=612x612&w=0&k=20&c=0TDS1aTXZzWLzI_X9eGBhqS_QZAz49zKEDKT8xsHZfU=" width="148" height="148">
+                    <img src="https://media.istockphoto.com/id/1200677760/fr/photo/verticale-de-jeune-homme-de-sourire-beau-avec-des-bras-crois%C3%A9s.jpg?s=612x612&w=0&k=20&c=0TDS1aTXZzWLzI_X9eGBhqS_QZAz49zKEDKT8xsHZfU=" width="198" height="198">
                     <div class="fullName">
-                        <div class="firstName">{{ user.firstName }}</div>
+                        <div class="firstName">{{ user.firstName }}</div>   
                         <div v-if="user.isPublic" class="lastName">{{ user.lastName }}</div>
                         <div v-else class="lastName">{{ obfuscateName(user.lastName) }}</div>
                     </div>
-                    <div class="activeYears">{{ user.activeYears }}</div>
-                    <div v-if="user.isPublic" class="function">{{ user.function }}</div>
+                    <div class="activeYears">Année à l'IUT <strong>{{ user.activeYears }}</strong></div>
+                    <div v-if="user.isPublic && user.function != 'autre'" class="function">En tant qu'{{ user.function }}</div>
                     <div v-if="user.isParticipated" class="isParticipated" >participe</div>
                     <div v-else class="isNotParticipated">participe pas</div>
                 </li>
@@ -109,54 +109,64 @@
 
 <style scoped>
 
-    .fullPage{
-        margin: 0 5%;
-    }
-    li.user{
-        list-style: none;
-        margin: 5px;
-        max-width: 150px;
-        min-width: 150px;
-        background-color: #fcfcfc;
-        border: solid var(--third) 1px;
-        box-shadow: 0 15px 10px 0 #d4d4d4;
-        transition: all .2s ease-in-out; 
-    }
+.fullPage{
+    margin: 0 5%;
+}
+li.user{
+    list-style: none;
+    margin: 5px;
+    max-width: 200px;
+    min-width: 200px;
+    background-color: #fcfcfc;
+    border: solid var(--third) 1px;
+    box-shadow: 0 15px 10px 0 #d4d4d4;
+    transition: all .2s ease-in-out; 
+}
 
-    ul.usersPart{
-        display: flex;
-        justify-content:space-evenly;
-    }
+ul.usersPart{
+    display: flex;
+    justify-content:space-evenly;
+}
 
-    .user:hover{
-        transform: scale(1.1);
-    }
+.user:hover{
+    transform: scale(1.1);
+}
 
-    .isParticipated{
-        color: green;
-    }
+.isParticipated{
+    color: green;
+    margin-bottom: 10px;
+}
 
-    .isNotParticipated{
-        color: red;
-    }
+.isNotParticipated{
+    color: red;
+    margin-bottom: 10px;
+}
 
-    .fullName {
-        display: flex;
-        justify-content: center;
-        margin: 20px 0 0 0;
-    }
+label{
+    margin: 0 10px 0 0;
+}
 
-    .firstName{
-        margin-right:7px;
-    }
+.fullName {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0 0 0;
+}
 
-    .filters{
-        display: flex;
-        justify-content: space-evenly;
-        align-items: center;
-    }
+.firstName{
+    margin-right:7px;
+}
 
-    .container input {
+.filters{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.filterYear{
+    display: flex;
+}
+
+.container input {
   position: absolute;
   opacity: 0;
   cursor: pointer;
@@ -169,12 +179,62 @@
   gap: 10px;
 }
 
+#inputFunction{
+    padding: 8px;
+    border: solid 2px var(--primary);
+    border-radius: 8px;
+    background: var(--input-bg);
+    font-weight: 500;
+    font-size: 16px;
+    flex: 1;
+    min-width: 100px;
+    color: black;
+}
+
+#inputFunction:focus-visible{
+    outline: var(--primary);
+}
+
+#inputFunction option{
+    background: var(--input-bg);
+}
+
+
+/* Create custom label */
+.form-row {
+  display: flex;
+  align-items: center;
+  margin: 16px 0px;
+  gap:16px;
+  flex-wrap: wrap;
+}
+
+.form-row__input {
+  padding:8px;
+  border: solid 2px var(--primary);
+  border-radius: 8px;
+  background: var(--input-bg);
+  font-weight: 500;
+  font-size: 16px;
+  flex:1;
+  min-width: 100px;
+  color: black;
+}
+
+.form-row__input:focus-visible{
+    outline: 1px solid var(--primary);
+}
+
+.form-row__input::placeholder {
+  color: var(--input-placeholder);
+}
+/* END custom label */ 
 
 /* Create a custom checkbox */
 .checkmark {
   position: relative;
-  box-shadow: rgb(255, 84, 0) 0px 0px 0px 2px;
-  background-color: rgba(16, 16, 16, 0.5);
+  box-shadow: var(--primary) 0px 0px 0px 2px;
+  background-color: var(--bg-secondary);
   height: 20px;
   width: 20px;
   margin-right: 10px;
@@ -189,8 +249,8 @@
 }
 
 .container input:checked ~ .checkmark {
-  box-shadow: rgb(255, 84, 0) 0px 0px 0px 2px;
-  background-color: rgba(245, 24, 24, 0.5);
+  box-shadow: var(--primary);
+  background-color: var(--primary);
   height: 20px;
   width: 20px;
   margin-right: 10px;
