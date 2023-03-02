@@ -31,11 +31,9 @@ class Activity
     #[ORM\Column]
     private ?bool $isValidate = null;
 
-    #[ORM\OneToMany(mappedBy: 'activities', targetEntity: User::class)]
-    private Collection $user;
-
-    #[ORM\ManyToOne]
-    private ?Media $medias = null;
+    #[ORM\ManyToOne(inversedBy: 'activities')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $creator = null;
 
     public function __construct()
     {
@@ -107,44 +105,14 @@ class Activity
         return $this;
     }
 
-    /**
-     * @return Collection<int, User>
-     */
-    public function getUser(): Collection
+    public function getCreator(): ?User
     {
-        return $this->user;
+        return $this->creator;
     }
 
-    public function addUser(User $user): self
+    public function setCreator(?User $creator): self
     {
-        if (!$this->user->contains($user)) {
-            $this->user->add($user);
-            $user->setActivities($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUser(User $user): self
-    {
-        if ($this->user->removeElement($user)) {
-            // set the owning side to null (unless already changed)
-            if ($user->getActivities() === $this) {
-                $user->setActivities(null);
-            }
-        }
-
-        return $this;
-    }
-
-    public function getMedias(): ?Media
-    {
-        return $this->medias;
-    }
-
-    public function setMedias(?Media $medias): self
-    {
-        $this->medias = $medias;
+        $this->creator = $creator;
 
         return $this;
     }

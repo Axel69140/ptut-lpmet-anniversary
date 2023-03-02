@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -62,6 +64,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'boolean')]
     private $isVerified = false;
+
+    #[ORM\OneToMany(mappedBy: 'creator', targetEntity: Article::class)]
+    private Collection $articles;
+
+    #[ORM\OneToMany(mappedBy: 'invitedBy', targetEntity: Guest::class, orphanRemoval: true)]
+    private Collection $guests;
+
+    #[ORM\OneToMany(mappedBy: 'creator', targetEntity: Activity::class)]
+    private Collection $activities;
+
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?Media $picture = null;
+
+    public function __construct()
+    {
+        $this->articles = new ArrayCollection();
+        $this->guests = new ArrayCollection();
+        $this->activities = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -261,6 +282,108 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIsVerified(bool $isVerified): self
     {
         $this->isVerified = $isVerified;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Article>
+     */
+    public function getArticles(): Collection
+    {
+        return $this->articles;
+    }
+
+    public function addArticle(Article $article): self
+    {
+        if (!$this->articles->contains($article)) {
+            $this->articles->add($article);
+            $article->setCreator($this);
+        }
+
+        return $this;
+    }
+
+    public function removeArticle(Article $article): self
+    {
+        if ($this->articles->removeElement($article)) {
+            // set the owning side to null (unless already changed)
+            if ($article->getCreator() === $this) {
+                $article->setCreator(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Guest>
+     */
+    public function getGuests(): Collection
+    {
+        return $this->guests;
+    }
+
+    public function addGuest(Guest $guest): self
+    {
+        if (!$this->guests->contains($guest)) {
+            $this->guests->add($guest);
+            $guest->setInvitedBy($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGuest(Guest $guest): self
+    {
+        if ($this->guests->removeElement($guest)) {
+            // set the owning side to null (unless already changed)
+            if ($guest->getInvitedBy() === $this) {
+                $guest->setInvitedBy(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Activity>
+     */
+    public function getActivities(): Collection
+    {
+        return $this->activities;
+    }
+
+    public function addActivity(Activity $activity): self
+    {
+        if (!$this->activities->contains($activity)) {
+            $this->activities->add($activity);
+            $activity->setCreator($this);
+        }
+
+        return $this;
+    }
+
+    public function removeActivity(Activity $activity): self
+    {
+        if ($this->activities->removeElement($activity)) {
+            // set the owning side to null (unless already changed)
+            if ($activity->getCreator() === $this) {
+                $activity->setCreator(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getPicture(): ?Media
+    {
+        return $this->picture;
+    }
+
+    public function setPicture(Media $picture): self
+    {
+        $this->picture = $picture;
 
         return $this;
     }
