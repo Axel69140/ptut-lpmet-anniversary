@@ -82,10 +82,9 @@ class ActivityController extends AbstractController
     public function getActivities(SerializerInterface $serializer, ActivityRepository $activityRepository, NormalizerInterface $normalizer): Response
     {
         $activities = $activityRepository->findAll();
-        dd($activities);
         $json = $serializer->serialize($activities, 'json');
         
-        return new Response($activities, 200, [
+        return new Response($json, 200, [
             'Content-Type' => 'application/json'
         ]);
     }
