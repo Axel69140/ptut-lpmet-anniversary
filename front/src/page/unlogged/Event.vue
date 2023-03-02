@@ -3,10 +3,15 @@
 
     export default {
     name: 'event',
-    data: () => ({ users: [] }),       
+    data: () => ({ activities: [] }),       
     computed: {},      
     methods: {},
-    mounted() {
+    mounted() {   
+        axios.get('https://127.0.0.1:8000/activity/api/activity').then(response => {
+            console.log(response.data);
+            this.activities = response.data;
+        });        
+        
         const second = 1000,
         minute = second * 60,
         hour = minute * 60,
@@ -17,14 +22,15 @@
         let today = new Date(),
         dd = String(today.getDate()).padStart(2, "0"),
         mm = String(today.getMonth() + 1).padStart(2, "0"),
-        yyyy = today.getFullYear(),
+        yyyy = today.getFullYear() +1,
         nextYear = yyyy + 1,
-        dayMonth = "09/30/",
+        dayMonth = "05/05/",
         birthday = dayMonth + yyyy;
+        
 
         today = mm + "/" + dd + "/" + yyyy;
         if (today > birthday) {
-        birthday = dayMonth + nextYear;
+            birthday = dayMonth + nextYear;
         }
         //end
 
@@ -54,7 +60,7 @@
 
 <template>
     <div class="countdown">
-        <h2 id="headline">Décompte de l'anniversaire du département informatique</h2>
+        <h1 id="headline">Décompte de l'anniversaire du département informatique</h1>
         <div id="countdown">
             <ul>
                 <li><span id="days"></span>days</li>
