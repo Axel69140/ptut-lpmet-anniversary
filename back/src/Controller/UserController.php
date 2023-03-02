@@ -4,10 +4,14 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\UserType;
+use App\Kernel;
+use App\Repository\MediaRepository;
 use App\Repository\UserRepository;
+use App\Service\FileUploader;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -25,13 +29,27 @@ class UserController extends AbstractController
     }
 
     #[Route('/new', name: 'app_user_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, UserRepository $userRepository): Response
+    public function new(Request $request, UserRepository $userRepository, MediaRepository $mediaRepository, FileUploader $fileUploader, UserPasswordHasherInterface $userPasswordHasher): Response
     {
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            $user->setPassword(
+                $userPasswordHasher->hashPassword(
+                    $user,
+                    $form->get('password')->getData()
+                )
+            );
+
+            if($request->files->all()[$form->getName()]['picture'] !== null){
+                $media = $fileUploader->toMedia($request->files->all()[$form->getName()]['picture'], $this->getParameter('upload_user_img'));
+                $mediaRepository->save($media);
+                $user->setPicture($media);
+            };
+
             $userRepository->save($user, true);
 
             return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
@@ -52,12 +70,27 @@ class UserController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_user_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, User $user, UserRepository $userRepository): Response
+    public function edit(Request $request, User $user, UserRepository $userRepository, MediaRepository $mediaRepository, FileUploader $fileUploader): Response
     {
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            if($request->files->all()[$form->getName()]['picture'] !== null){
+                $media = $fileUploader->toMedia($request->files->all()[$form->getName()]['picture'], $this->getParameter('upload_user_img'));
+                $mediaRepository->save($media);
+                if($user->getPicture() !== null)
+                {
+                    $pictureToDelete = $user->getPicture();
+                    unlink($pictureToDelete->getPath());
+                    $user->setPicture($media);
+                    $mediaRepository->remove($pictureToDelete, true);
+                } else {
+                    $user->setPicture($media);
+                }
+            }
+
             $userRepository->save($user, true);
 
             return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
@@ -73,6 +106,10 @@ class UserController extends AbstractController
     public function delete(Request $request, User $user, UserRepository $userRepository): Response
     {
         if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->request->get('_token'))) {
+            if($user->getPicture() !== null){
+                unlink($user->getPicture()->getPath());
+            }
+
             $userRepository->remove($user, true);
         }
 
