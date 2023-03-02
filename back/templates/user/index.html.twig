@@ -9,18 +9,20 @@
         <thead>
             <tr>
                 <th>Id</th>
+                <th>Email</th>
+                <th>Roles</th>
+                <th>Password</th>
                 <th>FirstName</th>
                 <th>LastName</th>
                 <th>MaidenName</th>
-                <th>Email</th>
-                <th>PhoneNumber</th>
-                <th>Password</th>
+                <th>Phone</th>
                 <th>Note</th>
                 <th>IsParticipated</th>
                 <th>IsPublic</th>
                 <th>ActiveYears</th>
                 <th>Function</th>
                 <th>Link</th>
+                <th>IsVerified</th>
                 <th>actions</th>
             </tr>
         </thead>
@@ -28,18 +30,20 @@
         {% for user in users %}
             <tr>
                 <td>{{ user.id }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.roles ? user.roles|json_encode : '' }}</td>
+                <td>{{ user.password }}</td>
                 <td>{{ user.firstName }}</td>
                 <td>{{ user.lastName }}</td>
                 <td>{{ user.maidenName }}</td>
-                <td>{{ user.email }}</td>
-                <td>{{ user.phoneNumber }}</td>
-                <td>{{ user.password }}</td>
+                <td>{{ user.phone }}</td>
                 <td>{{ user.note }}</td>
                 <td>{{ user.isParticipated ? 'Yes' : 'No' }}</td>
                 <td>{{ user.isPublic ? 'Yes' : 'No' }}</td>
-                <td>{{ user.activeYears }}</td>
+                <td>{{ user.activeYears ? user.activeYears|join(', ') : '' }}</td>
                 <td>{{ user.function }}</td>
                 <td>{{ user.link }}</td>
+                <td>{{ user.isVerified ? 'Yes' : 'No' }}</td>
                 <td>
                     <a href="{{ path('app_user_show', {'id': user.id}) }}">show</a>
                     <a href="{{ path('app_user_edit', {'id': user.id}) }}">edit</a>
@@ -47,7 +51,7 @@
             </tr>
         {% else %}
             <tr>
-                <td colspan="14">no records found</td>
+                <td colspan="16">no records found</td>
             </tr>
         {% endfor %}
         </tbody>
