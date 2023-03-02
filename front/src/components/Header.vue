@@ -1,12 +1,13 @@
 <script>
+    import { mapState } from 'vuex'
     export default {
         name: 'header',
         data: () => ({user: null}),       
-        computed: {            
+        computed: {  
         },
         methods: {  
-          logout: function () {
-            this.$store.commit('logout');
+          logout: async function () {
+            await this.$store.commit('logout');
             this.$router.push('/');
             this.checkLog();
           },

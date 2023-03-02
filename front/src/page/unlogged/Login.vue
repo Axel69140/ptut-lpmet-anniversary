@@ -51,13 +51,13 @@
       range(start, end) {
         return Array(end - start + 1).fill().map((_, index) => start + index);
       },
-      switchToCreateAccount: function () {
+      switchToCreateAccount() {
         this.mode = 'create';
       },
-      switchToLogin: function () {
+      switchToLogin() {
         this.mode = 'login';
       },
-      login: function () {
+      login() {
         const self = this;
         this.$store.dispatch('login', {
           email: this.email,
@@ -68,7 +68,7 @@
           console.log(error);
         })
       },
-      createAccount: function () {
+      createAccount() {
         const self = this;
         this.$store.dispatch('createAccount', {
           email: this.email,
