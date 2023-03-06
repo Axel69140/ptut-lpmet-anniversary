@@ -5,7 +5,11 @@
     name: 'event',
     data: () => ({ activities: [] }),       
     computed: {},      
-    methods: {},
+    methods: {
+      parameterGame() {
+        this.$router.push('../event/registration');
+      }
+    },
     mounted() {   
         axios.get('https://127.0.0.1:8000/activity/api/activity').then(response => {
             console.log(response.data);
@@ -71,11 +75,13 @@
         </div>
     </div>
     <div class="participate">
-        <p>Je participe à l'évènement</p>
-        <div class="invitation">
-            <a href="../logged/EventForm.vue">Inviter</a>
-            <a href="../logged/EventForm.vue">Voir ses invités</a>
-        </div>
+      <div class="divParticipate">
+        <p class="isParticipate" @click="parameterGame()">Je participe à l'évènement</p><!--Changer la pour récupérere si l'utilisateur est inscrit à l'évènement ou non-->
+      </div>
+      <div class="invitation">
+          <a href="../logged/EventForm.vue">Inviter</a>
+          <a href="../logged/EventForm.vue">Voir ses invités</a>
+      </div>
     </div>
 </template>
   
@@ -111,6 +117,53 @@ body {
     sans-serif;
 }
 
+.countdown{
+  background-color: var(--secondary);
+}
+
+.invitation a{
+  text-decoration: none;
+  color: black;
+  border: solid 1px #333;
+  border-radius: 15px;
+  padding: 0.5%;
+  margin: 15px 10px;
+  transition: all .2s ease-in-out; 
+}
+
+.invitation a:hover{
+  color: #ffffff;
+  border-color: var(--primary);
+  background-color: var(--primary);
+  transform: scale(1.1);
+}
+
+.isParticipate{
+  border: #333 solid 1px;
+  padding: 0.5%;
+  border-radius: 15px;
+  transition: all .2s ease-in-out; 
+  cursor: pointer;
+}
+
+.isParticipate:hover{
+  color: #ffffff;
+  border-color: var(--primary);
+  background-color: var(--primary);
+  transform: scale(1.1);
+}
+
+.invitation{
+  display: flex;
+  justify-content: center;
+}
+
+.divParticipate{
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
 .container {
   color: #333;
   margin: 0 auto;
@@ -121,6 +174,7 @@ h1 {
   font-weight: normal;
   letter-spacing: .125rem;
   text-transform: uppercase;
+  margin: 0;
 }
 
 li {
