@@ -123,8 +123,9 @@ body {
 
 .invitation a{
   text-decoration: none;
-  color: black;
-  border: solid 1px #333;
+  color: #ffffff;
+  border: solid 3px #ffffff;
+  background-color: var(--secondary);
   border-radius: 15px;
   padding: 0.5%;
   margin: 15px 10px;
@@ -139,7 +140,9 @@ body {
 }
 
 .isParticipate{
-  border: #333 solid 1px;
+  color: #ffffff;
+  border: solid 3px #ffffff;
+  background-color: var(--secondary);
   padding: 0.5%;
   border-radius: 15px;
   transition: all .2s ease-in-out; 
