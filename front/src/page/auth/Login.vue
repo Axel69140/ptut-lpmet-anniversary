@@ -1,28 +1,11 @@
 <script>
   import { mapState } from 'vuex';
-  import Footer from './../../components/Footer.vue';
+  import Footer from '../../components/Footer.vue';
 
   export default {
     name: 'login',
-    data: function () {
-      return {
-        mode: 'login',
-        email: '',
-        firstName: '',
-        lastName: '',
-        maidenName: '',
-        password: '',
-        password_confirmation: '',
-        phone: '',
-        activeYears: '',
-        activeYears2: '',
-        _function: '',
-        link: '',
-        note: '',
-        isParticipated: '',
-        isPublic: ''
-      }
-    },
+    data: () => ({ mode: 'login', email: '', firstName: '', lastName: '', maidenName: '', password: '', password_confirmation: '', phone: '', 
+                  activeYears: '', activeYears2: '',_function: '', link: '', note: '', isParticipated: '', isPublic: ''}),       
     mounted() {
       if (this.$store.state.user.userId != -1) {
         this.$router.push('/');
@@ -32,7 +15,8 @@
     computed: {
       validatedFields: function () {
         if (this.mode == 'create') {
-          if (this.email != "" && this.firstName != "" && this.lastName != "" && this.password != "" && this.password_confirmation != "") {
+          if (this.email != "" && this.firstName != "" && this.lastName != "" && this.password != "" && this.password_confirmation != "" 
+          && this.activeYears != "" && this.activeYears2 != "") {
             return true;
           } else {
             return false;
@@ -72,9 +56,19 @@
         const self = this;
         this.$store.dispatch('createAccount', {
           email: this.email,
-          nom: this.lastName,
-          prenom: this.firstName,
+          lastName: this.lastName,
+          firstName: this.firstName,
           password: this.password,
+          roles: ["ROLE_USER"],
+          maidenName: this.maidenName,
+          phone: this.phone,
+          note: this.note,
+          isParticipated: this.isParticipated === true ? this.isParticipated : false,
+          isPublic: this.isPublic === true ? this.isPublic : false,
+          activeYears: [this.activeYears, this.activeYears2],
+          function: this._function,
+          link: this.link,
+          isVerified: false
         }).then(function () {
           self.login();
         }, function (error) {
@@ -121,11 +115,15 @@
 
       <div class="form-row" v-if="mode == 'create'">
         <label for="activeYears">Année d'activité à l'IUT*</label>
-        <select name="activeYears" id="activeYears">
+        <select v-model="activeYears" name="activeYears" id="activeYears">
+          <option value="">-</option>
           <option v-for="year in range(1993, 2023)" v-bind:key="year" v-bind:value="year">{{ year }}</option>
         </select>
 
-        <select name="activeYears2" id="activeYears2">
+        <span>/</span>
+
+        <select v-model="activeYears2" name="activeYears2" id="activeYears2">
+          <option value="">-</option>
           <option v-for="year in range(1993, 2023)" v-bind:key="year" v-bind:value="year">{{ year }}</option>
         </select>
       </div>
@@ -159,11 +157,11 @@
 
       <!-- Button form -->
       <div class="form-row">
-        <button @click="login()" class="button" :class="{'button--disabled' : !validatedFields}" v-if="mode == 'login'">
+        <button @click="login()" class="button" :class="{'button--disabled' : !validatedFields}" :disabled="!validatedFields" v-if="mode == 'login'">
           <span v-if="status == 'loading'">Connexion en cours...</span>
           <span v-else>Connexion</span>
         </button>
-        <button @click="createAccount()" class="button" :class="{'button--disabled' : !validatedFields}" v-else>
+        <button @click="createAccount()" class="button" :class="{'button--disabled' : !validatedFields}" :disabled="!validatedFields" v-else>
           <span v-if="status == 'loading'">Création en cours...</span>
           <span v-else>Créer mon compte</span>
         </button>

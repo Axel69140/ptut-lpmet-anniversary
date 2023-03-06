@@ -128,7 +128,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/api/user', name: 'app_api_user_post', methods: ['POST'])]
+    #[Route('/api/register', name: 'app_api_user_post', methods: ['POST'])]
     public function create(Request $request, SerializerInterface $serializer, ValidatorInterface $validator, EntityManagerInterface $entityManager): Response
     {
         $json = $request->getContent();
@@ -143,6 +143,12 @@ class UserController extends AbstractController
             ]);
         }
 
+        $user->setPassword(
+            $userPasswordHasher->hashPassword(
+                $user,
+                json_decode($json)->password
+            )
+        );
         $entityManager->persist($user);
         $entityManager->flush();
 

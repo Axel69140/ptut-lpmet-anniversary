@@ -1,6 +1,5 @@
 import Home from '../page/unlogged/Home.vue';
-import Login from '../page/unlogged/Login.vue';
-import Register from '../page/unlogged/Register.vue';
+import Login from '../page/auth/Login.vue';
 import Article from '../page/unlogged/Article.vue';
 import Articles from '../page/unlogged/Articles.vue';
 import Contact from '../page/unlogged/Contact.vue';
@@ -22,7 +21,6 @@ import { createRouter, createWebHistory } from 'vue-router';
 const routes = [
     { path: '/', name: 'Home', component: Home },
     { path: '/login', name: 'Login', component: Login },
-    { path: '/register', name: 'Register', component: Register },
     { path: '/article', name: 'Article', component: Article },
     { path: '/articles', name: 'Articles', component: Articles },
     { path: '/contact', name: 'Contact', component: Contact },

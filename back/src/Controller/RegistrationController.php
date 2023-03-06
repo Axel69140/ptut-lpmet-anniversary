@@ -17,6 +17,8 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
+use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class RegistrationController extends AbstractController
 {
@@ -27,40 +29,41 @@ class RegistrationController extends AbstractController
         $this->emailVerifier = $emailVerifier;
     }
 
-    #[Route('/register', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
+    #[Route('/api/register', name: 'app_register', methods: ['POST'])]
+    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager, SerializerInterface $serializer, ValidatorInterface $validator): Response
     {
-        $user = new User();
-        $form = $this->createForm(UserType::class, $user);
-        $form->handleRequest($request);
+        $json = $request->getContent();
+        $user = $serializer->deserialize($json, User::class, 'json');
+        $errors = $validator->validate($user);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            // encode the plain password
-            $user->setPassword(
-                $userPasswordHasher->hashPassword(
-                    $user,
-                    $form->get('password')->getData()
-                )
-            );
-
-            $entityManager->persist($user);
-            $entityManager->flush();
-
-            // generate a signed url and email it to the user
-            $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,                (new TemplatedEmail())
-                    ->from(new Address('iutinfo@departement-anniversary.com', 'IUT Informatique BEB Mail Bot'))
-                    ->to($user->getEmail())
-                    ->subject('Please Confirm your Email')
-                    ->htmlTemplate('registration/confirmation_email.html.twig')
-            );
-            // do anything else you need here, like send an email
-
-            return $this->redirectToRoute('app_activity_index');
+        if (count($errors) > 0) {
+            return new Response($serializer->serialize($errors, 'json'), 400, [
+                'Content-Type' => 'application/json'
+            ]);
         }
 
-        return $this->render('registration/register.html.twig', [
-            'registrationForm' => $form->createView(),
-        ]);
+        $user->setPassword(
+            $userPasswordHasher->hashPassword(
+                $user,
+                json_decode($json)->password
+            )
+        );
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        // generate a signed url and email it to the user
+        /*$this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,                (new TemplatedEmail())
+                ->from(new Address('iutinfo@departement-anniversary.com', 'IUT Informatique BEB Mail Bot'))
+                ->to($user->getEmail())
+                ->subject('Please Confirm your Email')
+                ->htmlTemplate('registration/confirmation_email.html.twig')
+        );*/  
+
+        $json = $serializer->serialize($user, 'json', ['groups' => 'user']);
+
+        return new Response($json, 201, [
+            'Content-Type' => 'application/json'
+        ]);                 
     }
 
     #[Route('/verify/email', name: 'app_verify_email')]

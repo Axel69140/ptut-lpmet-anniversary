@@ -2,7 +2,7 @@ import { createStore } from 'vuex';
 import axios from 'axios';
 
 const instance = axios.create({
-  baseURL: 'https://www.wawasensei.dev/api/demo-auth/'
+  baseURL: 'http://127.0.0.1:8000/user/api/user'
 });
 
 let user = localStorage.getItem('user');
@@ -30,9 +30,7 @@ const store = createStore({
     user: user,
     userInfos: {
       firstName:'',
-      lastName: '',
-      email: '',
-      photo: '',
+      lastName: ''
     },
   },
   mutations: {
@@ -75,7 +73,7 @@ const store = createStore({
       commit('setStatus', 'loading');
       return new Promise((resolve, reject) => {
         commit;
-        instance.post('/createAccount', userInfos)
+        instance.post('', userInfos)
         .then(function (response) {
           commit('setStatus', 'created');
           resolve(response);
