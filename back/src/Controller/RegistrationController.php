@@ -38,7 +38,8 @@ class RegistrationController extends AbstractController
 
         if (count($errors) > 0) {
             return new Response($serializer->serialize($errors, 'json'), 400, [
-                'Content-Type' => 'application/json'
+                'Content-Type' => 'application/json',
+                'Access-Control-Allow-Origin' => '*'
             ]);
         }
 
@@ -62,7 +63,8 @@ class RegistrationController extends AbstractController
         $json = $serializer->serialize($user, 'json', ['groups' => 'user']);
 
         return new Response($json, 201, [
-            'Content-Type' => 'application/json'
+            'Content-Type' => 'application/json',
+            'Access-Control-Allow-Origin' => '*'
         ]);                 
     }
 

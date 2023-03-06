@@ -1,6 +1,7 @@
 <script>
   import { mapState } from 'vuex';
   import Footer from '../../components/Footer.vue';
+  import axios from 'axios';
 
   export default {
     name: 'login',
@@ -54,7 +55,7 @@
       },
       createAccount() {
         const self = this;
-        this.$store.dispatch('createAccount', {
+        /*this.$store.dispatch('createAccount', {
           email: this.email,
           lastName: this.lastName,
           firstName: this.firstName,
@@ -70,11 +71,30 @@
           link: this.link,
           isVerified: false
         }).then(function () {
-          self.login();
+          //self.login();
         }, function (error) {
           console.log(error);
+        })*/
+
+        axios.post('http://127.0.0.1:8000/user/api/register',{
+          email: this.email,
+          lastName: this.lastName,
+          firstName: this.firstName,
+          password: this.password,
+          roles: ["ROLE_USER"],
+          maidenName: this.maidenName,
+          phone: this.phone,
+          note: this.note,
+          isParticipated: this.isParticipated === true ? this.isParticipated : false,
+          isPublic: this.isPublic === true ? this.isPublic : false,
+          activeYears: [this.activeYears, this.activeYears2],
+          function: this._function,
+          link: this.link,
+          isVerified: false
+        }).then(response => {
+          console.log('ok');
         })
-      },
+},
     },
     components: {
       Footer

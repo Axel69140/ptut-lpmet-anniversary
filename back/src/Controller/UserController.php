@@ -129,7 +129,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/api/register', name: 'app_api_user_post', methods: ['POST'])]
-    public function create(Request $request, SerializerInterface $serializer, ValidatorInterface $validator, EntityManagerInterface $entityManager): Response
+    public function create(Request $request, SerializerInterface $serializer, ValidatorInterface $validator, EntityManagerInterface $entityManager, UserPasswordHasherInterface $userPasswordHasher): Response
     {
         $json = $request->getContent();
 
