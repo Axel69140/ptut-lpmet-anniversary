@@ -86,6 +86,6 @@ class ActivityController extends AbstractController
         
         return new Response($json, 200, [
             'Content-Type' => 'application/json'
-        ]);
+        ]); 
     }
 }
