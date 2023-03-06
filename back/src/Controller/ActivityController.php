@@ -8,6 +8,8 @@ use App\Repository\ActivityRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/activity')]
@@ -74,5 +76,16 @@ class ActivityController extends AbstractController
         }
 
         return $this->redirectToRoute('app_activity_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('/api/activity', name: 'app_api_activity_get', methods: ['GET'])]
+    public function getActivities(SerializerInterface $serializer, ActivityRepository $activityRepository, NormalizerInterface $normalizer): Response
+    {
+        $activities = $activityRepository->findAll();
+        $json = $serializer->serialize($activities, 'json');
+        
+        return new Response($json, 200, [
+            'Content-Type' => 'application/json'
+        ]); 
     }
 }

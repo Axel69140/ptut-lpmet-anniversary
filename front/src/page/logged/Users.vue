@@ -49,7 +49,7 @@
             }
         },
         mounted() {    
-            axios.get('https://127.0.0.1:8000/api/user').then(response => {
+            axios.get('https://127.0.0.1:8000/user/api/user').then(response => {
                 console.log(response.data);
                 this.users = response.data;
             });        
