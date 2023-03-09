@@ -15,7 +15,7 @@
 
 
 <template>
-    <h1>Artciles</h1>    
+    <h1>Articles</h1>    
 </template>
 
 <style scoped>

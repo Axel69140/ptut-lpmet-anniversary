@@ -33,16 +33,18 @@
 
 <style scoped>
 .save{
-    border-radius: 10px;
-    border: solid 1px black;
-    color: white;
-    background-color: #1f8d15;
+    border: 3px solid #fff;
+    color: #fff;
+    background-color: var(--secondary);
+    border-radius: 15px;
     padding: 0.5%;
     transition: all .2s ease-in-out; 
 }
 
 .save:hover{
     transform: scale(1.1);
+    background-color: var(--primary);
+    border: var(--primary);
 }
 .isParticipate{
     display: flex;
