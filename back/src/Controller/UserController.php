@@ -17,10 +17,11 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
-#[Route('/user')]
+#[Route('/users')]
 class UserController extends AbstractController
 {
-    #[Route('/', name: 'app_user_index', methods: ['GET'])]
+    // Default route
+    /*#[Route('/', name: 'app_user_index', methods: ['GET'])]
     public function index(UserRepository $userRepository): Response
     {
         return $this->render('user/index.html.twig', [
@@ -114,9 +115,10 @@ class UserController extends AbstractController
         }
 
         return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
-    }
+    }*/
 
-    #[Route('/api/user', name: 'app_api_user_get', methods: ['GET'])]
+    // API route
+    #[Route('/', name: 'app_api_user_get', methods: ['GET'])]
     public function getUsers(SerializerInterface $serializer, UserRepository $userRepository): Response
     {
         $users = $userRepository->findAll();
@@ -128,7 +130,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/api/register', name: 'app_api_user_post', methods: ['POST'])]
+    #[Route('/register', name: 'app_api_user_post', methods: ['POST'])]
     public function create(Request $request, SerializerInterface $serializer, ValidatorInterface $validator, EntityManagerInterface $entityManager): Response
     {
         $json = $request->getContent();
@@ -159,7 +161,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/api/user/{id}', name: 'app_api_user_patch', methods: ['PATCH'])]
+    #[Route('/{id}', name: 'app_api_user_patch', methods: ['PATCH'])]
     public function update(Request $request, SerializerInterface $serializer, ValidatorInterface $validator, User $user, EntityManagerInterface $entityManager): Response
     {
         $json = $request->getContent();
@@ -184,7 +186,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/api/user/{id}', name: 'app_api_user_delete', methods: ['DELETE'])]
+    #[Route('/{id}', name: 'app_api_user_delete', methods: ['DELETE'])]
     public function deleteUser(User $user, EntityManagerInterface $entityManager): Response
     {
         $entityManager->remove($user);
