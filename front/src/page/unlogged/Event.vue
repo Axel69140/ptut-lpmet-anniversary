@@ -44,10 +44,22 @@
             const now = new Date().getTime(),
             distance = countDown - now;
 
-            document.getElementById("days").innerText = Math.floor(distance / (day));
-            document.getElementById("hours").innerText = Math.floor((distance % (day)) / (hour));
-            document.getElementById("minutes").innerText = Math.floor((distance % (hour)) / (minute));
-            document.getElementById("seconds").innerText = Math.floor((distance % (minute)) / second);
+            const daysElement = document.getElementById("days");
+            if (daysElement) {
+              daysElement.innerText = Math.floor(distance / (day));
+            }
+            const hoursElement = document.getElementById("hours");
+            if (hoursElement) {
+              hoursElement.innerText = Math.floor((distance % (day)) / (hour));
+            }
+            const minutesElement = document.getElementById("minutes");
+            if (minutesElement) {
+              minutesElement.innerText = Math.floor((distance % (hour)) / (minute));
+            }
+            const secondsElement = document.getElementById("seconds");
+            if (secondsElement) {
+              secondsElement.innerText = Math.floor((distance % (minute)) / second);
+            }
 
             //do something later when date is reached
             if (distance < 0) {
@@ -63,27 +75,28 @@
 </script>
 
 <template>
-    <div class="countdown">
-        <h1 id="headline">Décompte de l'anniversaire du département informatique</h1>
-        <div id="countdown">
-            <ul>
-                <li><span id="days"></span>days</li>
-                <li><span id="hours"></span>Hours</li>
-                <li><span id="minutes"></span>Minutes</li>
-                <li><span id="seconds"></span>Seconds</li>
-            </ul>
-        </div>
-    </div>
-    <div class="participate">
-      <div class="divParticipate">
-        <p class="isParticipate" @click="parameterGame()">Je participe à l'évènement</p><!--Changer la pour récupérere si l'utilisateur est inscrit à l'évènement ou non-->
+  <div class="countdown">
+      <h1 id="headline">Décompte de l'anniversaire du département informatique</h1>
+      <div id="countdown">
+          <ul>
+              <li><span id="days"></span>days</li>
+              <li><span id="hours"></span>Hours</li>
+              <li><span id="minutes"></span>Minutes</li>
+              <li><span id="seconds"></span>Seconds</li>
+          </ul>
       </div>
-      <div class="invitation">
-          <a href="../logged/EventForm.vue">Inviter</a>
-          <a href="../logged/EventForm.vue">Voir ses invités</a>
-      </div>
+  </div>
+  <div class="participate">
+    <div class="divParticipate">
+      <p class="isParticipate" @click="parameterGame()">Je participe à l'évènement</p><!--Changer la pour récupérere si l'utilisateur est inscrit à l'évènement ou non-->
     </div>
+    <div class="invitation">
+        <a href="../logged/EventForm.vue">Inviter</a>
+        <a href="../logged/EventForm.vue">Voir ses invités</a>
+    </div>
+  </div>
 </template>
+
   
 
 <style scoped>
