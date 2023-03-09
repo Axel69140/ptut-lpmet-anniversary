@@ -7,12 +7,11 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
+#[ORM\Table(name: '`user`')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -42,7 +41,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $maidenName = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $phone = null;
+    private ?string $phoneNumber = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $note = null;
@@ -51,7 +50,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?bool $isParticipated = null;
 
     #[ORM\Column]
-    private ?bool $isPublic = null;
+    private ?bool $isPublicProfil = null;
 
     #[ORM\Column(type: Types::ARRAY)]
     private array $activeYears = [];
@@ -62,26 +61,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $link = null;
 
-    #[ORM\Column(type: 'boolean')]
-    private $isVerified = false;
-
-    #[ORM\OneToMany(mappedBy: 'creator', targetEntity: Article::class)]
-    private Collection $articles;
-
     #[ORM\OneToMany(mappedBy: 'invitedBy', targetEntity: Guest::class, orphanRemoval: true)]
     private Collection $guests;
 
     #[ORM\OneToMany(mappedBy: 'creator', targetEntity: Activity::class)]
     private Collection $activities;
 
+    #[ORM\OneToMany(mappedBy: 'creator', targetEntity: Article::class)]
+    private Collection $articles;
+
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    private ?Media $picture = null;
+    private ?Media $profilPicture = null;
 
     public function __construct()
     {
-        $this->articles = new ArrayCollection();
         $this->guests = new ArrayCollection();
         $this->activities = new ArrayCollection();
+        $this->articles = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -190,14 +186,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getPhone(): ?string
+    public function getPhoneNumber(): ?string
     {
-        return $this->phone;
+        return $this->phoneNumber;
     }
 
-    public function setPhone(?string $phone): self
+    public function setPhoneNumber(?string $phoneNumber): self
     {
-        $this->phone = $phone;
+        $this->phoneNumber = $phoneNumber;
 
         return $this;
     }
@@ -214,7 +210,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function isIsParticipated(): ?bool
+    public function isParticipated(): ?bool
     {
         return $this->isParticipated;
     }
@@ -226,14 +222,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function isIsPublic(): ?bool
+    public function isPublicProfil(): ?bool
     {
-        return $this->isPublic;
+        return $this->isPublicProfil;
     }
 
-    public function setIsPublic(bool $isPublic): self
+    public function setIsPublicProfil(bool $isPublicProfil): self
     {
-        $this->isPublic = $isPublic;
+        $this->isPublicProfil = $isPublicProfil;
 
         return $this;
     }
@@ -270,48 +266,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLink(?string $link): self
     {
         $this->link = $link;
-
-        return $this;
-    }
-
-    public function isVerified(): bool
-    {
-        return $this->isVerified;
-    }
-
-    public function setIsVerified(bool $isVerified): self
-    {
-        $this->isVerified = $isVerified;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Article>
-     */
-    public function getArticles(): Collection
-    {
-        return $this->articles;
-    }
-
-    public function addArticle(Article $article): self
-    {
-        if (!$this->articles->contains($article)) {
-            $this->articles->add($article);
-            $article->setCreator($this);
-        }
-
-        return $this;
-    }
-
-    public function removeArticle(Article $article): self
-    {
-        if ($this->articles->removeElement($article)) {
-            // set the owning side to null (unless already changed)
-            if ($article->getCreator() === $this) {
-                $article->setCreator(null);
-            }
-        }
 
         return $this;
     }
@@ -376,14 +330,44 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getPicture(): ?Media
+    /**
+     * @return Collection<int, Article>
+     */
+    public function getArticles(): Collection
     {
-        return $this->picture;
+        return $this->articles;
     }
 
-    public function setPicture(Media $picture): self
+    public function addArticle(Article $article): self
     {
-        $this->picture = $picture;
+        if (!$this->articles->contains($article)) {
+            $this->articles->add($article);
+            $article->setCreator($this);
+        }
+
+        return $this;
+    }
+
+    public function removeArticle(Article $article): self
+    {
+        if ($this->articles->removeElement($article)) {
+            // set the owning side to null (unless already changed)
+            if ($article->getCreator() === $this) {
+                $article->setCreator(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getProfilPicture(): ?Media
+    {
+        return $this->profilPicture;
+    }
+
+    public function setProfilPicture(?Media $profilPicture): self
+    {
+        $this->profilPicture = $profilPicture;
 
         return $this;
     }
