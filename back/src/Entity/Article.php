@@ -16,8 +16,8 @@ class Article
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $name = null;
+    #[ORM\Column(type: Types::TEXT)]
+    private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
     private ?string $content = null;
@@ -29,9 +29,12 @@ class Article
     #[ORM\JoinColumn(nullable: false)]
     private ?User $creator = null;
 
+    #[ORM\OneToMany(mappedBy: 'article', targetEntity: Media::class, orphanRemoval: true)]
+    private Collection $medias;
+
     public function __construct()
     {
-        $this->user = new ArrayCollection();
+        $this->medias = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -39,14 +42,14 @@ class Article
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getTitle(): ?string
     {
-        return $this->name;
+        return $this->title;
     }
 
-    public function setName(string $name): self
+    public function setTitle(string $title): self
     {
-        $this->name = $name;
+        $this->title = $title;
 
         return $this;
     }
@@ -63,7 +66,7 @@ class Article
         return $this;
     }
 
-    public function isIsValidate(): ?bool
+    public function isValidate(): ?bool
     {
         return $this->isValidate;
     }
@@ -83,6 +86,36 @@ class Article
     public function setCreator(?User $creator): self
     {
         $this->creator = $creator;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Media>
+     */
+    public function getMedias(): Collection
+    {
+        return $this->medias;
+    }
+
+    public function addMedia(Media $media): self
+    {
+        if (!$this->medias->contains($media)) {
+            $this->medias->add($media);
+            $media->setArticle($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMedia(Media $media): self
+    {
+        if ($this->medias->removeElement($media)) {
+            // set the owning side to null (unless already changed)
+            if ($media->getArticle() === $this) {
+                $media->setArticle(null);
+            }
+        }
 
         return $this;
     }

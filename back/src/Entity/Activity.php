@@ -22,10 +22,10 @@ class Activity
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[ORM\Column(type: Types::TIME_MUTABLE)]
     private ?\DateTimeInterface $startHour = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[ORM\Column(type: Types::TIME_MUTABLE)]
     private ?\DateTimeInterface $duration = null;
 
     #[ORM\Column]
@@ -35,9 +35,12 @@ class Activity
     #[ORM\JoinColumn(nullable: false)]
     private ?User $creator = null;
 
+    #[ORM\OneToMany(mappedBy: 'activity', targetEntity: Media::class, orphanRemoval: true)]
+    private Collection $medias;
+
     public function __construct()
     {
-        $this->user = new ArrayCollection();
+        $this->medias = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -74,7 +77,7 @@ class Activity
         return $this->startHour;
     }
 
-    public function setStartHour(?\DateTimeInterface $startHour): self
+    public function setStartHour(\DateTimeInterface $startHour): self
     {
         $this->startHour = $startHour;
 
@@ -93,7 +96,7 @@ class Activity
         return $this;
     }
 
-    public function isIsValidate(): ?bool
+    public function isValidate(): ?bool
     {
         return $this->isValidate;
     }
@@ -113,6 +116,36 @@ class Activity
     public function setCreator(?User $creator): self
     {
         $this->creator = $creator;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Media>
+     */
+    public function getMedias(): Collection
+    {
+        return $this->medias;
+    }
+
+    public function addMedia(Media $media): self
+    {
+        if (!$this->medias->contains($media)) {
+            $this->medias->add($media);
+            $media->setActivity($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMedia(Media $media): self
+    {
+        if ($this->medias->removeElement($media)) {
+            // set the owning side to null (unless already changed)
+            if ($media->getActivity() === $this) {
+                $media->setActivity(null);
+            }
+        }
 
         return $this;
     }

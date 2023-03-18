@@ -2,194 +2,217 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
-use App\Form\UserType;
-use App\Kernel;
-use App\Repository\MediaRepository;
 use App\Repository\UserRepository;
-use App\Service\FileUploader;
+use App\Service\RequestService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Entity\User;
 use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-#[Route('/user')]
+#[Route('/users')]
 class UserController extends AbstractController
 {
-    #[Route('/', name: 'app_user_index', methods: ['GET'])]
-    public function index(UserRepository $userRepository): Response
+    // Get users
+    #[Route('/', name: 'app_api_user_get', methods: ['GET'])]
+    public function getUsers(UserRepository $userRepository): JsonResponse
     {
-        return $this->render('user/index.html.twig', [
-            'users' => $userRepository->findAll(),
-        ]);
+        try {
+            $users = $userRepository->findAll();
+            return $this->json($users, 200);
+        } catch (\Exception $e) {
+            return $this->json([
+                'error' => 'Server error'
+            ], 500);
+        }
     }
 
-    #[Route('/new', name: 'app_user_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, UserRepository $userRepository, MediaRepository $mediaRepository, FileUploader $fileUploader, UserPasswordHasherInterface $userPasswordHasher): Response
+    // Get medias's users
+    #[Route('/medias', name: 'app_api_users_medias_get', methods: ['GET'])]
+    public function getUsersMedias(Request $request, UserRepository $userRepository): JsonResponse
     {
-        $user = new User();
-        $form = $this->createForm(UserType::class, $user);
-        $form->handleRequest($request);
+        try {
+            // Récupérer la limite et l'offset depuis les paramètres de requête
+            $limite = $request->query->get('limite', 30);
+            $offset = $request->query->get('offset', 0);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+            // Récupérer les utilisateurs avec la limite et l'offset
+            $users = $userRepository->findBy([], ['id' => 'ASC'], $limite, $offset);
+
+            // Créer un tableau avec les valeurs de profilPicture
+            $profilPictures = [];
+            foreach ($users as $user) {
+                $profilPictures[] = $user->getProfilPicture();
+            }
+
+            // Retourner le tableau en JSON
+            return $this->json($profilPictures, 200);
+        } catch (\Exception $e) {
+            return $this->json([
+                'error' => 'Server error'
+            ], 500);
+        }
+    }
+
+    // Get one user
+    #[Route('/{id}', name: 'app_api_user_get_one', methods: ['GET'])]
+    public function getUserById(UserRepository $userRepository, int $id): JsonResponse
+    {
+        try {
+            $user = $userRepository->find($id);
+
+            if (!$user) {
+                return $this->json([
+                    'error' => 'User not found'
+                ], 404);
+            }
+
+            return $this->json($user, 200);
+        } catch (\Exception $e) {
+            return $this->json([
+                'error' => 'Server error'
+            ], 500);
+        }
+    }
+
+    // Create user
+    #[Route('/register', name: 'app_api_user_post', methods: ['POST'])]
+    public function register(Request $request, SerializerInterface $serializer, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): JsonResponse
+    {
+        try {
+            $content = json_decode($request->getContent(), true);
+
+            if (empty($content)) {
+                return $this->json([
+                    'error' => 'No data provided'
+                ], 400);
+            }
+
+            $requiredFields = ['email', 'password', 'firstName', 'lastName', 'isPublicProfil', 'activeYears'];
+
+            // Vérification de la présence de tous les champs requis
+            foreach ($requiredFields as $field) {
+                if (!isset($content[$field])) {
+                    return $this->json([
+                        'error' => "Missing field '$field'"
+                    ], 400);
+                }
+            }
+
+            // Vérification des types des champs requis
+            if (!is_string($content['email']) || !is_string($content['password']) || !is_string($content['firstName']) || !is_string($content['lastName']) || !is_bool($content['isPublicProfil']) || !is_array($content['activeYears'])) {
+                return $this->json([
+                    'error' => 'One or more filled-in field(s) has/have a wrong type'
+                ], 400);
+            }
+
+            $email = $content['email'];
+
+            // Vérification de l'existence de l'utilisateur
+            $existingUser = $entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
+            if ($existingUser !== null) {
+                return $this->json([
+                    'error' => 'Email already exists'
+                ], 400);
+            }
+
+            $user = $serializer->deserialize($request->getContent(), User::class, 'json');
 
             $user->setPassword(
                 $userPasswordHasher->hashPassword(
                     $user,
-                    $form->get('password')->getData()
+                    $content['password']
                 )
             );
 
-            if($request->files->all()[$form->getName()]['picture'] !== null){
-                $media = $fileUploader->toMedia($request->files->all()[$form->getName()]['picture'], $this->getParameter('upload_user_img'));
-                $mediaRepository->save($media);
-                $user->setPicture($media);
-            };
+            $entityManager->persist($user);
+            $entityManager->flush();
 
-            $userRepository->save($user, true);
-
-            return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
+            return $this->json($user, 201);
+        } catch (\Exception $e) {
+            return $this->json([
+                'error' => 'Server error'
+            ], 500);
         }
-
-        return $this->renderForm('user/new.html.twig', [
-            'user' => $user,
-            'form' => $form,
-        ]);
     }
 
-    #[Route('/{id}', name: 'app_user_show', methods: ['GET'])]
-    public function show(User $user): Response
+    // Update user
+    #[Route('/{id}', name: 'app_api_user_update', methods: ['PATCH'])]
+    public function updateUser(Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager, int $id): JsonResponse
     {
-        return $this->render('user/show.html.twig', [
-            'user' => $user,
-        ]);
-    }
+        try {
+            $user = $entityManager->getRepository(User::class)->find($id);
 
-    #[Route('/{id}/edit', name: 'app_user_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, User $user, UserRepository $userRepository, MediaRepository $mediaRepository, FileUploader $fileUploader): Response
-    {
-        $form = $this->createForm(UserType::class, $user);
-        $form->handleRequest($request);
+            // Vérification de l'existence de l'utilisateur
+            if ($user === null) {
+                return $this->json([
+                    'error' => 'User not found'
+                ], 404);
+            }
 
-        if ($form->isSubmitted() && $form->isValid()) {
+            $content = json_decode($request->getContent(), true);
 
-            if($request->files->all()[$form->getName()]['picture'] !== null){
-                $media = $fileUploader->toMedia($request->files->all()[$form->getName()]['picture'], $this->getParameter('upload_user_img'));
-                $mediaRepository->save($media);
-                if($user->getPicture() !== null)
-                {
-                    $pictureToDelete = $user->getPicture();
-                    unlink($pictureToDelete->getPath());
-                    $user->setPicture($media);
-                    $mediaRepository->remove($pictureToDelete, true);
-                } else {
-                    $user->setPicture($media);
+            if (empty($content)) {
+                return $this->json([
+                    'error' => 'No data provided'
+                ], 400);
+            }
+
+            foreach ($content as $key => $value) {
+                // Vérification de l'existence de la propriété dans l'objet User
+                if (!property_exists(User::class, $key)) {
+                    return $this->json([
+                        'error' => "Unknown property '$key'"
+                    ], 400);
                 }
+
+                $setter = 'set' . ucfirst($key);
+
+                // Vérification de l'existence de la méthode setter pour la propriété
+                if (!method_exists(User::class, $setter)) {
+                    return $this->json([
+                        'error' => "No setter found for property '$key'"
+                    ], 500);
+                }
+
+                // Appel de la méthode setter pour modifier la propriété
+                $user->$setter($value);
             }
 
-            $userRepository->save($user, true);
+            $entityManager->flush();
 
-            return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
+            return $this->json($user, 200);
+        } catch (\Exception $e) {
+            return $this->json([
+                'error' => 'Server error'
+            ], 500);
         }
-
-        return $this->renderForm('user/edit.html.twig', [
-            'user' => $user,
-            'form' => $form,
-        ]);
     }
 
-    #[Route('/{id}', name: 'app_user_delete', methods: ['POST'])]
-    public function delete(Request $request, User $user, UserRepository $userRepository): Response
+    // Delete user
+    #[Route('/{id}', name: 'app_api_user_delete', methods: ['DELETE'])]
+    public function deleteUser(User $user = null, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->request->get('_token'))) {
-            if($user->getPicture() !== null){
-                unlink($user->getPicture()->getPath());
+        try {
+            if (!$user) {
+                return $this->json([
+                    'error' => 'User not found'
+                ], 404);
             }
 
-            $userRepository->remove($user, true);
+            $entityManager->remove($user);
+            $entityManager->flush();
+
+            return $this->json([], 204);
+        } catch (\Exception $e) {
+            return $this->json([
+                'error' => 'Server error'
+            ], 500);
         }
-
-        return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
-    }
-
-    #[Route('/api/user', name: 'app_api_user_get', methods: ['GET'])]
-    public function getUsers(SerializerInterface $serializer, UserRepository $userRepository): Response
-    {
-        $users = $userRepository->findAll();
-
-        $json = $serializer->serialize($users, 'json');
-
-        return new Response($json, 200, [
-            'Content-Type' => 'application/json'
-        ]);
-    }
-
-    #[Route('/api/register', name: 'app_api_user_post', methods: ['POST'])]
-    public function create(Request $request, SerializerInterface $serializer, ValidatorInterface $validator, EntityManagerInterface $entityManager, UserPasswordHasherInterface $userPasswordHasher): Response
-    {
-        $json = $request->getContent();
-
-        $user = $serializer->deserialize($json, User::class, 'json');
-
-        $errors = $validator->validate($user);
-
-        if (count($errors) > 0) {
-            return new Response($serializer->serialize($errors, 'json'), 400, [
-                'Content-Type' => 'application/json'
-            ]);
-        }
-
-        $user->setPassword(
-            $userPasswordHasher->hashPassword(
-                $user,
-                json_decode($json)->password
-            )
-        );
-        $entityManager->persist($user);
-        $entityManager->flush();
-
-        $json = $serializer->serialize($user, 'json', ['groups' => 'user']);
-
-        return new Response($json, 201, [
-            'Content-Type' => 'application/json'
-        ]);
-    }
-
-    #[Route('/api/user/{id}', name: 'app_api_user_patch', methods: ['PATCH'])]
-    public function update(Request $request, SerializerInterface $serializer, ValidatorInterface $validator, User $user, EntityManagerInterface $entityManager): Response
-    {
-        $json = $request->getContent();
-
-        $user = $serializer->deserialize($json, User::class, 'json', ['object_to_populate' => $user]);
-
-        $errors = $validator->validate($user);
-
-        if (count($errors) > 0) {
-            return new Response($serializer->serialize($errors, 'json'), 400, [
-                'Content-Type' => 'application/json'
-            ]);
-        }
-
-        $entityManager->persist($user);
-        $entityManager->flush();
-
-        $json = $serializer->serialize($user, 'json', ['groups' => 'user']);
-
-        return new Response($json, 200, [
-            'Content-Type' => 'application/json'
-        ]);
-    }
-
-    #[Route('/api/user/{id}', name: 'app_api_user_delete', methods: ['DELETE'])]
-    public function deleteUser(User $user, EntityManagerInterface $entityManager): Response
-    {
-        $entityManager->remove($user);
-        $entityManager->flush();
-
-        return new Response(null, 204);
     }
 }

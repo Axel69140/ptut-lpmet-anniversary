@@ -14,7 +14,7 @@ class Media
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(type: Types::TEXT)]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT)]
@@ -22,6 +22,17 @@ class Media
 
     #[ORM\Column(length: 255)]
     private ?string $format = null;
+
+    #[ORM\ManyToOne(inversedBy: 'medias')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Article $article = null;
+
+    #[ORM\ManyToOne(inversedBy: 'medias')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Activity $activity = null;
+
+    #[ORM\OneToOne(mappedBy: 'media', cascade: ['persist', 'remove'])]
+    private ?TimelineStep $timelineStep = null;
 
     public function getId(): ?int
     {
@@ -60,6 +71,52 @@ class Media
     public function setFormat(string $format): self
     {
         $this->format = $format;
+
+        return $this;
+    }
+
+    public function getArticle(): ?Article
+    {
+        return $this->article;
+    }
+
+    public function setArticle(?Article $article): self
+    {
+        $this->article = $article;
+
+        return $this;
+    }
+
+    public function getActivity(): ?Activity
+    {
+        return $this->activity;
+    }
+
+    public function setActivity(?Activity $activity): self
+    {
+        $this->activity = $activity;
+
+        return $this;
+    }
+
+    public function getTimelineStep(): ?TimelineStep
+    {
+        return $this->timelineStep;
+    }
+
+    public function setTimelineStep(?TimelineStep $timelineStep): self
+    {
+        // unset the owning side of the relation if necessary
+        if ($timelineStep === null && $this->timelineStep !== null) {
+            $this->timelineStep->setMedia(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($timelineStep !== null && $timelineStep->getMedia() !== $this) {
+            $timelineStep->setMedia($this);
+        }
+
+        $this->timelineStep = $timelineStep;
 
         return $this;
     }
