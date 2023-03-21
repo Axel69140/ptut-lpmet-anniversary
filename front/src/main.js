@@ -8,7 +8,6 @@ import 'vue3-easy-data-table/dist/style.css';
 import store from './store';
 import jquery from 'jquery'
 
-//createApp(App).use(router).use(store).use(jquery).mount('#app');
 const app = createApp(App);
 
 app.use(router).use(store).use(jquery);

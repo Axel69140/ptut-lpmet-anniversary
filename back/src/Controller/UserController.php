@@ -194,6 +194,66 @@ class UserController extends AbstractController
         }
     }
 
+    // Delete users
+    #[Route('/many', name: 'app_api_user_delete_many', methods: ['DELETE'])]
+    public function deleteUsers(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        try {
+            $data = json_decode($request->getContent(), true);
+            $ids = $data['id'] ?? [];
+    
+            if (empty($ids)) {
+                return $this->json([
+                    'error' => 'No IDs provided'
+                ], 400);
+            }
+    
+            $users = $entityManager->getRepository(User::class)->findBy([
+                'id' => $ids
+            ]);
+    
+            if (empty($users)) {
+                return $this->json([
+                    'error' => 'Users not found'
+                ], 404);
+            }
+    
+            foreach ($users as $user) {
+                $entityManager->remove($user);
+            }
+    
+            $entityManager->flush();
+    
+            return $this->json([], 204);
+        } catch (\Exception $e) {
+            return $this->json([
+                'error' => 'Server error'
+            ], 500);
+        }
+    }  
+
+    // Clear users
+    #[Route('/clear', name: 'app_api_user_delete_all', methods: ['DELETE'])]
+    public function clearUsers(EntityManagerInterface $entityManager): Response
+    {
+        try {
+            $userRepository = $entityManager->getRepository(User::class);
+            $users = $userRepository->findAll();
+
+            foreach ($users as $user) {
+                $entityManager->remove($user);
+            }
+
+            $entityManager->flush();
+
+            return $this->json([], 204);
+        } catch (\Exception $e) {
+            return $this->json([
+                'error' => 'Server error'
+            ], 500);
+        }
+    }
+
     // Delete user
     #[Route('/{id}', name: 'app_api_user_delete', methods: ['DELETE'])]
     public function deleteUser(User $user = null, EntityManagerInterface $entityManager): Response
@@ -214,5 +274,5 @@ class UserController extends AbstractController
                 'error' => 'Server error'
             ], 500);
         }
-    }
+    }    
 }
