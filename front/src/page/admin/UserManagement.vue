@@ -11,6 +11,7 @@
     const itemsSelected = ref<Item[]>([]);
     let isLoading = ref(true);
     let userEdit = false;
+    let deleteMode = '';
     const id = ref('');
     const email = ref('');
     const firstName = ref('');
@@ -44,8 +45,6 @@
     const items: Item[] = users.value;
 
     onMounted(async () => {
-        // get user's info
-
         // set datatable
         getUsers();
         isLoading.value = false;  
@@ -181,6 +180,10 @@
         }); 
     };
 
+    const setDeleteMode = (mode) => {
+        deleteMode = mode;
+    };
+
     const range = (start, end) => {
         return Array(end - start + 1).fill().map((_, index) => start + index);
     }  
@@ -217,7 +220,8 @@
                 resetForm,
                 editUser,
                 deleteUser,
-                deleteUsers
+                deleteUsers,
+                setDeleteMode
             }
         }
     });
@@ -231,17 +235,17 @@
         <div class="container">      
             <div id="function-datatable">
                 <input type="text" placeholder="Rechercher..." v-model="searchValue">
-                <button @click="clearUserTable()">Vider la table utilisateur</button>
+                <button type="button" data-bs-toggle="modal" data-bs-target="#clearModal">Vider la table utilisateur</button>
                 <button @click="exportData()">Exporter la liste des utilisateurs</button>
                 <button type="button" data-bs-toggle="modal" data-bs-target="#formModal">Créer un utilisateur</button>
 
                 <div v-if="itemsSelected.length === 1">
                     <button type="button" data-bs-toggle="modal" data-bs-target="#formModal" @click="getUserById(itemsSelected[0].id)">Modifier l'utilisateur</button>
-                    <button @click="deleteUser()">Supprimer l'utilisateur</button>
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#deleteModal">Supprimer l'utilisateur</button>
                 </div>
 
                 <div v-if="itemsSelected.length > 1">
-                    <button @click="deleteUsers()">Supprimer les utilisateurs</button>
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#deletesModal">Supprimer les utilisateurs</button>
                 </div>
             </div>
 
@@ -270,6 +274,7 @@
             </EasyDataTable>
         </div>
 
+        <!-- Pop-in d'ajout ou de modfication d'un utilisateur -->
         <div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="formModal" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -340,6 +345,58 @@
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="resetForm()">Fermer</button>
                         <button v-if="!userEdit" type="button" class="btn btn-primary" @click="createUser()" data-bs-dismiss="modal">Enregistrer</button>
                         <button v-else type="button" class="btn btn-primary" @click="editUser()" data-bs-dismiss="modal">Enregistrer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pop-in de confirmation de suppression -->
+        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Voulez-vous supprimez l'utilisateur ?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                        <button type="button" class="btn btn-primary" @click="deleteUser()" data-bs-dismiss="modal">Supprimer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="deletesModal" tabindex="-1" aria-labelledby="deletesModal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Voulez-vous supprimez les utilisateurs ?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                        <button type="button" class="btn btn-primary" @click="deleteUsers()" data-bs-dismiss="modal">Supprimer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="clearModal" tabindex="-1" aria-labelledby="clearModal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Voulez êtes sur le point de vider la table, voulez-vous continuez ?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                        <button type="button" class="btn btn-primary" @click="clearUserTable()" data-bs-dismiss="modal">Vider</button>
                     </div>
                 </div>
             </div>
