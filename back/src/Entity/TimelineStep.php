@@ -17,13 +17,16 @@ class TimelineStep
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $date = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 255)]
     private ?string $title = null;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[ORM\Column(type: Types::TEXT)]
     private ?string $content = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\Column]
+    private ?bool $isValidate = null;
+
+    #[ORM\OneToOne(inversedBy: 'timelineStep', cascade: ['persist', 'remove'])]
     private ?Media $media = null;
 
     public function getId(): ?int
@@ -48,7 +51,7 @@ class TimelineStep
         return $this->title;
     }
 
-    public function setTitle(?string $title): self
+    public function setTitle(string $title): self
     {
         $this->title = $title;
 
@@ -60,9 +63,21 @@ class TimelineStep
         return $this->content;
     }
 
-    public function setContent(?string $content): self
+    public function setContent(string $content): self
     {
         $this->content = $content;
+
+        return $this;
+    }
+
+    public function isIsValidate(): ?bool
+    {
+        return $this->isValidate;
+    }
+
+    public function setIsValidate(bool $isValidate): self
+    {
+        $this->isValidate = $isValidate;
 
         return $this;
     }
