@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 
 #[Route('/users')]
 class UserController extends AbstractController
@@ -76,6 +77,63 @@ class UserController extends AbstractController
         } catch (\Exception $e) {
             return $this->json([
                 'error' => 'Server error'
+            ], 500);
+        }
+    }    
+    
+    // Log user
+    #[Route('/login', name: 'app_api_user_login', methods: ['POST'])]
+    public function login(Request $request, EntityManagerInterface $entityManager, JWTTokenManagerInterface $jwtManager): JsonResponse
+    {
+        try {
+            $content = json_decode($request->getContent(), true);
+
+            if (empty($content)) {
+                return $this->json([
+                    'error' => 'No data provided'
+                ], 400);
+            }
+
+            $requiredFields = ['email', 'password'];
+
+            // Vérification de la présence de tous les champs requis
+            foreach ($requiredFields as $field) {
+                if (!isset($content[$field])) {
+                    return $this->json([
+                        'error' => "Missing field '$field'"
+                    ], 400);
+                }
+            }
+
+            // Vérification des types des champs requis
+            if (!is_string($content['email']) || !is_string($content['password'])) {
+                return $this->json([
+                    'error' => 'One or more filled-in field(s) has/have a wrong type'
+                ], 400);
+            }
+
+            $email = $content['email'];
+
+            // Vérification de l'existence de l'utilisateur
+            $existingUser = $entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
+            if ($existingUser === null) {
+                return $this->json([
+                    'error' => 'User not found'
+                ], 400);
+            }
+
+            if(!password_verify($content['password'], $existingUser->getPassword())) {
+                return $this->json([
+                    'error' => 'Bad password'
+                ], 400);
+            }
+
+            $token = $jwtManager->create($existingUser->getEmail());
+            
+            return $this->json($token, 201);
+        } catch (\Exception $e) {
+            return $this->json([
+                'error' => $e->getMessage()
             ], 500);
         }
     }
@@ -274,5 +332,5 @@ class UserController extends AbstractController
                 'error' => 'Server error'
             ], 500);
         }
-    }    
+    }   
 }
