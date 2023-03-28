@@ -43,6 +43,7 @@
       },
       login() {
         const self = this;
+        console.log('la');
         this.$store.dispatch('login', {
           email: this.email,
           password: this.password,
