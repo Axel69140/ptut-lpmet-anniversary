@@ -1,6 +1,7 @@
 <script>
   import { mapState } from 'vuex';
   import Footer from '../../components/Footer.vue';
+  import axios from "axios";
 
   export default {
     name: 'login',
@@ -40,10 +41,9 @@
       },
       switchToLogin() {
         this.mode = 'login';
-      },
+      },      
       login() {
         const self = this;
-        console.log('la');
         this.$store.dispatch('login', {
           email: this.email,
           password: this.password,

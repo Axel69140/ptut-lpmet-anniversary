@@ -11,7 +11,6 @@
     const itemsSelected = ref<Item[]>([]);
     let isLoading = ref(true);
     let userEdit = false;
-    let deleteMode = '';
     const id = ref('');
     const email = ref('');
     const firstName = ref('');
