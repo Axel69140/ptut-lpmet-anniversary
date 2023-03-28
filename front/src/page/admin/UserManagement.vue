@@ -60,7 +60,7 @@
     };
 
     const getUsers = () => {
-        axios.get('http://127.0.0.1:8000/users', {
+        axios.get('https://127.0.0.1:8000/users', {
             headers: {
                 Authorization: `Bearer ${getToken()}`
             }
@@ -77,7 +77,7 @@
     };
 
     const getUserById = (userId) => {        
-        axios.get('http://127.0.0.1:8000/users/' + userId).then(response => {  
+        axios.get('https://127.0.0.1:8000/users/' + userId).then(response => {  
             userEdit = true;     
             id.value = userId;
             email.value = response.data.email;
@@ -97,7 +97,7 @@
 
     const createUser = () => {        
         isLoading.value = true; 
-        axios.post('http://127.0.0.1:8000/users/register',{
+        axios.post('https://127.0.0.1:8000/users/register',{
             email: email.value,
             lastName: lastName.value,
             firstName: firstName.value,
@@ -120,7 +120,7 @@
 
     const editUser = () => {        
         isLoading.value = true; 
-        axios.patch('http://127.0.0.1:8000/users/' + id.value,{
+        axios.patch('https://127.0.0.1:8000/users/' + id.value,{
             email: email.value,
             lastName: lastName.value,
             firstName: firstName.value,
@@ -142,7 +142,7 @@
         isLoading.value = true; 
         console.log(itemsSelected);
         
-        axios.delete('http://127.0.0.1:8000/users/' + itemsSelected.value[0].id).then(async response => {               
+        axios.delete('https://127.0.0.1:8000/users/' + itemsSelected.value[0].id).then(async response => {               
             await getUsers();
             isLoading.value = false;  
         });
@@ -154,7 +154,7 @@
         itemsSelected.value.forEach((user) => {
             ids.push(user.id);
         });     
-        axios.delete('http://127.0.0.1:8000/users/many', {
+        axios.delete('https://127.0.0.1:8000/users/many', {
             data: {
                 id: ids
             }          
@@ -166,7 +166,7 @@
 
     const clearUserTable = () => {
         isLoading.value = true; 
-        axios.delete('http://127.0.0.1:8000/users/clear').then(async response => {               
+        axios.delete('https://127.0.0.1:8000/users/clear').then(async response => {               
             await getUsers();
             isLoading.value = false;  
         }).catch(err => {
@@ -175,7 +175,7 @@
     };    
 
     const exportData = () => {
-        axios.get('http://127.0.0.1:8000/users/export').then(response => {
+        axios.get('https://127.0.0.1:8000/users/export').then(response => {
             // upload le pdf reçu                                    
         }); 
     };

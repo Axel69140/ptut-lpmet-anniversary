@@ -83,7 +83,7 @@ class UserController extends AbstractController
     
     // Log user
     #[Route('/login', name: 'app_api_user_login', methods: ['POST'])]
-    public function login(Request $request, EntityManagerInterface $entityManager, JWTTokenManagerInterface $jwtManager): JsonResponse
+    public function login(Request $request, EntityManagerInterface $entityManager, JWTTokenManagerInterface $jwtManager, UserRepository $userRepository): JsonResponse
     {
         try {
             $content = json_decode($request->getContent(), true);
@@ -115,22 +115,24 @@ class UserController extends AbstractController
             $email = $content['email'];
 
             // Vérification de l'existence de l'utilisateur
-            $existingUser = $entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
-            if ($existingUser === null) {
+            $user = $userRepository->findOneBy(['email' => $email]);
+            if ($user === null) {
                 return $this->json([
                     'error' => 'User not found'
                 ], 400);
             }
 
-            if(!password_verify($content['password'], $existingUser->getPassword())) {
+            if(!password_verify($content['password'], $user->getPassword())) {
                 return $this->json([
                     'error' => 'Bad password'
                 ], 400);
             }
 
-            $token = $jwtManager->create($existingUser->getEmail());
+            $token = $jwtManager->create($user);
             
-            return $this->json($token, 201);
+            return $this->json([
+                'token' => $token,
+            ], 201);
         } catch (\Exception $e) {
             return $this->json([
                 'error' => $e->getMessage()
