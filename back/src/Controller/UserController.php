@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/users')]
 class UserController extends AbstractController
@@ -59,6 +60,22 @@ class UserController extends AbstractController
         }
     }
 
+    // Get user's media
+    #[Route('/{id}/media', name: 'app_api_users_media_get', methods: ['GET'])]
+    public function getUsersMedia(UserRepository $userRepository, int $id, SerializerInterface $serializer): JsonResponse
+    {
+        try {
+            $user = json_decode($this->getUserById($userRepository, $id)->getContent());
+            dd($user['profilePicture']);
+//            return $this->json($user->, 200);
+
+        } catch (\Exception $e) {
+            return $this->json([
+                'error' => 'Server error'
+            ], 500);
+        }
+    }
+
     // Get one user
     #[Route('/{id}', name: 'app_api_user_get_one', methods: ['GET'])]
     public function getUserById(UserRepository $userRepository, int $id): JsonResponse
@@ -82,8 +99,9 @@ class UserController extends AbstractController
 
     // Create user
     #[Route('/register', name: 'app_api_user_post', methods: ['POST'])]
-    public function register(Request $request, SerializerInterface $serializer, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): JsonResponse
+    public function register(Request $request, SerializerInterface $serializer, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager, ValidatorInterface $validator): JsonResponse
     {
+
         try {
             $content = json_decode($request->getContent(), true);
 
@@ -117,7 +135,7 @@ class UserController extends AbstractController
             $existingUser = $entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
             if ($existingUser !== null) {
                 return $this->json([
-                    'error' => 'Email already exists'
+                    'error' => 'Email already use'
                 ], 400);
             }
 
@@ -130,6 +148,16 @@ class UserController extends AbstractController
                 )
             );
 
+            //Symfony validation
+            $errors = $validator->validate($user);
+
+            if(count($errors) > 0)
+            {
+                return $this->json([
+                    'error' => $errors
+                ], 400);
+            }
+
             $entityManager->persist($user);
             $entityManager->flush();
 
@@ -139,6 +167,7 @@ class UserController extends AbstractController
                 'error' => 'Server error'
             ], 500);
         }
+
     }
 
     // Update user
