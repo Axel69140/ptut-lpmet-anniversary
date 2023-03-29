@@ -17,13 +17,24 @@ import ParticipantManagement from '../page/admin/ParticipantManagement.vue';
 import TimelineManagement from '../page/admin/TimelineManagement.vue';
 import UserManagement from '../page/admin/UserManagement.vue';
 import { createRouter, createWebHistory } from 'vue-router';
-import store from '../store'
+import store from '../store';
+import axios from 'axios';
 
 // Check if user is admin
 const isAdmin = (to, from, next) => {
-    const user = store.state.user
-    if (user && user.role[0] === 'ROLE_ADMIN') {
-      next()
+    const user = store.state.user    
+    if (user.token != '') {
+      axios.get(`https://127.0.0.1:8000/users/${user.id}/role`, {
+        headers: {
+            Authorization: `Bearer ${user.token}`
+        }
+      }).then(response => {
+        if (response.data.role[0] === 'ROLE_ADMIN') {
+          next()
+        } else {
+          next('/')
+        }                         
+      }); 
     } else {
       next('/')
     }
@@ -31,7 +42,7 @@ const isAdmin = (to, from, next) => {
 
 // Check if user is connected
 const isUserConnected = (to, from, next) => {
-    if (store.state.user) {
+    if (store.state.user.userId != -1) {
       next()
     } else {
       next('/')

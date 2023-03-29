@@ -81,6 +81,27 @@ class UserController extends AbstractController
                 'error' => 'Server error'
             ], 500);
         }
+    }    
+
+    // Get role's user
+    #[Route('/{id}/role', name: 'app_api_users_role_get', methods: ['GET'])]
+    public function getUserRole(Request $request, UserRepository $userRepository, int $id): JsonResponse
+    {
+        try {
+            $user = $userRepository->find($id);
+
+            if (!$user) {
+                return $this->json([
+                    'error' => 'User not found'
+                ], 404);
+            }
+
+            return $this->json(["role" => $user->getRoles()], 200);
+        } catch (\Exception $e) {
+            return $this->json([
+                'error' => 'Server error'
+            ], 500);
+        }
     }
 
     // Get one user
@@ -153,7 +174,7 @@ class UserController extends AbstractController
 
             $token = $jwtManager->create($user);
 
-            return $this->json(["userId" => $user->getId(), "role" => $user->getRoles(),"token" => $token ], 201);
+            return $this->json(["id" => $user->getId(), "email" => $user->getEmail(), "firstName" => $user->getFirstName(), "lastName" => $user->getLastName(), "token" => $token ], 201);
         } catch (\Exception $e) {
             return $this->json([
                 'error' => 'Server error'
