@@ -73,11 +73,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?Media $profilPicture = null;
 
+    #[ORM\OneToMany(mappedBy: 'User', targetEntity: Anecdote::class)]
+    private Collection $anecdotes;
+
     public function __construct()
     {
         $this->guests = new ArrayCollection();
         $this->activities = new ArrayCollection();
         $this->articles = new ArrayCollection();
+        $this->anecdotes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -368,6 +372,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setProfilPicture(?Media $profilPicture): self
     {
         $this->profilPicture = $profilPicture;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Anecdote>
+     */
+    public function getAnecdotes(): Collection
+    {
+        return $this->anecdotes;
+    }
+
+    public function addAnecdote(Anecdote $anecdote): self
+    {
+        if (!$this->anecdotes->contains($anecdote)) {
+            $this->anecdotes->add($anecdote);
+            $anecdote->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAnecdote(Anecdote $anecdote): self
+    {
+        if ($this->anecdotes->removeElement($anecdote)) {
+            // set the owning side to null (unless already changed)
+            if ($anecdote->getUser() === $this) {
+                $anecdote->setUser(null);
+            }
+        }
 
         return $this;
     }

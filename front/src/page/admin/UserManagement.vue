@@ -1,41 +1,228 @@
 <script lang="ts" setup>
     import { defineComponent } from 'vue';
     import { Header, Item } from "vue3-easy-data-table";
-    import { onMounted, ref } from "vue";
+    import { onMounted, ref, computed, watch, watchEffect } from "vue";
     import axios from "axios";
     import Footer from '../../components/Footer.vue';    
+    import Loader from '../../components/Loader.vue';
 
     const searchValue = ref('');
-
-    const users = ref([]);
+    let users = ref([]);
+    const itemsSelected = ref<Item[]>([]);
+    let isLoading = ref(true);
+    let userEdit = false;
+    let deleteMode = '';
+    const id = ref('');
+    const email = ref('');
+    const firstName = ref('');
+    const lastName = ref('');
+    const maidenName = ref('');
+    const password = ref('');
+    const password_confirmation = ref('');
+    const phone = ref('');
+    const activeYears = ref('');
+    const activeYears2 = ref('');
+    const _function = ref('');
+    const link = ref('');
+    const note = ref('');
+    const isParticipated = ref('');
+    const isPublic = ref('');
 
     const headers: Header[] = [
-        { text: "Prénom", value: "firstName" },
-        { text: "Nom", value: "lastName" },
-        { text: "Nom de jeune fille", value: "maidenName" },
-        { text: "Email", value: "email" },
-        { text: "Numéro de téléphone", value: "phoneNumber" },
-        { text: "Année d'activité", value: "activeYears" },
-        { text: "Fonction", value: "function" },
-        { text: "Lien linkedIn", value: "link" },
-        { text: "Note", value: "note" },
-        { text: "Participe à l'évènement", value: "participated" },
-        { text: "Profil publique", value: "publicProfil" }
+        { text: "Prénom", value: "firstName", sortable: true },
+        { text: "Nom", value: "lastName", sortable: true },
+        { text: "Nom de jeune fille", value: "maidenName", sortable: true },
+        { text: "Email", value: "email", sortable: true },
+        { text: "Numéro de téléphone", value: "phoneNumber", sortable: true },
+        { text: "Année d'activité", value: "activeYears", sortable: true },
+        { text: "Fonction", value: "function", sortable: true },
+        { text: "Lien linkedIn", value: "link", sortable: true },
+        { text: "Note", value: "note", sortable: true },
+        { text: "Participe à l'évènement", value: "participated", sortable: true },
+        { text: "Profil publique", value: "publicProfil", sortable: true }
     ];
 
     const items: Item[] = users.value;
 
     onMounted(async () => {
-        axios.get('https://127.0.0.1:8000/users').then((response) => {
-            console.log(response.data);
-            users.value.push(...response.data);            
-        }); 
+        // set datatable
+        getUsers();
+        isLoading.value = false;  
     });    
+    
+    const getToken = () => {        
+        let user = localStorage.getItem('user');
+        if (user) {            
+            user = JSON.parse(user);
+            return user.token;
+        }
+        return null;
+    };
+
+    const getUsers = () => {
+        axios.get('http://127.0.0.1:8000/users', {
+            headers: {
+                Authorization: `Bearer ${getToken()}`
+            }
+        }).then(response => {
+            items.splice(0, items.length);
+            const usersResponse = response.data;
+            usersResponse.forEach(user => {
+                user.publicProfil = user.publicProfil == true ? "Oui" : "Non";
+                user.participated = user.participated == true ? "Oui" : "Non";
+            });         
+            users.value.push(... usersResponse);
+            itemsSelected.value = [];                                         
+        }); 
+    };
+
+    const getUserById = (userId) => {        
+        axios.get('http://127.0.0.1:8000/users/' + userId).then(response => {  
+            userEdit = true;     
+            id.value = userId;
+            email.value = response.data.email;
+            firstName.value = response.data.firstName;
+            lastName.value = response.data.lastName;
+            maidenName.value = response.data.maidenName;
+            phone.value = response.data.phoneNumber;
+            activeYears.value = response.data.activeYears[0];
+            activeYears2.value = response.data.activeYears[1];
+            _function.value = response.data.function;
+            link.value = response.data.link;
+            note.value = response.data.note;
+            isParticipated.value = response.data.participated;
+            isPublic.value = response.data.publicProfil;                                       
+        });
+    };
+
+    const createUser = () => {        
+        isLoading.value = true; 
+        axios.post('http://127.0.0.1:8000/users/register',{
+            email: email.value,
+            lastName: lastName.value,
+            firstName: firstName.value,
+            password: password.value,
+            roles: ["ROLE_USER"],
+            maidenName: maidenName.value,
+            phoneNumber: phone.value,
+            note: note.value,
+            isParticipated: isParticipated.value == true ? isParticipated.value : false,
+            isPublicProfil: isPublic.value == true ? isPublic.value : false,
+            activeYears: [activeYears.value, activeYears2.value],
+            function: _function.value,
+            link: link.value,
+            isVerified: false
+        }).then(async response => {
+            await getUsers();  
+            isLoading.value = false;                           
+        }); 
+    };
+
+    const editUser = () => {        
+        isLoading.value = true; 
+        axios.patch('http://127.0.0.1:8000/users/' + id.value,{
+            email: email.value,
+            lastName: lastName.value,
+            firstName: firstName.value,
+            maidenName: maidenName.value,
+            phoneNumber: phone.value,
+            note: note.value,
+            isParticipated: isParticipated.value == true ? isParticipated.value : false,
+            isPublicProfil: isPublic.value == true ? isPublic.value : false,
+            activeYears: [activeYears.value, activeYears2.value],
+            function: _function.value,
+            link: link.value
+        }).then(async response => {
+            await getUsers();  
+            isLoading.value = false;                           
+        }); 
+    };
+
+    const deleteUser = () => {        
+        isLoading.value = true; 
+        console.log(itemsSelected);
+        
+        axios.delete('http://127.0.0.1:8000/users/' + itemsSelected.value[0].id).then(async response => {               
+            await getUsers();
+            isLoading.value = false;  
+        });
+    };
+
+    const deleteUsers = () => {        
+        isLoading.value = true; 
+        let ids = [];
+        itemsSelected.value.forEach((user) => {
+            ids.push(user.id);
+        });     
+        axios.delete('http://127.0.0.1:8000/users/many', {
+            data: {
+                id: ids
+            }          
+        }).then(async response => {               
+            await getUsers();
+            isLoading.value = false;  
+        });
+    };
+
+    const clearUserTable = () => {
+        isLoading.value = true; 
+        axios.delete('http://127.0.0.1:8000/users/clear').then(async response => {               
+            await getUsers();
+            isLoading.value = false;  
+        }).catch(err => {
+            console.log("Error : impossible de vider la table utilisateur");
+        }) 
+    };    
+
+    const exportData = () => {
+        axios.get('http://127.0.0.1:8000/users/export').then(response => {
+            // upload le pdf reçu                                    
+        }); 
+    };
+
+    const setDeleteMode = (mode) => {
+        deleteMode = mode;
+    };
+
+    const range = (start, end) => {
+        return Array(end - start + 1).fill().map((_, index) => start + index);
+    }  
+
+    const resetForm = () => {
+        email.value = '';
+        firstName.value = '';
+        lastName.value = '';
+        maidenName.value = '';
+        password.value = '';
+        password_confirmation.value = '';
+        phone.value = '';
+        activeYears.value = '';
+        activeYears2.value = '';
+        _function.value = '';
+        link.value = '';
+        note.value = '';
+        isParticipated.value = '';
+        isPublic.value = '';
+    };
     
     defineComponent({
         name: 'userManagement',
         components: {
-            Footer
+            Footer,
+            Loader
+        },
+        setup() {
+            return {
+                clearUserTable,
+                exportData,
+                createUser,
+                getUserById,
+                resetForm,
+                editUser,
+                deleteUser,
+                deleteUsers,
+                setDeleteMode
+            }
         }
     });
 </script>
@@ -43,34 +230,176 @@
 
 <template>
     <main>
-        <h1>Gestion des utilisateurs</h1>    
+        <h1>Gestion des utilisateurs</h1>     
 
         <div class="container">      
             <div id="function-datatable">
                 <input type="text" placeholder="Rechercher..." v-model="searchValue">
+                <button type="button" data-bs-toggle="modal" data-bs-target="#clearModal">Vider la table utilisateur</button>
+                <button @click="exportData()">Exporter la liste des utilisateurs</button>
+                <button type="button" data-bs-toggle="modal" data-bs-target="#formModal">Créer un utilisateur</button>
+
+                <div v-if="itemsSelected.length === 1">
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#formModal" @click="getUserById(itemsSelected[0].id)">Modifier l'utilisateur</button>
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#deleteModal">Supprimer l'utilisateur</button>
+                </div>
+
+                <div v-if="itemsSelected.length > 1">
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#deletesModal">Supprimer les utilisateurs</button>
+                </div>
             </div>
 
             <EasyDataTable
                 :headers="headers"
                 :items="items"
                 :search-value="searchValue"
+                :loading="isLoading"
+                v-model:items-selected="itemsSelected"
                 alternating
                 border-cell
                 buttons-pagination
-                rows-per-page-message="Ligne par page"
+                rows-per-page-message="Ligne par page"           
             >
+                <template #loading>
+                    <Loader/>
+                </template>
+
+                <template #empty-message>
+                    <p>Aucun résultat</p>
+                </template>
+
                 <template #item-activeYears="item">
                     {{ item.activeYears.length > 0 ? item.activeYears[0] + "/" + item.activeYears[1] : "" }}                    
                 </template>
-
-                <template #item-participated="item">
-                    {{ item.participated === true ? "Oui" : "Non" }}                    
-                </template>
-
-                <template #item-publicProfil="item">
-                    {{ item.publicProfil === true ? "Oui" : "Non" }}                    
-                </template>
             </EasyDataTable>
+        </div>
+
+        <!-- Pop-in d'ajout ou de modfication d'un utilisateur -->
+        <div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="formModal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="formModal">Créer un utilisateur</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="resetForm()"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input v-model="id" type="hidden"/>
+
+                        <div class="form-row">
+                            <input v-model="firstName" class="form-row__input" type="text" placeholder="Prénom*"/>
+                            <input v-model="lastName" class="form-row__input" type="text" placeholder="Nom*"/>
+                        </div>
+
+                        <div class="form-row">
+                            <input v-model="maidenName" class="form-row__input" type="text" placeholder="Nom de jeune fille"/>
+                            <input v-model="phone" class="form-row__input" type="tel" placeholder="Numéro de téléphone"/>
+                        </div>
+
+                        <div class="form-row">
+                            <input v-model="email" class="form-row__input" type="text" placeholder="Adresse mail*"/>
+                        </div>
+
+                        <div class="form-row" v-if="!userEdit">
+                            <input v-model="password" class="form-row__input" type="password" placeholder="Mot de passe*"/>
+                        </div>
+
+                        <div class="form-row" v-if="!userEdit">
+                            <input v-model="password_confirmation" class="form-row__input" type="password" placeholder="Confirmer mot de passe*"/>
+                        </div>
+
+                        <div class="form-row">
+                            <label for="activeYears">Année d'activité à l'IUT*</label>
+                            <select v-model="activeYears" name="activeYears" id="activeYears">
+                            <option value="">-</option>
+                            <option v-for="year in range(1993, 2023)" v-bind:key="year" v-bind:value="year">{{ year }}</option>
+                            </select>
+
+                            <span>/</span>
+
+                            <select v-model="activeYears2" name="activeYears2" id="activeYears2">
+                            <option value="">-</option>
+                            <option v-for="year in range(1993, 2023)" v-bind:key="year" v-bind:value="year">{{ year }}</option>
+                            </select>
+                        </div>
+
+                        <div class="form-row">
+                            <input v-model="_function" class="form-row__input" type="text" placeholder="Fonction"/>
+                            <input v-model="link" class="form-row__input" type="text" placeholder="Lien linkedIn"/>
+                        </div>      
+
+                        <div class="form-row">
+                            <textarea v-model="note" class="form-row__input" placeholder="Note"/>
+                        </div>      
+
+                        <div class="form-row">
+                            <label for="isParticipated">Je participe à l'événement</label>
+                            <input v-model="isParticipated" type="checkbox"/>
+                        </div>
+
+                        <div class="form-row">
+                            <label for="isPublic">Je souhaite afficher publiquement mes informations</label>
+                            <input v-model="isPublic" type="checkbox"/>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="resetForm()">Fermer</button>
+                        <button v-if="!userEdit" type="button" class="btn btn-primary" @click="createUser()" data-bs-dismiss="modal">Enregistrer</button>
+                        <button v-else type="button" class="btn btn-primary" @click="editUser()" data-bs-dismiss="modal">Enregistrer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pop-in de confirmation de suppression -->
+        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Voulez-vous supprimez l'utilisateur ?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                        <button type="button" class="btn btn-primary" @click="deleteUser()" data-bs-dismiss="modal">Supprimer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="deletesModal" tabindex="-1" aria-labelledby="deletesModal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Voulez-vous supprimez les utilisateurs ?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                        <button type="button" class="btn btn-primary" @click="deleteUsers()" data-bs-dismiss="modal">Supprimer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="clearModal" tabindex="-1" aria-labelledby="clearModal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Voulez êtes sur le point de vider la table, voulez-vous continuez ?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                        <button type="button" class="btn btn-primary" @click="clearUserTable()" data-bs-dismiss="modal">Vider</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
 
