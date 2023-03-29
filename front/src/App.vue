@@ -57,6 +57,7 @@
 main {
   min-height: 80vh !important;
   padding:32px;
+  padding-top: 80px;
 }
 
 #app {

@@ -25,10 +25,10 @@
 
       <div class="navbar-mobile">
         <div class="form-inline my-md-0 display-mobile">
-          <a v-if="this.$store.state.user.token === ''" class="nav-link btn-custom btn" href="/login" role="button">Connexion</a>
+          <a v-if="this.$store.state.user.token === ''" class="btn-custom btn" href="/login" role="button">Connexion</a>
           <div v-if="this.$store.state.user.token !== ''" class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="/" id="dropdown3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ this.$store.state.user.firstName }} {{ this.$store.state.user.lastName }}</a>
-            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown3">
+            <div class="dropdown-menu" aria-labelledby="dropdown3">
               <a class="dropdown-item" @click="logout()">Déconnexion</a>
             </div>
           </div>
@@ -66,11 +66,11 @@
         </ul>  
 
         <div class="form-inline my-md-0 display-desktop">
-          <a v-if="this.$store.state.user.token === ''" class="nav-link btn-custom btn" href="/login" role="button">Connexion</a>
+          <a v-if="this.$store.state.user.token === ''" class="btn-custom btn" href="/login" role="button">Connexion</a>
           <div v-if="this.$store.state.user.token !== ''" class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="/" id="dropdown3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ this.$store.state.user.firstName }} {{ this.$store.state.user.lastName }}</a>
-            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown3">
-              <a class="dropdown-item" @click="logout()">Déconnexion</a>
+            <div class="dropdown-menu" aria-labelledby="dropdown3">
+              <a class="dropdown-item" href="" @click="logout()">Déconnexion</a>
             </div>
           </div>
         </div>      
@@ -105,7 +105,7 @@
   }
 
   .navbar-ul {
-    margin-left: 20%;
+    margin-left: 22%;
   }
 
   .nav-img {
@@ -119,7 +119,7 @@
     display: flex;
     align-items: center;
     z-index: 100000;
-  }
+  }  
 }
 
 @media (max-width: 1399px) {  
@@ -134,6 +134,11 @@
     top: 85px;
     width: 100%;
   }
+  
+  .dropdown-item {
+    border-top: 1px solid #eceef0 !important;
+  }
+
   .display-desktop {
     display: none;
   }
@@ -176,6 +181,10 @@
     display: flex;
     align-items: center;
     z-index: 100000;
+  }
+
+  .navbar-custom div[data-v-61dd7a3d] {
+    margin-right: 0px;
   }
 }
 
@@ -236,11 +245,19 @@
   }
 }
 
+.navbar {  
+  z-index: 99;
+}
+
 .img-nav {
   width: 90%;
 }
 
-.navbar .nav-link {
+.navbar .nav-link:hover, .navbar .nav-link:focus, .dropdown-item:hover {
+  color: var(--primary) !important;
+}
+
+.navbar .nav-link, .dropdown-item {
   font-size: 16px !important;
   font-weight: 700 !important;    
 }
@@ -269,10 +286,10 @@
 
 .navbar-ul li {
   height: 100%;
-  padding: 27px 35px;
 }
 
-.navbar-ul li a {
+.navbar-ul li a {  
+  padding: 27px 35px !important;
   height: 100%;
   display: flex;
   align-items: center;  
@@ -314,5 +331,18 @@
 
 .btn-custom:hover {
   color: var(--button-color-disable) !important;
+}
+
+.dropdown-menu {
+  border-radius: inherit;
+  border: none;
+  top: 98% !important;
+  padding: 0 !important;
+}
+
+.dropdown-item {
+  padding-top: 12px;
+  border-bottom: 1px solid #eceef0;
+  padding-bottom: 12px;
 }
 </style>
