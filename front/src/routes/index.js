@@ -16,8 +16,28 @@ import ArticleManagement from '../page/admin/ArticleManagement.vue';
 import ParticipantManagement from '../page/admin/ParticipantManagement.vue';
 import TimelineManagement from '../page/admin/TimelineManagement.vue';
 import UserManagement from '../page/admin/UserManagement.vue';
-
 import { createRouter, createWebHistory } from 'vue-router';
+import store from '../store'
+
+// Check if user is admin
+const isAdmin = (to, from, next) => {
+    const user = store.state.user
+    if (user && user.role[0] === 'ROLE_ADMIN') {
+      next()
+    } else {
+      next('/')
+    }
+}
+
+// Check if user is connected
+const isUserConnected = (to, from, next) => {
+    if (store.state.user) {
+      next()
+    } else {
+      next('/')
+    }
+}
+
 const routes = [
     { path: '/', name: 'Home', component: Home },
     { path: '/login', name: 'Login', component: Login },
@@ -25,24 +45,27 @@ const routes = [
     { path: '/articles', name: 'Articles', component: Articles },
     { path: '/contact', name: 'Contact', component: Contact },
     { path: '/event', name: 'Event', component: Event },
-    { path: '/users', name: 'Users', component: Users },
-    { path: '/user', name: 'User', component: User },
-    { path: '/event/registration', name: 'EventForm', component: EventForm },
-    { path: '/article/form', name: 'ArticleForm', component: ArticleForm },
-    { path: '/anecdote/form', name: 'AnecdoteForm', component: AnecdoteForm },
-    { path: '/activity/form', name: 'ActivityForm', component: ActivityForm },
-    { path: '/admin/activity', name: 'ActivityManagement', component: ActivityManagement },
-    { path: '/admin/anecdote', name: 'AnecdoteManagement', component: AnecdoteManagement },
-    { path: '/admin/article', name: 'ArticleManagement', component: ArticleManagement },
-    { path: '/admin/participant', name: 'ParticipantManagement', component: ParticipantManagement },
-    { path: '/admin/timeline', name: 'TimelineManagement', component: TimelineManagement },
-    { path: '/admin/user', name: 'UserManagement', component: UserManagement },    
+    { path: '/users', name: 'Users', component: Users, beforeEnter: isUserConnected },
+    { path: '/user', name: 'User', component: User, beforeEnter: isUserConnected },
+    { path: '/event/registration', name: 'EventForm', component: EventForm, beforeEnter: isUserConnected },
+    { path: '/article/form', name: 'ArticleForm', component: ArticleForm, beforeEnter: isUserConnected },
+    { path: '/anecdote/form', name: 'AnecdoteForm', component: AnecdoteForm, beforeEnter: isUserConnected },
+    { path: '/activity/form', name: 'ActivityForm', component: ActivityForm, beforeEnter: isUserConnected },
+    { path: '/admin/activity', name: 'ActivityManagement', component: ActivityManagement, beforeEnter: isAdmin },
+    { path: '/admin/anecdote', name: 'AnecdoteManagement', component: AnecdoteManagement, beforeEnter: isAdmin },
+    { path: '/admin/article', name: 'ArticleManagement', component: ArticleManagement, beforeEnter: isAdmin },
+    { path: '/admin/participant', name: 'ParticipantManagement', component: ParticipantManagement, beforeEnter: isAdmin },
+    { path: '/admin/timeline', name: 'TimelineManagement', component: TimelineManagement, beforeEnter: isAdmin },
+    { path: '/admin/user', name: 'UserManagement', component: UserManagement, beforeEnter: isAdmin },    
+    { path: '/:catchAll(.*)', redirect: '/' },   
 ];
 
 export const router = createRouter({
     history: createWebHistory(),
     routes
 });
+
+router.replace({ path: '*', redirect: '/' });
 
 
 export default async function (fastify, opts) {
