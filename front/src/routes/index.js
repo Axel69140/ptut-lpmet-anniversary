@@ -42,7 +42,7 @@ const isAdmin = (to, from, next) => {
 
 // Check if user is connected
 const isUserConnected = (to, from, next) => {
-    if (store.state.user.userId != -1) {
+    if (store.state.user.token != '') {
       next()
     } else {
       next('/')
@@ -75,9 +75,6 @@ export const router = createRouter({
     history: createWebHistory(),
     routes
 });
-
-router.replace({ path: '*', redirect: '/' });
-
 
 export default async function (fastify, opts) {
     fastify.get('/', async function (request, reply) {
