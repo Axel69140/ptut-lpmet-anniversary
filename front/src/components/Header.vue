@@ -245,6 +245,10 @@
   }
 }
 
+.navbar-ul li a:active {
+  background-color: var(--bs-dropdown-link-hover-bg);
+}
+
 .navbar {  
   z-index: 99;
 }

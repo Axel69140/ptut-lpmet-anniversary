@@ -45,7 +45,7 @@ const isUserConnected = (to, from, next) => {
     if (store.state.user.token != '') {
       next()
     } else {
-      next('/')
+      next({ path: '/login', query: { isConnected: false }})
     }
 }
 
