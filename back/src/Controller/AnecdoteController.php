@@ -17,6 +17,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\AnecdotePasswordHasherInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Symfony\Component\Serializer\Context\Normalizer\ObjectNormalizerContextBuilder;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 #[Route('/anecdotes')]
 class AnecdoteController extends AbstractController
@@ -88,23 +90,21 @@ class AnecdoteController extends AbstractController
             }
         
             $user = $userRepository->find($content['id_user']);
-        
             if (!$user) {
                 return $this->json([
                     'error' => 'User not found'
                 ], 404);
             }
-        
-            $context = [
-                'skip_null_values' => true,
-                'skip_duplicate_objects' => true,
-            ];
-        
-            $anecdote = $serializer->deserialize($request->getContent(), Anecdote::class, 'json', $context);
+            
+            $context = (new ObjectNormalizerContextBuilder())
+            ->withGroups('user')
+            ->toArray();
+            
+            $anecdote = $serializer->deserialize($request->getContent(), Anecdote::class, 'json', $content);
             
             $anecdote->setUser($user);
             $anecdote->setIsValidate(false);
-        
+
             $entityManager->persist($anecdote);
             $entityManager->flush();
         
@@ -115,4 +115,6 @@ class AnecdoteController extends AbstractController
             ], 500);
         }
     }
+
+
 }
