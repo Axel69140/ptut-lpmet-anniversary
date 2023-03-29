@@ -8,7 +8,7 @@
     data: () => ({ mode: 'login', email: '', firstName: '', lastName: '', maidenName: '', password: '', password_confirmation: '', phone: '', 
                   activeYears: '', activeYears2: '',_function: '', link: '', note: '', isParticipated: '', isPublic: ''}),       
     mounted() {
-      if (this.$store.state.user.userId != -1) {
+      if (this.$store.state.user.token != '') {
         this.$router.push('/');
         return ;
       }

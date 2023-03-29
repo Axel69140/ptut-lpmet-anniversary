@@ -11,7 +11,7 @@
             this.checkLog();
           },
           checkLog() {
-            if (this.$store.state.user.userId != -1) {
+            if (this.$store.state.user.token != '') {
               this.user = this.$store.state.user;
             } else {
               this.user = null;
@@ -19,7 +19,7 @@
           } 
         },
         mounted() {  
-          if (this.$store.state.user.userId != -1) {
+          if (this.$store.state.user.token != '') {
             this.user = this.$store.state.user;
           }     
         }
@@ -63,7 +63,7 @@
         <div class="form-inline  my-md-0">
           <a v-if="user === null" class="nav-link" href="/login">Connexion</a>
           <div v-if="user !== null" class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="/" id="dropdown3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{user.name}}</a>
+            <a class="nav-link dropdown-toggle" href="/" id="dropdown3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ user.firstName }} {{ user.lastName }}</a>
             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown3">
               <a class="dropdown-item" @click="logout()">Déconnexion</a>
             </div>
