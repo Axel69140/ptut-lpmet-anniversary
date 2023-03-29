@@ -3,6 +3,8 @@ import Login from '../page/auth/Login.vue';
 import Article from '../page/unlogged/Article.vue';
 import Articles from '../page/unlogged/Articles.vue';
 import Contact from '../page/unlogged/Contact.vue';
+import MentionsLegales from '../page/unlogged/MentionsLegales.vue';
+import Plan from '../page/unlogged/Plan.vue';
 import Event from '../page/unlogged/Event.vue';
 import Users from '../page/logged/Users.vue';
 import User from '../page/logged/User.vue';
@@ -55,6 +57,8 @@ const routes = [
     { path: '/article', name: 'Article', component: Article },
     { path: '/articles', name: 'Articles', component: Articles },
     { path: '/contact', name: 'Contact', component: Contact },
+    { path: '/mentions-legales', name: 'MentionsLegales', component: MentionsLegales },
+    { path: '/plan', name: 'Plan', component: Plan },
     { path: '/event', name: 'Event', component: Event },
     { path: '/users', name: 'Users', component: Users, beforeEnter: isUserConnected },
     { path: '/user', name: 'User', component: User, beforeEnter: isUserConnected },

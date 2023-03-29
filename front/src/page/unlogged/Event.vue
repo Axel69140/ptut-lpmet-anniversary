@@ -1,5 +1,6 @@
 <script>
-    import axios from 'axios';    
+    import axios from 'axios';   
+    import Footer from '../../components/Footer.vue';   
 
     export default {
     name: 'event',
@@ -70,31 +71,38 @@
             }
             //seconds
         }, 0)
+    },
+    components: {
+        Footer
     }
 }
 </script>
 
 <template>
-  <div class="countdown">
-      <h1 id="headline">Décompte de l'anniversaire du département informatique</h1>
-      <div id="countdown">
-          <ul>
-              <li><span id="days"></span>days</li>
-              <li><span id="hours"></span>Hours</li>
-              <li><span id="minutes"></span>Minutes</li>
-              <li><span id="seconds"></span>Seconds</li>
-          </ul>
+  <main>
+    <div class="countdown">
+        <h1 id="headline">Décompte de l'anniversaire du département informatique</h1>
+        <div id="countdown">
+            <ul>
+                <li><span id="days"></span>days</li>
+                <li><span id="hours"></span>Hours</li>
+                <li><span id="minutes"></span>Minutes</li>
+                <li><span id="seconds"></span>Seconds</li>
+            </ul>
+        </div>
+    </div>
+    <div class="participate">
+      <div class="divParticipate">
+        <p class="isParticipate" @click="parameterGame()">Je participe à l'évènement</p><!--Changer la pour récupérere si l'utilisateur est inscrit à l'évènement ou non-->
       </div>
-  </div>
-  <div class="participate">
-    <div class="divParticipate">
-      <p class="isParticipate" @click="parameterGame()">Je participe à l'évènement</p><!--Changer la pour récupérere si l'utilisateur est inscrit à l'évènement ou non-->
+      <div class="invitation">
+          <a href="../logged/EventForm.vue">Inviter</a>
+          <a href="../logged/EventForm.vue">Voir ses invités</a>
+      </div>
     </div>
-    <div class="invitation">
-        <a href="../logged/EventForm.vue">Inviter</a>
-        <a href="../logged/EventForm.vue">Voir ses invités</a>
-    </div>
-  </div>
+  </main>
+
+  <Footer/>
 </template>
 
   

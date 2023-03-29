@@ -2,6 +2,7 @@
     import axios from 'axios';    
     import _ from 'lodash';
     import { chunk } from 'lodash';
+    import Footer from '../../components/Footer.vue';
 
     export default {
         name: 'home',
@@ -53,6 +54,9 @@
                 console.log(response.data);
                 this.users = response.data;
             });        
+        },
+        components: {
+            Footer
         }
     }
     
@@ -60,51 +64,53 @@
 
 
 <template>
-    
-    <h1>Users</h1>
-    <div class="fullPage">
-        <div class="filters">
-            <div class="filterFunction">
-                <label class="container">Participe à l'évènement
-                    <input id="inputEvent" type="checkbox" v-model="eventOption">
-                    <div class="checkmark"></div>
-                </label>
-                
+    <main>
+        <h1>Participants</h1>
+        <div class="fullPage">
+            <div class="filters">
+                <div class="filterFunction">
+                    <label class="container">Participe à l'évènement
+                        <input id="inputEvent" type="checkbox" v-model="eventOption">
+                        <div class="checkmark"></div>
+                    </label>
+                    
+                </div>
+                <div class="filterFunction">
+                    <label>fonction au sein de l'IUT</label>
+                    <select id="inputFunction" v-model="selectedOption" name="inputFunction">
+                        <option value="tous">tous</option>
+                        <option value="élève">élève</option>
+                        <option value="enseignant">enseignant</option>
+                        <option value="autre">autre</option>
+                    </select>
+                </div>
+                <div class="filterYear form-row">
+                    <label for="inputYear1">Année au sein de l'IUT de</label>
+                    <input id="monInput" type="number" name="monInput" min="1993" max="2023" class="form-row__input" v-model="minNumber">
+                    <label for="inputYear1">à</label>
+                    <input id="monInput" type="number" name="monInput" min="1993" max="2023" class="form-row__input" v-model="maxNumber">
+                </div>
             </div>
-            <div class="filterFunction">
-                <label>fonction au sein de l'IUT</label>
-                <select id="inputFunction" v-model="selectedOption" name="inputFunction">
-                    <option value="tous">tous</option>
-                    <option value="élève">élève</option>
-                    <option value="enseignant">enseignant</option>
-                    <option value="autre">autre</option>
-                </select>
-            </div>
-            <div class="filterYear form-row">
-                <label for="inputYear1">Année au sein de l'IUT de</label>
-                <input id="monInput" type="number" name="monInput" min="1993" max="2023" class="form-row__input" v-model="minNumber">
-                <label for="inputYear1">à</label>
-                <input id="monInput" type="number" name="monInput" min="1993" max="2023" class="form-row__input" v-model="maxNumber">
+            <div class="users">
+                <ul v-for="(chunk, index) in test(filteredUsers, 6)" :key="index" class="usersPart">
+                    <li v-for="(user, i) in chunk" :key="i" class="user">
+                        <img src="https://media.istockphoto.com/id/1200677760/fr/photo/verticale-de-jeune-homme-de-sourire-beau-avec-des-bras-crois%C3%A9s.jpg?s=612x612&w=0&k=20&c=0TDS1aTXZzWLzI_X9eGBhqS_QZAz49zKEDKT8xsHZfU=" width="198" height="198">
+                        <div class="fullName">
+                            <div class="firstName">{{ user.firstName }}</div>   
+                            <div v-if="user.isPublic" class="lastName">{{ user.lastName }}</div>
+                            <div v-else class="lastName">{{ obfuscateName(user.lastName) }}</div>
+                        </div>
+                        <div class="activeYears">Année à l'IUT <strong>{{ user.activeYears[0] }} - {{ user.activeYears[1] }}</strong></div>
+                        <div v-if="user.isPublic && user.function != 'autre'" class="function">En tant qu'{{ user.function }}</div>
+                        <div v-if="user.isParticipated" class="isParticipated" >participe</div>
+                        <div v-else class="isNotParticipated">participe pas</div>
+                    </li>
+                </ul>
             </div>
         </div>
-        <div class="users">
-            <ul v-for="(chunk, index) in test(filteredUsers, 6)" :key="index" class="usersPart">
-                <li v-for="(user, i) in chunk" :key="i" class="user">
-                    <img src="https://media.istockphoto.com/id/1200677760/fr/photo/verticale-de-jeune-homme-de-sourire-beau-avec-des-bras-crois%C3%A9s.jpg?s=612x612&w=0&k=20&c=0TDS1aTXZzWLzI_X9eGBhqS_QZAz49zKEDKT8xsHZfU=" width="198" height="198">
-                    <div class="fullName">
-                        <div class="firstName">{{ user.firstName }}</div>   
-                        <div v-if="user.isPublic" class="lastName">{{ user.lastName }}</div>
-                        <div v-else class="lastName">{{ obfuscateName(user.lastName) }}</div>
-                    </div>
-                    <div class="activeYears">Année à l'IUT <strong>{{ user.activeYears[0] }} - {{ user.activeYears[1] }}</strong></div>
-                    <div v-if="user.isPublic && user.function != 'autre'" class="function">En tant qu'{{ user.function }}</div>
-                    <div v-if="user.isParticipated" class="isParticipated" >participe</div>
-                    <div v-else class="isNotParticipated">participe pas</div>
-                </li>
-            </ul>
-        </div>
-    </div>
-    
+    </main>
+
+    <Footer/>    
 </template>
 
 <style scoped>
