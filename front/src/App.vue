@@ -38,7 +38,8 @@
     --bg-primary: #FFFFFF;
     --bg-secondary: #F7F7F7;
     --bg-third: #CCCCCC;
-    --bg-navbar: #403E3F;
+    --bg-navbar: #FFFFFF;
+    --bg-navbar-link: #3b3b3b;
     --subtitle: #666;
     --button-bg-disable: #cecece;
     --button-color-disable: #ececec;
@@ -86,6 +87,6 @@ main {
 }
 
 h1 {
-  padding-top: 40px!important;
+  margin-top: 100px !important;
 }
 </style>
