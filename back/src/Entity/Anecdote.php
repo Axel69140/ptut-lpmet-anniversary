@@ -20,6 +20,7 @@ class Anecdote
     #[ORM\Column]
     private ?bool $isValidate = null;
 
+    #[Groups(['user'])]
     #[ORM\ManyToOne(inversedBy: 'anecdotes')]
     private ?User $User = null;
 
