@@ -214,7 +214,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function isParticipated(): ?bool
+    public function getIsParticipated(): ?bool
     {
         return $this->isParticipated;
     }
@@ -226,7 +226,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function isPublicProfil(): ?bool
+    public function getIsPublicProfil(): ?bool
     {
         return $this->isPublicProfil;
     }
