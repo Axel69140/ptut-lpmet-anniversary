@@ -2,12 +2,12 @@
 
 namespace App\Service;
 
-use App\Entity\User;
+use ReflectionClass;
 
 class EntryDataService
 {
 
-    public function defineKeysInEntity($keys, $entity, $em)
+    public function defineKeysInEntity($keys, $entity)
     {
         foreach ($keys as $key => $value) {
 
@@ -27,19 +27,32 @@ class EntryDataService
                 return null;
             }
 
-//            $entityManager = $doctrine->getManagerForClass($entity::class);
-//            $classMetadata = $entityManager->getClassMetadata($entity::class);
-//            $fieldType = $classMetadata->getTypeOfField($key);
+            // Get the reflection class of your entity
+            $reflectionClass = new ReflectionClass($entity::class);
 
-            $metadata = $em->getClassMetadata($entity::class);
-            $type = $metadata->getTypeOfField($key);
+            // Get the setter method you're interested in
+            $setterMethod = $reflectionClass->getMethod($setter);
 
-            if(gettype($value) !== $type)
-            {
-                var_dump($key);
-                var_dump('fieldType ' . $type);
-                var_dump('gettype ' . gettype($value));
-                var_dump('not same type');
+            // Get the type hint of the first parameter of the method
+            $parameterType = $setterMethod->getParameters()[0]->getType();
+
+            // If the type hint is a class or interface, get its name
+//            if ($parameterType && !$parameterType->isBuiltin()) {
+//                $parameterTypeName = $parameterType->getName();
+//            }
+//            var_dump($key . ' | ' .$parameterType->allowsNull() . ' | ' . $parameterType->getName() . ' | ' . gettype($value) . '|||||||||||||');
+
+            if (($parameterType->allowsNull() === false) && gettype($value) === 'NULL') {
+                return null;
+            }
+
+            if (gettype($value) === 'boolean') {
+                if ($parameterType->getName() !== 'bool') {
+                    return null;
+                }
+            }
+
+            if (gettype($value) !== $parameterType->getName()) {
                 return null;
             }
 
