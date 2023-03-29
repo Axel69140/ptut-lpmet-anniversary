@@ -1,5 +1,6 @@
 <script>
-    import axios from 'axios';    
+    import axios from 'axios';   
+    import Footer from '../../components/Footer.vue';     
 
     export default {
         name: 'home',
@@ -8,21 +9,21 @@
         },
         methods: {      
         },
-        mounted() {    
-            axios.get('https://127.0.0.1:8000/api/user').then(response => {
-                console.log(response.data);
-                this.users = response.data;
-            });        
+        mounted() {                      
+        },
+        components: {
+            Footer
         }
     }
 </script>
 
 
 <template>
+    <main>
     <h1>Home</h1>
-    <ul v-for="user in users" :key="user.id">
-            {{ user.firstName }}
-    </ul>
+    </main>
+    
+    <Footer/>
 </template>
 
 <style scoped>

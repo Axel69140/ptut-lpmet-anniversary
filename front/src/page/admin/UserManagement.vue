@@ -179,10 +179,6 @@
         }); 
     };
 
-    const setDeleteMode = (mode) => {
-        deleteMode = mode;
-    };
-
     const range = (start, end) => {
         return Array(end - start + 1).fill().map((_, index) => start + index);
     }  
@@ -219,8 +215,7 @@
                 resetForm,
                 editUser,
                 deleteUser,
-                deleteUsers,
-                setDeleteMode
+                deleteUsers
             }
         }
     });

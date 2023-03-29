@@ -6,11 +6,14 @@
   export default {
     name: 'login',
     data: () => ({ mode: 'login', email: '', firstName: '', lastName: '', maidenName: '', password: '', password_confirmation: '', phone: '', 
-                  activeYears: '', activeYears2: '',_function: '', link: '', note: '', isParticipated: '', isPublic: ''}),       
+                  activeYears: '', activeYears2: '',_function: '', link: '', note: '', isParticipated: '', isPublic: '', showMessage: false}),       
     mounted() {
       if (this.$store.state.user.token != '') {
         this.$router.push('/');
         return ;
+      }
+      if (this.$route.query.isConnected) {
+        this.showMessage = true;
       }
     },
     computed: {
@@ -90,6 +93,11 @@
       <h1 class="card__title" v-else>Inscription</h1>
       <p class="card__subtitle" v-if="mode == 'login'">Tu n'as pas encore de compte ? <span class="card__action" @click="switchToCreateAccount()">Créer un compte</span></p>
       <p class="card__subtitle" v-else>Tu as déjà un compte ? <span class="card__action" @click="switchToLogin()">Se connecter</span></p>
+
+      <!-- Message -->
+      <div class="alert alert-secondary" role="alert" v-if="showMessage">
+        Vous devez être connecté pour accédez à cette page.
+      </div>
 
       <!-- Input form -->
       <div class="form-row" v-if="mode == 'create'">
@@ -177,7 +185,9 @@
 main {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: center;  
+  padding-top: 80px;
+  background-image: url("../../../public/img/bg-login.webp");
 }
 
 .create-footer {
@@ -199,6 +209,10 @@ main {
   text-align: center;
   color: var(--subtitle);
   font-weight: 500;
+}
+
+.alert {
+  font-weight: 600;
 }
 
 .button {

@@ -1,5 +1,6 @@
 <script>
-    import axios from 'axios';    
+    import axios from 'axios';  
+    import Footer from '../../components/Footer.vue';     
 
     export default {
         name: 'eventForm',
@@ -9,12 +10,16 @@
         methods: {      
         },
         mounted() {       
+        },
+        components: {
+            Footer
         }
     }
 </script>
 
 
 <template>
+  <main>
     <h1>Participer à l'évènement</h1>
     <div class="isParticipate">
         <label class="containerInput">Je participe à l'évènement
@@ -29,6 +34,9 @@
     <div>
         <button class="save">Enregistrer</button>
     </div>
+  </main>
+
+  <Footer/>
 </template>
 
 <style scoped>

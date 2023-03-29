@@ -1,15 +1,15 @@
 <script>
-    import axios from 'axios';   
-    import Footer from '../../components/Footer.vue';     
+    import axios from 'axios';  
+    import Footer from '../../components/Footer.vue';  
 
     export default {
-        name: 'activityForm',
+        name: 'mentions-legales',
         data: () => ({ users: [] }),       
         computed: {            
         },
         methods: {      
         },
-        mounted() {                      
+        mounted() {       
         },
         components: {
             Footer
@@ -20,9 +20,9 @@
 
 <template>
     <main>
-        <h1>Proposer une activitée</h1>
+        <h1>Mentions légales</h1>    
     </main>
-    
+
     <Footer/>
 </template>
 

@@ -1,21 +1,29 @@
 <script>
-    import axios from 'axios';    
+    import axios from 'axios';   
+    import Footer from '../../components/Footer.vue';     
 
     export default {
-        name: 'artciles',
+        name: 'articles',
         data: () => ({ users: [] }),       
         computed: {            
         },
         methods: {      
         },
-        mounted() {       
+        mounted() {                      
+        },
+        components: {
+            Footer
         }
     }
 </script>
 
 
 <template>
-    <h1>Artciles</h1>    
+    <main>
+        <h1>Articles</h1>
+    </main>
+    
+    <Footer/>   
 </template>
 
 <style scoped>
