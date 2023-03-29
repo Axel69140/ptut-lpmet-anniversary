@@ -13,9 +13,11 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-        main:
-            lazy: true
-            provider: app_user_provider
+            
+        api:
+            pattern: ^/users
+            stateless: true
+            jwt: ~
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
@@ -28,6 +30,9 @@ security:
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/users/login, roles: PUBLIC_ACCESS }
+        - { path: ^/users/register, roles: PUBLIC_ACCESS }
+        - { path: ^/users, roles: IS_AUTHENTICATED_FULLY }
 
 when@test:
     security:

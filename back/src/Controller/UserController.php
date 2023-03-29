@@ -4,18 +4,19 @@ namespace App\Controller;
 
 use App\Repository\UserRepository;
 use App\Service\EntryDataService;
-use App\Service\RequestService;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\User;
-use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\Response;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+
 
 #[Route('/users')]
 class UserController extends AbstractController
@@ -144,9 +145,33 @@ class UserController extends AbstractController
         }
     }
 
+    // Get role's user
+    #[Route('/{id}/role', name: 'app_api_users_role_get', methods: ['GET'])]
+    public function getUserRole(int $id, UserRepository $userRepository): JsonResponse
+    {
+        try {
+
+            $user = $userRepository->findOneBy(['id' => $id]);
+            if (!$user) {
+                return $this->json([
+                    'error' => 'User not found'
+                ], 404);
+            }
+
+            return $this->json(["role" => $user->getRoles()], 200);
+
+        } catch (\Exception $e) {
+
+            return $this->json([
+                'error' => 'Server error'
+            ], 500);
+
+        }
+    }
+
     // Log user
     #[Route('/login', name: 'app_api_user_login', methods: ['POST'])]
-    public function login(Request $request, UserRepository $userRepository, JWTTokenManagerInterface $jwtManager, UserPasswordHasherInterface $passwordHasher): JsonResponse
+    public function login(Request $request, JWTTokenManagerInterface $jwtManager, UserRepository $userRepository, UserPasswordHasherInterface $passwordHasher): JsonResponse
     {
         try {
 
@@ -170,13 +195,12 @@ class UserController extends AbstractController
             }
 
             $token = $jwtManager->create($user);
-
-            return $this->json($token, 201);
+            return $this->json(["id" => $user->getId(), "email" => $user->getEmail(), "firstName" => $user->getFirstName(), "lastName" => $user->getLastName(), "token" => $token ], 201);
 
         } catch (\Exception $e) {
 
             return $this->json([
-                'error' => $e->getMessage()
+                'error' => 'Server error'
             ], 500);
 
         }
@@ -184,13 +208,13 @@ class UserController extends AbstractController
 
     // Create user
     #[Route('/register', name: 'app_api_user_post', methods: ['POST'])]
-    public function register(Request $request, UserRepository $userRepository, UserPasswordHasherInterface $userPasswordHasher, ValidatorInterface $validator, EntryDataService $entryDataService): JsonResponse
+    public function register(Request $request, UserRepository $userRepository, UserPasswordHasherInterface $userPasswordHasher, ValidatorInterface $validator, EntryDataService $entryDataService, EntityManagerInterface $em): JsonResponse
     {
         try {
 
             $content = json_decode($request->getContent(), true);
             $user = new User();
-            $user = $entryDataService->defineKeysInEntity($content, $user);
+            $user = $entryDataService->defineKeysInEntity($content, $user, $em);
             if ($user === null) {
                 return $this->json([
                     'error' => 'A problem has been encounter during entity modification'
@@ -221,7 +245,7 @@ class UserController extends AbstractController
                 ], 400);
             }
 
-            $userRepository->save($user);
+            $userRepository->save($user, true);
             return $this->json($user, 201);
 
         } catch (\Exception $e) {
@@ -268,6 +292,7 @@ class UserController extends AbstractController
 
     // Delete users
     #[Route('/many', name: 'app_api_user_delete_many', methods: ['DELETE'])]
+    #[IsGranted('ROLE_ADMIN', statusCode: 403, message: 'Vous n\'avez pas les droits suffisants')]
     public function deleteUsers(Request $request, UserRepository $userRepository): Response
     {
         try {
@@ -306,6 +331,7 @@ class UserController extends AbstractController
 
     // Clear users
     #[Route('/clear', name: 'app_api_user_delete_all', methods: ['DELETE'])]
+    #[IsGranted('ROLE_ADMIN', statusCode: 403, message: 'Vous n\'avez pas les droits suffisants')]
     public function clearUsers(UserRepository $userRepository): Response
     {
         try {

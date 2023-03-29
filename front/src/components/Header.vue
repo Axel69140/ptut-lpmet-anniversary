@@ -1,28 +1,14 @@
 <script>
-    import { mapState } from 'vuex'
     export default {
         name: 'header',
-        data: () => ({user: null}),       
+        data: () => ({}),       
         computed: {  
         },
         methods: {  
           logout: async function () {
             await this.$store.commit('logout');
             this.$router.push('/');
-            this.checkLog();
-          },
-          checkLog() {
-            if (this.$store.state.user.userId != -1) {
-              this.user = this.$store.state.user;
-            } else {
-              this.user = null;
-            }
-          } 
-        },
-        mounted() {  
-          if (this.$store.state.user.userId != -1) {
-            this.user = this.$store.state.user;
-          }     
+          }
         }
     }
 </script>
@@ -56,15 +42,15 @@
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="/" id="dropdown2" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Anecdotes</a>
             <div class="dropdown-menu" aria-labelledby="dropdown2">
-              <a class="dropdown-item" href="/anecdote/form">Proposer une anecdote</a>
+              <a class="dropdown-item" href="/anecdote/form">Proposer une anecdote </a>
             </div>
           </li>
         </ul>
 
         <div class="form-inline  my-md-0">
-          <a v-if="user === null" class="nav-link" href="/login">Connexion</a>
-          <div v-if="user !== null" class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="/" id="dropdown3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{user.name}}</a>
+          <a v-if="this.$store.state.user.token === ''" class="nav-link" href="/login">Connexion</a>
+          <div v-if="this.$store.state.user.token !== ''" class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="/" id="dropdown3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ this.$store.state.user.firstName }} {{ this.$store.state.user.lastName }}</a>
             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown3">
               <a class="dropdown-item" @click="logout()">Déconnexion</a>
             </div>

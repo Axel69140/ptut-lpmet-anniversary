@@ -1,13 +1,14 @@
 <script>
   import { mapState } from 'vuex';
   import Footer from '../../components/Footer.vue';
+  import axios from "axios";
 
   export default {
     name: 'login',
     data: () => ({ mode: 'login', email: '', firstName: '', lastName: '', maidenName: '', password: '', password_confirmation: '', phone: '', 
                   activeYears: '', activeYears2: '',_function: '', link: '', note: '', isParticipated: '', isPublic: ''}),       
     mounted() {
-      if (this.$store.state.user.userId != -1) {
+      if (this.$store.state.user.token != '') {
         this.$router.push('/');
         return ;
       }
@@ -40,10 +41,9 @@
       },
       switchToLogin() {
         this.mode = 'login';
-      },
+      },      
       login() {
         const self = this;
-        console.log('la');
         this.$store.dispatch('login', {
           email: this.email,
           password: this.password,

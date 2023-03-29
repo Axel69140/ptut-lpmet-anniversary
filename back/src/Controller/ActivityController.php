@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
@@ -18,17 +19,12 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class ActivityController extends AbstractController
 {
     // Get activities
-    #[Route('/', name: 'app_api_activity_get', methods: ['GET'])]
+    /*#[Route('/', name: 'app_api_activity_get', methods: ['GET'])]
     public function getActivities(ActivityRepository $activityRepository): JsonResponse
     {
-        try {
             $activities = $activityRepository->findAll();
             return $this->json($activities, 200);
-        } catch (\Exception $e) {
-            return $this->json([
-                'error' => 'Server error'
-            ], 500);
-        }
+        
     }
 
     // Get one activities
@@ -54,9 +50,8 @@ class ActivityController extends AbstractController
 
     // Create activity
     #[Route('/create', name: 'app_api_activity_post', methods: ['POST'])]
-    public function createActivity(Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
+    public function createActivity(Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager, UserRepository $userRepository): JsonResponse
     {
-        try {
             $content = json_decode($request->getContent(), true);
 
             if (empty($content)) {
@@ -83,17 +78,24 @@ class ActivityController extends AbstractController
                 ], 400);
             }
 
+            $user = $userRepository->find($content['id_user']);
+
+            if (!$user) {
+                return $this->json([
+                    'error' => 'User not found'
+                ], 404);
+            }
+
+            
+
             $activity = $serializer->deserialize($request->getContent(), Activity::class, 'json');
+            $activity->setIsValidate(false);
+            $activity->setCreator($user);          
 
             $entityManager->persist($activity);
             $entityManager->flush();
 
-            return $this->json($activity, 201);
-        } catch (\Exception $e) {
-            return $this->json([
-                'error' => 'Server error'
-            ], 500);
-        }
+            return $this->json($activity, 201);              
     }
 
     // Update activity
@@ -229,5 +231,5 @@ class ActivityController extends AbstractController
                 'error' => 'Server error'
             ], 500);
         }
-    } 
+    } */
 }
