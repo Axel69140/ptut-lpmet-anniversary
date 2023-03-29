@@ -11,6 +11,8 @@ use App\Service\RequestService;
 use Symfony\Component\Serializer\SerializerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use App\Entity\TimelineStep;
 
 #[Route('/timelinesteps')]
 class TimelineStepController extends AbstractController
@@ -80,9 +82,13 @@ class TimelineStepController extends AbstractController
                     'error' => 'One or more filled-in field(s) has/have a wrong type'
                 ], 400);
             }
-
-            $timelineStep = $serializer->deserialize($request->getContent(), TimelineStep::class, 'json');
             
+            $timelineStep = new TimelineStep;
+            $timelineStep->setDate(\DateTime::createFromFormat('Y-m-d', $content['date']));
+            $timelineStep->setTitle($content['title']);
+            $timelineStep->setContent($content['content']);
+            $timelineStep->setIsValidate(true);
+
             //Symfony validation
             $errors = $validator->validate($timelineStep);
 
