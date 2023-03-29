@@ -1,5 +1,6 @@
 <script>
-    import axios from 'axios';    
+    import axios from 'axios';   
+    import Footer from '../../components/Footer.vue';     
 
     export default {
         name: 'home',
@@ -14,16 +15,23 @@
                 this.timelineSteps = response.data;
                 console.log("test");
             });        
+        },
+        components: {
+            Footer
         }
     }
 </script>
 
 
 <template>
+    <main>
     <h1>Home</h1>
     <ul v-for="timelineStep in timelineSteps" :key="timelineStep.id">
             {{ timelineStep.content }}
     </ul>
+    </main>
+    
+    <Footer/>
 </template>
 
 <style scoped>

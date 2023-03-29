@@ -1,5 +1,6 @@
 <script>
-    import axios from 'axios';    
+    import axios from 'axios';  
+    import Footer from '../../components/Footer.vue';  
 
     export default {
         name: 'contact',
@@ -9,13 +10,20 @@
         methods: {      
         },
         mounted() {       
+        },
+        components: {
+            Footer
         }
     }
 </script>
 
 
 <template>
-    <h1>Contact</h1>    
+    <main>
+        <h1>Contact</h1>    
+    </main>
+
+    <Footer/>
 </template>
 
 <style scoped>
