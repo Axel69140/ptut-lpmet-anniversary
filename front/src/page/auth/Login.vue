@@ -177,7 +177,9 @@
 main {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: center;  
+  padding-top: 80px;
+  background-image: url("../../../public/img/bg-login.webp");
 }
 
 .create-footer {

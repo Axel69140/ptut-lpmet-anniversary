@@ -28,8 +28,8 @@
           <a v-if="this.$store.state.user.token === ''" class="btn-custom btn" href="/login" role="button">Connexion</a>
           <div v-if="this.$store.state.user.token !== ''" class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="/" id="dropdown3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ this.$store.state.user.firstName }} {{ this.$store.state.user.lastName }}</a>
-            <div class="dropdown-menu" aria-labelledby="dropdown3">
-              <a class="dropdown-item" @click="logout()">Déconnexion</a>
+            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown3">
+              <a class="dropdown-item" href="" @click="logout()">Déconnexion</a>
             </div>
           </div>
         </div>
@@ -68,8 +68,8 @@
         <div class="form-inline my-md-0 display-desktop">
           <a v-if="this.$store.state.user.token === ''" class="btn-custom btn" href="/login" role="button">Connexion</a>
           <div v-if="this.$store.state.user.token !== ''" class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="/" id="dropdown3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ this.$store.state.user.firstName }} {{ this.$store.state.user.lastName }}</a>
-            <div class="dropdown-menu" aria-labelledby="dropdown3">
+            <a class="nav-link dropdown-toggle" href="/" id="dropdown3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ this.$store.state.user.firstName }} {{ this.$store.state.user.lastName }}</a>   
+            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown3">
               <a class="dropdown-item" href="" @click="logout()">Déconnexion</a>
             </div>
           </div>
@@ -183,7 +183,7 @@
     z-index: 100000;
   }
 
-  .navbar-custom div[data-v-61dd7a3d] {
+  .navbar-custom div {
     margin-right: 0px;
   }
 }
@@ -276,9 +276,9 @@
   background-color: var(--bg-navbar);
 }
 
-.navbar-custom div {
+/* .navbar-custom div {
   margin-right: 20px; 
-}
+} */
 
 .navbar-ul {
   height: 100%;
@@ -294,6 +294,14 @@
   display: flex;
   align-items: center;  
   color: var(--bg-navbar-link) !important;
+}
+
+.form-inline .nav-link, .form-inline .dropdown-item {
+  padding: 27px 35px !important;
+}
+
+.form-inline .dropdown-menu.show {
+  top: 97% !important;
 }
 
 .btn-custom {
