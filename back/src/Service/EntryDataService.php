@@ -86,9 +86,9 @@ class EntryDataService
 
             // Appel de la méthode setter pour modifier la propriété
             try {
-
                 if(str_contains($parameterTypeName, 'App\Entity'))
                 {
+
                     // Check if $em null
                     if($em === null)
                     {
@@ -96,7 +96,8 @@ class EntryDataService
                     }
 
                     $metadata = $em->getClassMetadata($parameterTypeName);
-
+                    var_dump($key);
+                    dd($metadata->hasAssociation($key));
                     if (!$metadata->hasAssociation($key)) {
                         throw new \InvalidArgumentException(sprintf('The entity %s does not have an association named %s', $parameterTypeName, $key));
                     }
