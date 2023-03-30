@@ -339,7 +339,7 @@ class UserController extends AbstractController
             }
 
             foreach ($users as $user) {
-                $userRepository->remove($user);
+                $userRepository->remove($user, true);
             }
 
             return $this->json([], 204);
@@ -363,7 +363,7 @@ class UserController extends AbstractController
             $users = $userRepository->findAll();
 
             foreach ($users as $user) {
-                $userRepository->remove($user);
+                $userRepository->remove($user, true);
             }
 
             return $this->json([], 204);
