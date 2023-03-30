@@ -225,7 +225,7 @@ class UserController extends AbstractController
 
     // Create user
     #[Route('/register', name: 'app_api_user_post', methods: ['POST'])]
-    public function register(Request $request, UserRepository $userRepository, UserPasswordHasherInterface $userPasswordHasher, ValidatorInterface $validator, EntryDataService $entryDataService, EntityManagerInterface $em): JsonResponse
+    public function register(Request $request, UserRepository $userRepository, UserPasswordHasherInterface $userPasswordHasher, ValidatorInterface $validator, EntryDataService $entryDataService): JsonResponse
     {
         try {
 
@@ -234,7 +234,7 @@ class UserController extends AbstractController
             $user = $entryDataService->defineKeysInEntity($content, $user);
             if ($user === null) {
                 return $this->json([
-                    'error' => 'A problem has been encounter during entity modification'
+                    'error' => 'A problem has been encounter during entity creation'
                 ], 400);
             }
 
@@ -255,7 +255,6 @@ class UserController extends AbstractController
 
             //Symfony validation
             $errors = $validator->validate($user);
-
             if (count($errors) > 0) {
                 return $this->json([
                     'error' => $errors
@@ -276,7 +275,7 @@ class UserController extends AbstractController
 
     // Update user
     #[Route('/{id}', name: 'app_api_user_update', methods: ['PATCH'])]
-    public function updateUser(int $id, Request $request, UserRepository $userRepository, EntryDataService $entryDataService): JsonResponse
+    public function updateUser(int $id, Request $request, UserRepository $userRepository, EntryDataService $entryDataService, ValidatorInterface $validator): JsonResponse
     {
         try {
 
@@ -292,6 +291,14 @@ class UserController extends AbstractController
             if ($userToUpdate === null) {
                 return $this->json([
                     'error' => 'A problem has been encounter during entity modification'
+                ], 400);
+            }
+
+            //Symfony validation
+            $errors = $validator->validate($userToUpdate);
+            if (count($errors) > 0) {
+                return $this->json([
+                    'error' => $errors
                 ], 400);
             }
 
