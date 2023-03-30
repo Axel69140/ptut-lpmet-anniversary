@@ -59,9 +59,8 @@ class EntryDataService
 
             //Check if function is correct
             $functions = $entity->getAllowedFunctions();
-            if($key === 'function' && in_array($value, $functions))
+            if($key === 'function' && !in_array($value, $functions))
             {
-                var_dump('test');
                 return null;
             }
 
