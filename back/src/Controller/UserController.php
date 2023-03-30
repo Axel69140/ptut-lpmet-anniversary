@@ -390,7 +390,7 @@ class UserController extends AbstractController
                 ], 404);
             }
 
-            $userRepository->remove($userToDelete);
+            $userRepository->remove($userToDelete, true);
             return $this->json([], 204);
 
         } catch (\Exception $e) {

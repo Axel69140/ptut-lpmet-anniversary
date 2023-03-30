@@ -1,16 +1,12 @@
 import Axios from '../services/caller.services'
 import store from '../store'
 
-let login = (credentials) => {
-    return Axios.post('/auth/login', credentials)
-}
-
-let logout = () => {
+const logout = () => {
     store.commit('logout');
     this.$router.push('/');
 }
 
-let getToken = () => {
+const getToken = () => {
     let user = localStorage.getItem('user');
     if (user) {            
         user = JSON.parse(user);
@@ -19,11 +15,7 @@ let getToken = () => {
     return null;
 }
 
-let saveToken = (token) => {
-    localStorage.setItem('token', token)
-}
-
-let getId = () => {
+const getId = () => {
     let user = localStorage.getItem('user');
     if (user) {            
         user = JSON.parse(user);
@@ -32,7 +24,7 @@ let getId = () => {
     return null;
 }
 
-let getMail = () => {
+const getMail = () => {
     let user = localStorage.getItem('user');
     if (user) {            
         user = JSON.parse(user);
@@ -41,7 +33,7 @@ let getMail = () => {
     return '';
 }
 
-let getFirstName = () => {
+const getFirstName = () => {
     let user = localStorage.getItem('user');
     if (user) {            
         user = JSON.parse(user);
@@ -50,7 +42,7 @@ let getFirstName = () => {
     return null
 }
 
-let getLastName = () => {
+const getLastName = () => {
     let user = localStorage.getItem('user');
     if (user) {            
         user = JSON.parse(user);
@@ -59,21 +51,9 @@ let getLastName = () => {
     return null
 }
 
-let isLogged = () => {
-    let user = localStorage.getItem('user');
-    if (user) {            
-        user = JSON.parse(user);
-        return user.token != '' ? true : false;
-    }
-    return false;
-}
-
 export const accountService = {
-    login,
     logout,
-    saveToken,
     getToken,
-    isLogged,
     getLastName,
     getFirstName,
     getMail,
