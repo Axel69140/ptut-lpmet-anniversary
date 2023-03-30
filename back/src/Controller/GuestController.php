@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Service\EntryDataService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
@@ -13,6 +14,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/guests')]
 class GuestController extends AbstractController
@@ -22,20 +24,25 @@ class GuestController extends AbstractController
     public function getGuests(GuestRepository $guestRepository): JsonResponse
     {
         try {
+
             $guests = $guestRepository->findAll();
             return $this->json($guests, 200);
+
         } catch (\Exception $e) {
+
             return $this->json([
                 'error' => 'Server error'
             ], 500);
+
         }
     }
 
     // Get one guests
     #[Route('/{id}', name: 'app_api_guest_get_one', methods: ['GET'])]
-    public function getGuestById(GuestRepository $guestRepository, int $id): JsonResponse
+    public function getGuestById(int $id, GuestRepository $guestRepository): JsonResponse
     {
         try {
+
             $guest = $guestRepository->find($id);
 
             if (!$guest) {
@@ -45,64 +52,57 @@ class GuestController extends AbstractController
             }
 
             return $this->json($guest, 200);
+
         } catch (\Exception $e) {
+
             return $this->json([
                 'error' => 'Server error'
             ], 500);
+
         }
     }
 
     // Create guest
     #[Route('/create', name: 'app_api_guest_post', methods: ['POST'])]
-    public function createGuest(Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
+    public function createGuest(Request $request, EntryDataService $entryDataService, GuestRepository $guestRepository, ValidatorInterface $validator, EntityManagerInterface $em): JsonResponse
     {
         try {
+
+            // Entries verifications
             $content = json_decode($request->getContent(), true);
-
-            if (empty($content)) {
+            $guest = new Guest();
+            $guest = $entryDataService->defineKeysInEntity($content, $guest, $em);
+            if ($guest === null) {
                 return $this->json([
-                    'error' => 'No data provided'
+                    'error' => 'A problem has been encounter during entity creation'
                 ], 400);
             }
 
-            $requiredFields = ['firstName', 'lastName', 'email', 'id_user'];
-
-            // Vérification de la présence de tous les champs requis
-            foreach ($requiredFields as $field) {
-                if (!isset($content[$field])) {
-                    return $this->json([
-                        'error' => "Missing field '$field'"
-                    ], 400);
-                }
+            // Check if guest already exist
+            $guestExisting = $guestRepository->findOneBy(['email' => $guest->getEmail()]);
+            if ($guestExisting && ($guestExisting->getInvitedBy()->getId() === $guest->getInvitedBy()->getId())) {
+                return $this->json([
+                    'error' => 'You already invite this guest ! This mail is already use'
+                ], 403);
             }
 
-            // Vérification des types des champs requis
-            if (!is_string($content['firstName']) || !is_string($content['lastName']) || !is_string($content['email']) || !is_numeric($content['id_user'])) {
+            //Symfony validation
+            $errors = $validator->validate($guest);
+            if (count($errors) > 0) {
                 return $this->json([
-                    'error' => 'One or more filled-in field(s) has/have a wrong type'
+                    'error' => $errors
                 ], 400);
             }
 
-            $email = $content['email'];
-
-            // Vérification de l'existence de l'utilisateur
-            $existingGuest = $entityManager->getRepository(Guest::class)->findOneBy(['email' => $email]);
-            if ($existingGuest !== null) {
-                return $this->json([
-                    'error' => 'Email already exists'
-                ], 400);
-            }
-
-            $guest = $serializer->deserialize($request->getContent(), Guest::class, 'json');
-
-            $entityManager->persist($guest);
-            $entityManager->flush();
-
+            $guestRepository->save($guest, true);
             return $this->json($guest, 201);
+
         } catch (\Exception $e) {
+
             return $this->json([
                 'error' => 'Server error'
             ], 500);
+
         }
     }
 

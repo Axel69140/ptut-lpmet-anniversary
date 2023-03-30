@@ -2,18 +2,45 @@
 
 namespace App\Service;
 
+use App\Entity\User;
 use ReflectionClass;
 
 class EntryDataService
 {
+    public function isDifferentType($value, $parameterType)
+    {
+        if(gettype($value) !== $parameterType->getName())
+        {
+            // Check if type correspond (boolean and bool are same), then continue
+            if(is_bool($value) && ($parameterType->getName() === 'bool'))
+            {
+                return true;
+            }
 
-    public function defineKeysInEntity($keys, $entity)
+            // Check if allowed to be null and if entry is null, then continue
+            if(($parameterType->allowsNull() === true) && (gettype($value) === 'NULL'))
+            {
+                return true;
+            }
+
+            // Check if int given for entity attempt
+            if((str_contains($parameterType->getName(), 'App\Entity') && is_int($value)))
+            {
+                return true;
+            }
+
+            return false;
+        }
+        return true;
+    }
+
+    public function defineKeysInEntity($keys, $entity, $em = null)
     {
         foreach ($keys as $key => $value) {
 
             // Vérification de l'existence de la propriété dans l'objet User
             if (!property_exists($entity::class, $key)) {
-                var_dump('property exists ' . $key);
+                var_dump('property doesn\'t exists ' . $key);
                 return null;
             }
 
@@ -35,33 +62,67 @@ class EntryDataService
 
             // Get the type hint of the first parameter of the method
             $parameterType = $setterMethod->getParameters()[0]->getType();
+            $parameterTypeName = $parameterType->getName();
 
             // If the type hint is a class or interface, get its name
 //            if ($parameterType && !$parameterType->isBuiltin()) {
-//                $parameterTypeName = $parameterType->getName();
+//                $parameterTypeName = $parameterTypeName;
 //            }
-//            var_dump($key . ' | ' .$parameterType->allowsNull() . ' | ' . $parameterType->getName() . ' | ' . gettype($value) . '|||||||||||||');
 
-            if (($parameterType->allowsNull() === false) && gettype($value) === 'NULL') {
+            // Check if type are different
+            if(!$this->isDifferentType($value, $parameterType))
+            {
                 return null;
             }
 
-            if (gettype($value) === 'boolean') {
-                if ($parameterType->getName() !== 'bool') {
+            //Check if function is correct
+            if($entity::class === User::class){
+                $functions = $entity->getAllowedFunctions();
+                if($key === 'function' && !in_array($value, $functions))
+                {
                     return null;
                 }
             }
 
-            if (gettype($value) !== $parameterType->getName()) {
-                return null;
-            }
-
             // Appel de la méthode setter pour modifier la propriété
             try {
-                $entity->$setter($value);
+
+                if(str_contains($parameterTypeName, 'App\Entity'))
+                {
+                    // Check if $em null
+                    if($em === null)
+                    {
+                        return null;
+                    }
+
+                    $metadata = $em->getClassMetadata($parameterTypeName);
+
+                    if (!$metadata->hasAssociation($key)) {
+                        throw new \InvalidArgumentException(sprintf('The entity %s does not have an association named %s', $parameterTypeName, $key));
+                    }
+
+                    $targetEntity = $metadata->getAssociationTargetClass($key);
+
+                    $entityRepository =  $em->getRepository($targetEntity);
+                    $entityAttribute = $entityRepository->findOneBy(['id' => $value]);
+
+                    if(!$entityAttribute)
+                    {
+                        return null;
+                    }
+
+                    $entity->$setter($entityAttribute);
+
+                } else {
+
+                    $entity->$setter($value);
+
+                }
+
             } catch (\Exception $e) {
-                var_dump('setter');
+
                 return null;
+
             }
 
         }
