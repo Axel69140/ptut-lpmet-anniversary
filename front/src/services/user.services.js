@@ -1,8 +1,11 @@
-import Axios from '../services/caller.services'
-import store from '../store'
+import Axios from '../services/caller.services';
 
 const getUsers = () => {    
     return Axios.get('https://127.0.0.1:8000/users');
+}
+
+const getUsersParticipate = () => {    
+    return Axios.get('https://127.0.0.1:8000/users/participate');
 }
 
 const getUserById = (userId) => {    
@@ -45,5 +48,6 @@ export const userService = {
     deleteUser,
     deleteUsers,
     clearUserTable,
-    exportUserData
+    exportUserData,
+    getUsersParticipate
 }

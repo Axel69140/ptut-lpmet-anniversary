@@ -94,7 +94,7 @@ class UserController extends AbstractController
 
     // Get all functions
     #[Route('/functions', name: 'app_api_get_functions', methods: ['GET'])]
-    public function getFunctions(): Response
+    public function getFunctions(): JsonResponse
     {
         try {
 
@@ -105,6 +105,24 @@ class UserController extends AbstractController
 
             return $this->json([
                 'error' => 'Server error'
+            ], 500);
+
+        }
+    }
+
+    // Get all functions
+    #[Route('/participate', name: 'app_api_users_participate_get', methods: ['GET'])]
+    public function getUsersParticipate(UserRepository $userRepository): JsonResponse
+    {
+        try {
+
+            $users = $userRepository->findBy(['isParticipated' => true]);
+            return $this->json($users, 200);
+
+        } catch (\Exception $e) {
+
+            return $this->json([
+                'error' => $e->getMessage()
             ], 500);
 
         }
@@ -135,31 +153,6 @@ class UserController extends AbstractController
 
         }
 
-    }
-
-    // Get user by email
-    #[Route('/{email}', name: 'app_api_user_get_one_by_email', methods: ['GET'])]
-    public function getUserByEmail(string $email, UserRepository $userRepository): JsonResponse
-    {
-        try {
-
-            $user = $userRepository->findOneBy(['email' => $email]);
-
-            if (!$user) {
-                return $this->json([
-                    'error' => 'User not found'
-                ], 404);
-            }
-
-            return $this->json($user, 200);
-
-        } catch (\Exception $e) {
-
-            return $this->json([
-                'error' => 'Server error'
-            ], 500);
-
-        }
     }
 
     // Get role's user
