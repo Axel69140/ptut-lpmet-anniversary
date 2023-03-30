@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Repository\UserRepository;
 use App\Service\EntryDataService;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -83,6 +82,24 @@ class UserController extends AbstractController
             }
 
             return $this->json($user->getProfilPicture(), 200);
+
+        } catch (\Exception $e) {
+
+            return $this->json([
+                'error' => 'Server error'
+            ], 500);
+
+        }
+    }
+
+    // Get all functions
+    #[Route('/functions', name: 'app_api_get_functions', methods: ['GET'])]
+    public function getFunctions(): Response
+    {
+        try {
+
+            $user = new User();
+            return $this->json($user->getAllowedFunctions(), 200);
 
         } catch (\Exception $e) {
 
@@ -214,7 +231,7 @@ class UserController extends AbstractController
 
             $content = json_decode($request->getContent(), true);
             $user = new User();
-            $user = $entryDataService->defineKeysInEntity($content, $user, $em);
+            $user = $entryDataService->defineKeysInEntity($content, $user);
             if ($user === null) {
                 return $this->json([
                     'error' => 'A problem has been encounter during entity modification'

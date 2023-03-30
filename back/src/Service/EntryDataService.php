@@ -40,19 +40,28 @@ class EntryDataService
 //            if ($parameterType && !$parameterType->isBuiltin()) {
 //                $parameterTypeName = $parameterType->getName();
 //            }
-//            var_dump($key . ' | ' .$parameterType->allowsNull() . ' | ' . $parameterType->getName() . ' | ' . gettype($value) . '|||||||||||||');
 
-            if (($parameterType->allowsNull() === false) && gettype($value) === 'NULL') {
+            // Check if type are different
+            if(gettype($value) !== $parameterType->getName())
+            {
+                // Check if type correspond (boolean and bool are same), then continue
+                if((gettype($value) === 'boolean') && ($parameterType->getName() === 'bool')){
+                    continue;
+                }
+
+                // Check if allowed to be null and if entry is null, then continue
+                if(($parameterType->allowsNull() === true) && (gettype($value) === 'NULL')){
+                    continue;
+                }
+
                 return null;
             }
 
-            if (gettype($value) === 'boolean') {
-                if ($parameterType->getName() !== 'bool') {
-                    return null;
-                }
-            }
-
-            if (gettype($value) !== $parameterType->getName()) {
+            //Check if function is correct
+            $functions = $entity->getAllowedFunctions();
+            if($key === 'function' && in_array($value, $functions))
+            {
+                var_dump('test');
                 return null;
             }
 
