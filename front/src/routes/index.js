@@ -20,31 +20,27 @@ import TimelineManagement from '../page/admin/TimelineManagement.vue';
 import UserManagement from '../page/admin/UserManagement.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import store from '../store';
-import axios from 'axios';
+import Axios from '../services/caller.services';
+import { accountService } from '../services/account.services';
 
 // Check if user is admin
 const isAdmin = (to, from, next) => {
-    const user = store.state.user    
-    if (user.token != '') {
-      axios.get(`https://127.0.0.1:8000/users/${user.id}/role`, {
-        headers: {
-            Authorization: `Bearer ${user.token}`
-        }
-      }).then(response => {
-        if (response.data.role[0] === 'ROLE_ADMIN') {
+    if (accountService.getToken()) {
+      Axios.get(`https://127.0.0.1:8000/users/${accountService.getId()}/role`).then((response) => {
+        if (response.data && response.data.role[0] === 'ROLE_ADMIN') {
           next()
         } else {
           next('/')
         }                         
-      }); 
+      });       
     } else {
-      next('/')
+      next({ path: '/login', query: { isConnected: false }})
     }
 }
 
 // Check if user is connected
 const isUserConnected = (to, from, next) => {
-    if (store.state.user.token != '') {
+    if (accountService.getToken()) {
       next()
     } else {
       next({ path: '/login', query: { isConnected: false }})

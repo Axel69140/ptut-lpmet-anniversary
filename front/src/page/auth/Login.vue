@@ -1,14 +1,14 @@
 <script>
   import { mapState } from 'vuex';
   import Footer from '../../components/Footer.vue';
-  import axios from "axios";
+  import { accountService } from '../../services/account.services'; 
 
   export default {
     name: 'login',
     data: () => ({ mode: 'login', email: '', firstName: '', lastName: '', maidenName: '', password: '', password_confirmation: '', phone: '', 
                   activeYears: '', activeYears2: '',_function: '', link: '', note: '', isParticipated: '', isPublic: '', showMessage: false}),       
     mounted() {
-      if (this.$store.state.user.token != '') {
+      if (accountService.getToken()) {
         this.$router.push('/');
         return ;
       }

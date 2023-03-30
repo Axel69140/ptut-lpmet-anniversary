@@ -44,31 +44,25 @@ const store = createStore({
   },
   actions: {
     login: ({commit}, userInfos) => {
-      commit('setStatus', 'loading');
       return new Promise((resolve, reject) => {
         instance.post('/login', userInfos)
         .then(function (response) {
-          commit('setStatus', '');
           commit('logUser', response.data);
           resolve(response);
         })
         .catch(function (error) {
-          commit('setStatus', 'error_login');
           reject(error);
         });
       });
     },
     createAccount: ({commit}, userInfos) => {
-      commit('setStatus', 'loading');
       return new Promise((resolve, reject) => {
         commit;
         instance.post('/register', userInfos)
         .then(function (response) {
-          commit('setStatus', 'created');
           resolve(response);
         })
         .catch(function (error) {
-          commit('setStatus', 'error_create');
           reject(error);
         });
       });

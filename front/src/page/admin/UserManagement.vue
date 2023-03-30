@@ -5,6 +5,7 @@
     import axios from "axios";
     import Footer from '../../components/Footer.vue';    
     import Loader from '../../components/Loader.vue';
+    import Axios from '../../services/caller.services';
 
     const searchValue = ref('');
     let users = ref([]);
@@ -48,22 +49,9 @@
         getUsers();
         isLoading.value = false;  
     });    
-    
-    const getToken = () => {        
-        let user = localStorage.getItem('user');
-        if (user) {            
-            user = JSON.parse(user);
-            return user.token;
-        }
-        return null;
-    };
 
-    const getUsers = () => {
-        axios.get('https://127.0.0.1:8000/users', {
-            headers: {
-                Authorization: `Bearer ${getToken()}`
-            }
-        }).then(response => {
+    const getUsers = () => {    
+        Axios.get('https://127.0.0.1:8000/users').then(response => {
             items.splice(0, items.length);
             const usersResponse = response.data;
             usersResponse.forEach(user => {
@@ -76,7 +64,7 @@
     };
 
     const getUserById = (userId) => {        
-        axios.get('https://127.0.0.1:8000/users/' + userId).then(response => {  
+        Axios.get('https://127.0.0.1:8000/users/' + userId).then(response => {  
             userEdit = true;     
             id.value = userId;
             email.value = response.data.email;
@@ -96,7 +84,7 @@
 
     const createUser = () => {        
         isLoading.value = true; 
-        axios.post('https://127.0.0.1:8000/users/register',{
+        Axios.post('https://127.0.0.1:8000/users/register',{
             email: email.value,
             lastName: lastName.value,
             firstName: firstName.value,
@@ -119,7 +107,7 @@
 
     const editUser = () => {        
         isLoading.value = true; 
-        axios.patch('https://127.0.0.1:8000/users/' + id.value,{
+        Axios.patch('https://127.0.0.1:8000/users/' + id.value,{
             email: email.value,
             lastName: lastName.value,
             firstName: firstName.value,
@@ -141,7 +129,7 @@
         isLoading.value = true; 
         console.log(itemsSelected);
         
-        axios.delete('https://127.0.0.1:8000/users/' + itemsSelected.value[0].id).then(async response => {               
+        Axios.delete('https://127.0.0.1:8000/users/' + itemsSelected.value[0].id).then(async response => {               
             await getUsers();
             isLoading.value = false;  
         });
@@ -153,7 +141,7 @@
         itemsSelected.value.forEach((user) => {
             ids.push(user.id);
         });     
-        axios.delete('https://127.0.0.1:8000/users/many', {
+        Axios.delete('https://127.0.0.1:8000/users/many', {
             data: {
                 id: ids
             }          
@@ -165,7 +153,7 @@
 
     const clearUserTable = () => {
         isLoading.value = true; 
-        axios.delete('https://127.0.0.1:8000/users/clear').then(async response => {               
+        Axios.delete('https://127.0.0.1:8000/users/clear').then(async response => {               
             await getUsers();
             isLoading.value = false;  
         }).catch(err => {
@@ -174,7 +162,7 @@
     };    
 
     const exportData = () => {
-        axios.get('https://127.0.0.1:8000/users/export').then(response => {
+        Axios.get('https://127.0.0.1:8000/users/export').then(response => {
             // upload le pdf reçu                                    
         }); 
     };
