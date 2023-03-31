@@ -127,12 +127,13 @@
     }  
 
     const resetForm = () => {
-        title.value = '',
-        day.value = '',
-        month.value = '',
-        year.value = '',
-        media.value = '',
-        content.value = ''
+        title.value = '';
+        day.value = '';
+        month.value = '';
+        year.value = '';
+        media.value = '';
+        content.value = '';
+        timelineEdit = false;
     };
     
     defineComponent({
@@ -204,7 +205,7 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="formModal">Créer une étape</h5>
+                        <h5 class="modal-title" id="formModal">{{ !timelineEdit ? "Créer" : "Modifier" }}  une étape</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="resetForm()"></button>
                     </div>
                     <div class="modal-body">
