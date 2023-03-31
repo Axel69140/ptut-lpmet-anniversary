@@ -28,6 +28,13 @@ class UserController extends AbstractController
         try {
 
             $users = $userRepository->findAll();
+
+            if (!$users) {
+                return $this->json([
+                    'error' => 'Users not found'
+                ], 404);
+            }
+
             return $this->json($users, 200, [], ['groups' => ['user-return']]);
 
         } catch (\Exception $e) {
@@ -249,13 +256,13 @@ class UserController extends AbstractController
 
     // Create user
     #[Route('/register', name: 'app_api_user_post', methods: ['POST'])]
-    public function register(Request $request, UserRepository $userRepository, UserPasswordHasherInterface $userPasswordHasher, ValidatorInterface $validator, EntryDataService $entryDataService, GuestRepository $guestRepository): JsonResponse
+    public function register(Request $request, UserRepository $userRepository, UserPasswordHasherInterface $userPasswordHasher, ValidatorInterface $validator, EntryDataService $entryDataService, GuestRepository $guestRepository, EntityManagerInterface $em): JsonResponse
     {
         try {
 
             $content = json_decode($request->getContent(), true);
             $user = new User();
-            $user = $entryDataService->defineKeysInEntity($content, $user);
+            $user = $entryDataService->defineKeysInEntity($content, $user, $em);
             if ($user === null) {
                 return $this->json([
                     'error' => 'A problem has been encounter during entity creation'
@@ -308,7 +315,7 @@ class UserController extends AbstractController
 
     // Update user
     #[Route('/{id}', name: 'app_api_user_update', methods: ['PATCH'])]
-    public function updateUser(int $id, Request $request, UserRepository $userRepository, EntryDataService $entryDataService, ValidatorInterface $validator, GuestRepository $guestRepository): JsonResponse
+    public function updateUser(int $id, Request $request, UserRepository $userRepository, EntryDataService $entryDataService, ValidatorInterface $validator, GuestRepository $guestRepository, EntityManagerInterface $em): JsonResponse
     {
         try {
 
@@ -320,7 +327,7 @@ class UserController extends AbstractController
                 ], 404);
             }
 
-            $userToUpdate = $entryDataService->defineKeysInEntity($content, $userToUpdate);
+            $userToUpdate = $entryDataService->defineKeysInEntity($content, $userToUpdate, $em);
             if ($userToUpdate === null) {
                 return $this->json([
                     'error' => 'A problem has been encounter during entity modification'
