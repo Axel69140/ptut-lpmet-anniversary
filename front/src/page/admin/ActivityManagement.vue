@@ -125,6 +125,7 @@
         startHour.value = '';
         duration.value = '';
         user.value = '';
+        activityEdit = false;
     };
     
     defineComponent({
@@ -200,7 +201,7 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="formModal">Créer un activité</h5>
+                        <h5 class="modal-title" id="formModal">{{ !activityEdit ? "Créer" : "Modifier" }}  un activité</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="resetForm()"></button>
                     </div>
                     <div class="modal-body">

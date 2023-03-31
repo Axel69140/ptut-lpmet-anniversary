@@ -102,6 +102,7 @@
         name.value = '';
         email.value = '';
         user.value = '';
+        participantEdit = false;
     };
     
     defineComponent({
@@ -175,7 +176,7 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="formModal">Créer un participant</h5>
+                        <h5 class="modal-title" id="formModal">{{ !participantEdit ? "Créer" : "Modifier" }}  un participant</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="resetForm()"></button>
                     </div>
                     <div class="modal-body">
