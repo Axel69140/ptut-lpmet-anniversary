@@ -351,6 +351,7 @@
   overflow: hidden;
   z-index: 1;
   font-family: inherit;
+  margin-bottom: 0px !important;
 }
 
 .btn-custom::before {

@@ -96,16 +96,21 @@ h1 {
   font-size: 16px;
   font-weight: 700;
   color: var(--bg-navbar-link) !important;
-  border: 3px solid transparent;
+  border: 3px solid var(--primary);
   cursor: pointer;
   position: relative;
-  background: linear-gradient(var(--bg-navbar), var(--bg-navbar)) padding-box,
-      linear-gradient(to right, rgba(231,81,18,0.75), rgba(253,175,23,0.75)) border-box;
+  background: var(--bg-navbar);
   text-decoration: none;
   overflow: hidden;
   z-index: 1;
   font-family: inherit;  
   margin-bottom: 20px !important;
+}
+
+.btn-custom:hover {
+  border: 3px solid transparent;
+  background: linear-gradient(var(--bg-navbar), var(--bg-navbar)) padding-box,
+      linear-gradient(to right, rgba(231,81,18,0.75), rgba(253,175,23,0.75)) border-box;
 }
 
 .btn-custom::before {
