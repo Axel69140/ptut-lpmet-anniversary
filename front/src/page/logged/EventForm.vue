@@ -2,7 +2,7 @@
     import axios from 'axios';  
     import Footer from '../../components/Footer.vue';     
     import { userService } from '../../services/user.services';
-    import { accountService } from '../services/account.services';
+    import { accountService } from '../../services/account.services';
     import { participantService } from '../../services/participant.services';
 
     export default {
