@@ -101,10 +101,11 @@ export default {
     </div>
     <form @submit.prevent="submitForm">
       <div class="isParticipate">
-          <label class="containerInput">Je participe à l'évènement
-              <input id="inputEvent" type="checkbox" v-model="isInputChecked" @change="onInputChange">
-              <div class="checkmark"></div>
-          </label>
+          <label for="inputEvent">Je participe à l'évènement</label>
+          <div class="cntr">
+              <input type="checkbox" id="inputEvent" class="hidden-xs-up" v-model="isInputChecked" @change="onInputChange">
+              <label for="inputEvent" class="cbx"></label>
+          </div> 
       </div>
       <div class="invitations">
         <div class="invitation" v-for="guest in guests.data">
@@ -141,7 +142,25 @@ export default {
 </template>
 
 <style scoped>
+#inputEvent:checked ~ .cbx {
+  border-color: transparent;
+  background: var(--primary);
+  animation: jelly 0.6s ease;
+}
 
+#inputEvent:checked ~ .cbx:after {
+  opacity: 1;
+  transform: rotate(45deg) scale(1);
+}
+
+.save{
+    border-radius: 10px;
+    border: solid 1px black;
+    color: white;
+    background-color: #1f8d15;
+    padding: 0.5%;
+    transition: all .2s ease-in-out; 
+}
 .invitation{
   width: 20%;
   border: solid 2px var(--primary);
@@ -265,73 +284,4 @@ li span {
     align-items: center;
     margin-top: 40px;
 }
-.containerInput input {
-  position: absolute;
-  opacity: 0;
-  cursor: pointer;
-  height: 0;
-  width: 0;
-}
-
-.containerInput {
-  display: flex;
-  gap: 10px;
-  font-size: x-large;
-}
-
-/* Create a custom checkbox */
-.checkmark {
-  position: relative;
-  box-shadow: var(--primary) 0px 0px 0px 2px;
-  background-color: transparent;
-  height: 20px;
-  width: 20px;
-  margin-right: 10px;
-  flex-shrink: 0;
-  transition: all 0.2s ease 0s;
-  cursor: pointer;
-  transform-origin: 0px 10px;
-  border-radius: 4px;
-  margin: 10px 10px 0px 0px;
-  padding: 0px;
-  box-sizing: border-box;
-}
-
-.containerInput input:checked ~ .checkmark {
-  box-shadow: var(--primary);
-  background-color: var(--primary);
-  height: 20px;
-  width: 20px;
-  margin-right: 10px;
-  flex-shrink: 0;
-  transition: all 0.2s ease 0s;
-  cursor: pointer;
-  transform-origin: 0px 0px;
-  border-radius: 4px;
-  padding: 0px;
-  box-sizing: border-box;
-}
-
-.checkmark:after {
-  content: "";
-  position: absolute;
-  display: none;
-}
-
-.containerInput input:checked ~ .checkmark:after {
-  display: block;
-}
-
-.containerInput .checkmark:after {
-  left: 0.35em;
-  top: 0.15em;
-  width: 0.25em;
-  height: 0.5em;
-  border: solid white;
-  border-width: 0 0.15em 0.15em 0;
-  transform: rotate(45deg);
-  transition: all 500ms ease-in-out;
-}
-
-/* END custom checkbox */
 </style>

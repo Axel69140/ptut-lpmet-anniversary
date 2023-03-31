@@ -307,12 +307,18 @@
 
                         <div class="form-row">
                             <label for="isParticipated">Je participe à l'événement</label>
-                            <input v-model="isParticipated" type="checkbox"/>
+                            <div class="cntr">
+                                <input v-model="isParticipated" type="checkbox" id="isParticipated" class="hidden-xs-up">
+                                <label for="isParticipated" class="cbx"></label>
+                            </div>
                         </div>
 
                         <div class="form-row">
                             <label for="isPublic">Je souhaite afficher publiquement mes informations</label>
-                            <input v-model="isPublic" type="checkbox"/>
+                            <div class="cntr">
+                                <input v-model="isPublic" type="checkbox" id="isPublic" class="hidden-xs-up">
+                                <label for="isPublic" class="cbx"></label>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -388,5 +394,16 @@ h1 {
 #function-datatable {
     display: flex;
     flex-wrap: wrap;
+}
+
+#isParticipated:checked ~ .cbx, #isPublic:checked ~ .cbx {
+  border-color: transparent;
+  background: var(--primary);
+  animation: jelly 0.6s ease;
+}
+
+#isParticipated:checked ~ .cbx:after, #isPublic:checked ~ .cbx:after {
+  opacity: 1;
+  transform: rotate(45deg) scale(1);
 }
 </style>
