@@ -1,87 +1,88 @@
 <script>
-    import axios from 'axios';  
-    import Footer from '../../components/Footer.vue';     
-    import { userService } from '../../services/user.services';
-    import { accountService } from '../../services/account.services';
-    import { participantService } from '../../services/participant.services';
+    
+import axios from 'axios';  
+import Footer from '../../components/Footer.vue';     
+import { userService } from '../../services/user.services';
+import { accountService } from '../../services/account.services';
+import { participantService } from '../../services/participant.services';
 
-    export default {
-        name: 'eventForm',
-        data: () => ({ 
-          guest: [],
-          
-          }),       
-        computed: {            
-        },
-        methods: { 
-          
-        },
-        mounted() {    
-          /*idUser = accountService.getId().then((response) => {
-              this.guests = participantService.getParticipantByUser(response).then((response2) =>{
-                  console.log(this.guests);  
-              });
-          });*/
-
-          const second = 1000,
-        minute = second * 60,
-        hour = minute * 60,
-        day = hour * 24;
-
-        //I'm adding this section so I don't have to keep updating this pen every year :-)
-        //remove this if you don't need it
-        let today = new Date(),
-        dd = String(today.getDate()).padStart(2, "0"),
-        mm = String(today.getMonth() + 1).padStart(2, "0"),
-        yyyy = today.getFullYear() +1,
-        nextYear = yyyy + 1,
-        dayMonth = "05/05/",
-        birthday = dayMonth + yyyy;
-        
-
-        today = mm + "/" + dd + "/" + yyyy;
-        if (today > birthday) {
-            birthday = dayMonth + nextYear;
-        }
-        //end
-
-        const countDown = new Date(birthday).getTime(),
-        x = setInterval(function() {
-
-            const now = new Date().getTime(),
-            distance = countDown - now;
-
-            const daysElement = document.getElementById("days");
-            if (daysElement) {
-              daysElement.innerText = Math.floor(distance / (day));
-            }
-            const hoursElement = document.getElementById("hours");
-            if (hoursElement) {
-              hoursElement.innerText = Math.floor((distance % (day)) / (hour));
-            }
-            const minutesElement = document.getElementById("minutes");
-            if (minutesElement) {
-              minutesElement.innerText = Math.floor((distance % (hour)) / (minute));
-            }
-            const secondsElement = document.getElementById("seconds");
-            if (secondsElement) {
-              secondsElement.innerText = Math.floor((distance % (minute)) / second);
-            }
-
-            //do something later when date is reached
-            if (distance < 0) {
-            document.getElementById("headline").innerText = "It's my birthday!";
-            document.getElementById("countdown").style.display = "none";
-            document.getElementById("content").style.display = "block";
-            clearInterval(x);
-            }
-            //seconds
-        }, 0)
-    },
-        components: {
-            Footer
-        }
+export default {
+  name: 'eventForm',
+  data: () => ({ 
+    guests: {},
+    isInputChecked: false
+  }),       
+  computed: {            
+  },
+  methods: { 
+    addGuest(){
+      console.log("test");
     }
+  },
+  async mounted() {
+    const idUser = await accountService.getId();
+    const guests = await userService.getGuestsByUser(idUser);
+    this.guests = guests;
+    console.log(guests);
+    
+    const second = 1000,
+      minute = second * 60,
+      hour = minute * 60,
+      day = hour * 24;
+
+    //I'm adding this section so I don't have to keep updating this pen every year :-)
+    //remove this if you don't need it
+    let today = new Date(),
+      dd = String(today.getDate()).padStart(2, "0"),
+      mm = String(today.getMonth() + 1).padStart(2, "0"),
+      yyyy = today.getFullYear() +1,
+      nextYear = yyyy + 1,
+      dayMonth = "05/05/",
+      birthday = dayMonth + yyyy;
+
+    today = mm + "/" + dd + "/" + yyyy;
+    if (today > birthday) {
+      birthday = dayMonth + nextYear;
+    }
+    //end
+
+    const countDown = new Date(birthday).getTime(),
+      x = setInterval(function() {
+
+      const now = new Date().getTime(),
+        distance = countDown - now;
+
+      const daysElement = document.getElementById("days");
+      if (daysElement) {
+        daysElement.innerText = Math.floor(distance / (day));
+      }
+      const hoursElement = document.getElementById("hours");
+      if (hoursElement) {
+        hoursElement.innerText = Math.floor((distance % (day)) / (hour));
+      }
+      const minutesElement = document.getElementById("minutes");
+      if (minutesElement) {
+        minutesElement.innerText = Math.floor((distance % (hour)) / (minute));
+      }
+      const secondsElement = document.getElementById("seconds");
+      if (secondsElement) {
+        secondsElement.innerText = Math.floor((distance % (minute)) / second);
+      }
+
+      //do something later when date is reached
+      if (distance < 0) {
+        document.getElementById("headline").innerText = "It's my birthday!";
+        document.getElementById("countdown").style.display = "none";
+        document.getElementById("content").style.display = "block";
+        clearInterval(x);
+      }
+      //seconds
+    }, 0)
+  },
+  components: {
+    Footer
+  }
+}
 </script>
 
 
@@ -98,25 +99,75 @@
             </ul>
         </div>
     </div>
-    <div class="isParticipate">
-        <label class="containerInput">Je participe à l'évènement
-            <input id="inputEvent" type="checkbox">
-            <div class="checkmark"></div>
-        </label>
-    </div>
-    <div class="invitations"><!--Récupérere si il participe + si il a inviter quelequ'un deja ou non-->
-      <div class="invitation" v-for="guest in this.guests"></div>
+    <form @submit.prevent="submitForm">
+      <div class="isParticipate">
+          <label class="containerInput">Je participe à l'évènement
+              <input id="inputEvent" type="checkbox" v-model="isInputChecked" @change="onInputChange">
+              <div class="checkmark"></div>
+          </label>
       </div>
-      <div v-if="this.guests.length > 1"></div><!-- option défini en base a la place du 1 --></div>
-    <div>
-        <button class="btn-custom">Enregistrer</button>
-    </div>
+      <div class="invitations">
+        <div class="invitation" v-for="guest in guests.data">
+          <div class="guest">
+            <div class="name">
+              <p>Nom : </p>
+              <p>{{ guest.name }}</p>
+            </div>
+            <div class="email">
+              <p>Email : </p>
+              <p>{{ guest.email }}</p>
+            </div>
+            
+            
+          </div>
+          
+        </div>
+        <div v-if="guests.data < 1 && isInputChecked" class="invitation" id="addGuest" @click="addGuest()"><!-- Settings à la place du 1 -->
+          <p class="infoAddGuets">Invité une personne à l'évènement</p>
+          <p class="iconAdd">+</p>
+        </div>
+      </div>
+      
+      <div>
+          <button class="btn-custom" type="submit">Enregistrer</button>
+      </div>
+    </form>
+    <Footer class="footer" />
   </main>
-
-  <Footer/>
 </template>
 
 <style scoped>
+
+.invitation{
+  width: 20%;
+  border: solid 2px var(--primary);
+  border-radius: 15px;
+}
+
+.footer{
+  position: inherit;
+}
+
+#addGuest{
+  cursor: pointer;
+}
+
+.guest{
+  display: flex;
+}
+.infoAddGuets{
+  font-size: larger;
+}
+
+.iconAdd{
+  font-size: xx-large;
+}
+
+.invitations{
+  display: flex;
+  justify-content: space-around;
+  margin: 30px 1% 30px 1%;
+}
 
 :root {
   --smaller: .75;

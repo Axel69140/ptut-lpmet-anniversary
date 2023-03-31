@@ -4,10 +4,6 @@ const getParticipants = () => {
     return Axios.get('https://127.0.0.1:8000/participants');
 }
 
-const getParticipantByUser = (userId) => {
-    return Axios.get('https://127.0.0.1:8000/participants/byuser/' + userId);
-}
-
 const getParticipantByEMail = (participantMail) => {    
     return Axios.get('https://127.0.0.1:8000/participants/' + participantMail);
 }
@@ -38,7 +34,6 @@ const exportParticipantData = () => {
 
 export const participantService = {
     getParticipants,
-    getParticipantByUser,
     getParticipantByEMail,
     createParticipant,
     editParticipant,

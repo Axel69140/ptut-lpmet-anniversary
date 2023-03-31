@@ -8,6 +8,10 @@ const getUserById = (userId) => {
     return Axios.get('https://127.0.0.1:8000/users/' + userId);
 }
 
+const getGuestsByUser = (userId) => {
+    return Axios.get('https://127.0.0.1:8000/users/' + userId + '/guests');
+}
+
 const createUser = (user) => {    
     return Axios.post('https://127.0.0.1:8000/users/register', user);
 }
@@ -39,6 +43,7 @@ const exportUserData = () => {
 export const userService = {
     getUsers,
     getUserById,
+    getGuestsByUser,
     createUser,
     editUser,
     deleteUser,

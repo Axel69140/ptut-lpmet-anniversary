@@ -84,7 +84,7 @@
         </ul>
     </main>
     
-    <Footer/>
+    <Footer class="footer" />
 </template>
 
 <style scoped>
@@ -92,6 +92,9 @@
         margin: 0;
         padding: 0;
         border: none;
+    }
+
+    .footer{
     }
 
     .stepWithoutPicture{
