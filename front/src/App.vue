@@ -188,6 +188,7 @@ h1 {
   background: linear-gradient(to right, rgba(4, 146, 28, 0.75), rgba(91, 172, 68, 0.75));
 }
 
+/* SearchBar */
 .searchBar {
   outline: none;
   line-height: 26px;
@@ -208,6 +209,7 @@ h1 {
   color: var(--bg-navbar-link) !important;
 }
 
+/* Modal */
 .modal-body p {
   font-weight: 600;
   font-size: 18px;
@@ -219,6 +221,7 @@ h1 {
   font-size: 25px;
 }
 
+/* Form */
 .form-row {
   display: flex;
   margin: 16px 0px;
@@ -240,5 +243,82 @@ h1 {
 
 .form-row__input::placeholder {
   color: var(--input-placeholder);
+}
+
+label {
+  font-weight: 600;
+}
+
+/* Checkbox */
+.cbx {
+  position: relative;
+  top: 1px;
+  width: 20px;
+  height: 20px;
+  border: 1px solid #c8ccd4;
+  border-radius: 3px;
+  vertical-align: middle;
+  transition: background 0.1s ease;
+  cursor: pointer;
+  display: block;
+}
+
+.cbx:after {
+  content: '';
+  position: absolute;
+  top: 1px;
+  left: 6px;
+  width: 6px;
+  height: 12px;
+  opacity: 0;
+  transform: rotate(45deg) scale(0);
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  transition: all 0.3s ease;
+  transition-delay: 0.15s;
+}
+
+.lbl {
+  margin-left: 5px;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.cntr {
+  position: relative;
+}
+
+@keyframes jelly {
+ from {
+  transform: scale(1, 1);
+ }
+
+ 30% {
+  transform: scale(1.25, 0.75);
+ }
+
+ 40% {
+  transform: scale(0.75, 1.25);
+ }
+
+ 50% {
+  transform: scale(1.15, 0.85);
+ }
+
+ 65% {
+  transform: scale(0.95, 1.05);
+ }
+
+ 75% {
+  transform: scale(1.05, 0.95);
+ }
+
+ to {
+  transform: scale(1, 1);
+ }
+}
+
+.hidden-xs-up {
+ display: none!important;
 }
 </style>
