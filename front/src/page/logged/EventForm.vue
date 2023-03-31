@@ -104,9 +104,10 @@
             <div class="checkmark"></div>
         </label>
     </div>
-    <div class="invitation"><!--Récupérere si il participe + si il a inviter quelequ'un deja ou non-->
-
-    </div>
+    <div class="invitations"><!--Récupérere si il participe + si il a inviter quelequ'un deja ou non-->
+      <div class="invitation" v-for="guest in this.guests"></div>
+      </div>
+      <div v-if="this.guests.length > 1"></div><!-- option défini en base a la place du 1 --></div>
     <div>
         <button class="btn-custom">Enregistrer</button>
     </div>
