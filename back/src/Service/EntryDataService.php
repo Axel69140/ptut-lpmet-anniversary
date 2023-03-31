@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Entity\User;
 use ReflectionClass;
+use App\Repository\SettingsRepository;
 
 class EntryDataService
 {
@@ -96,8 +97,14 @@ class EntryDataService
 
             //Check if function is correct
             if($entity::class === User::class){
-                $functions = $entity->getAllowedFunctions();
-                if($key === 'function' && !in_array($value, $functions))
+                // Check if $em null
+                if($em === null)
+                {
+                    return null;
+                }
+
+                $settingsRepository = $em->getRepository('App\Entity\Settings');
+                if($key === 'function' && !in_array($value, $settingsRepository->findAll()[0]->getAllowedFunctions()))
                 {
                     return null;
                 }
