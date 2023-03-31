@@ -84,7 +84,7 @@
         </ul>
     </main>
     
-    <Footer/>
+    <Footer class="footer" />
 </template>
 
 <style scoped>

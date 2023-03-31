@@ -45,7 +45,7 @@
                 return name.charAt(0) + '*'.repeat(name.length - 1);
             },
 
-            test(array,nbr) {
+            filter(array,nbr) {
                 return _.chunk(array,nbr);
             }
         },
@@ -92,7 +92,7 @@
                 </div>
             </div>
             <div class="users">
-                <ul v-for="(chunk, index) in test(filteredUsers, 6)" :key="index" class="usersPart">
+                <ul v-for="(chunk, index) in filter(filteredUsers, 6)" :key="index" class="usersPart">
                     <li v-for="(user, i) in chunk" :key="i" class="user">
                         <img src="https://media.istockphoto.com/id/1200677760/fr/photo/verticale-de-jeune-homme-de-sourire-beau-avec-des-bras-crois%C3%A9s.jpg?s=612x612&w=0&k=20&c=0TDS1aTXZzWLzI_X9eGBhqS_QZAz49zKEDKT8xsHZfU=" width="198" height="198">
                         <div class="fullName">
