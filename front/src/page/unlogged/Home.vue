@@ -94,9 +94,6 @@
         border: none;
     }
 
-    .footer{
-    }
-
     .stepWithoutPicture{
         background-color: #fff;
         border: 5px solid var(--third);
