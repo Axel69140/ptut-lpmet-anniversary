@@ -19,11 +19,11 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class ActivityController extends AbstractController
 {
     // Get activities
-    /*#[Route('/', name: 'app_api_activity_get', methods: ['GET'])]
+    #[Route('/', name: 'app_api_activity_get', methods: ['GET'])]
     public function getActivities(ActivityRepository $activityRepository): JsonResponse
     {
             $activities = $activityRepository->findAll();
-            return $this->json($activities, 200);
+            return $this->json($activities, 200, [], ['groups' => ['activity-return']]);
         
     }
 
@@ -95,7 +95,7 @@ class ActivityController extends AbstractController
             $entityManager->persist($activity);
             $entityManager->flush();
 
-            return $this->json($activity, 201);              
+            return $this->json($activity, 201, [], ['groups' => ['activity-return']]);
     }
 
     // Update activity
@@ -231,5 +231,5 @@ class ActivityController extends AbstractController
                 'error' => 'Server error'
             ], 500);
         }
-    } */
+    }
 }

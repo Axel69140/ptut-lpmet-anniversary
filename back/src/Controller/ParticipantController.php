@@ -16,24 +16,24 @@ use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-#[Route('/guests')]
-class GuestController extends AbstractController
+#[Route('/participants')]
+class ParticipantController extends AbstractController
 {
-    // Get guests
+    // Get participants
     #[Route('/', name: 'app_api_guest_get', methods: ['GET'])]
-    public function getGuests(GuestRepository $guestRepository): JsonResponse
+    public function getGuests(GuestRepository $guestRepository, UserRepository $userRepository): JsonResponse
     {
         try {
 
-            $guests = $guestRepository->findAll();
+            $participants = $userRepository->findBy(['isParticipated' => true]) + $guestRepository->findAll();
 
-            if (!$guests) {
+            if (!$participants) {
                 return $this->json([
-                    'error' => 'Guests not found'
+                    'error' => 'Participants not found'
                 ], 404);
             }
 
-            return $this->json($guests, 200, [], ['groups' => ['guest-return']]);
+            return $this->json($participants, 200, [], ['groups' => ['user-return', 'guest-return']]);
 
         } catch (\Exception $e) {
 

@@ -12,29 +12,29 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\Entity(repositoryClass: ActivityRepository::class)]
 class Activity
 {
-    #[Groups(['user-return'])]
+    #[Groups(['user-return', 'activity-return'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['user-return'])]
+    #[Groups(['user-return', 'activity-return'])]
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[Groups(['user-return'])]
+    #[Groups(['user-return', 'activity-return'])]
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
 
-    #[Groups(['user-return'])]
+    #[Groups(['user-return', 'activity-return'])]
     #[ORM\Column(type: Types::TIME_MUTABLE)]
     private ?\DateTimeInterface $startHour = null;
 
-    #[Groups(['user-return'])]
+    #[Groups(['user-return', 'activity-return'])]
     #[ORM\Column(type: Types::TIME_MUTABLE)]
     private ?\DateTimeInterface $duration = null;
 
-    #[Groups(['user-return'])]
+    #[Groups(['user-return', 'activity-return'])]
     #[ORM\Column]
     private ?bool $isValidate = null;
 
@@ -42,7 +42,7 @@ class Activity
     #[ORM\JoinColumn(nullable: false)]
     private ?User $creator = null;
 
-    #[Groups(['user-return'])]
+    #[Groups(['user-return', 'activity-return'])]
     #[ORM\OneToMany(mappedBy: 'activity', targetEntity: Media::class, orphanRemoval: true)]
     private Collection $medias;
 

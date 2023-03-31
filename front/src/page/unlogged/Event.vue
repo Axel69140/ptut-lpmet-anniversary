@@ -1,40 +1,50 @@
 <script>
-    import axios from 'axios';   
-    import Footer from '../../components/Footer.vue';  
-    import { activityService } from '../../services/activity.services'; 
+  import axios from 'axios';
+  import Footer from '../../components/Footer.vue';
+  import { activityService } from '../../services/activity.services';
+  import { accountService } from '../../services/account.services';
+  import { userService } from '../../services/user.services';
 
-    export default {
+  export default {
     name: 'event',
-    data: () => ({ activities: [] }),       
-    computed: {},      
+    data() {
+      return {
+        activities: [],
+        user: {},
+      };
+    },
+    computed: {},
     methods: {
       parameterGame() {
         this.$router.push('../event/registration');
-      }
+      },
     },
-    mounted() {   
-        activityService.getActivities().then(response => {
-            console.log(response.data);
-            this.activities = response.data;
-        });        
-        
-        const second = 1000,
-        minute = second * 60,
-        hour = minute * 60,
-        day = hour * 24;
+    
+    async mounted() {
+      activityService.getActivities().then((response) => {
+        console.log(response.data);
+        this.activities = response.data;
+      });
 
-        //I'm adding this section so I don't have to keep updating this pen every year :-)
-        //remove this if you don't need it
-        let today = new Date(),
-        dd = String(today.getDate()).padStart(2, "0"),
-        mm = String(today.getMonth() + 1).padStart(2, "0"),
-        yyyy = today.getFullYear() +1,
-        nextYear = yyyy + 1,
-        dayMonth = "05/05/",
-        birthday = dayMonth + yyyy;
-        
+      const idUser = await accountService.getId();
+      this.user = await userService.getUserById(idUser);
+      console.log(this.user);
 
-        today = mm + "/" + dd + "/" + yyyy;
+      const second = 1000;
+      const minute = second * 60;
+      const hour = minute * 60;
+      const day = hour * 24;
+
+      // I'm adding this section so I don't have to keep updating this pen every year :-)
+      // remove this if you don't need it
+      let today = new Date();
+      const dd = String(today.getDate()).padStart(2, '0');
+      const mm = String(today.getMonth() + 1).padStart(2, '0');
+      const yyyy = today.getFullYear() + 1;
+      const nextYear = yyyy + 1;
+      const dayMonth = '05/05/';
+      let birthday = dayMonth + yyyy;
+
         if (today > birthday) {
             birthday = dayMonth + nextYear;
         }
@@ -93,12 +103,13 @@
         </div>
     </div>
     <div class="participate">
-      <div class="divParticipate">
-        <p class="isParticipate" @click="parameterGame()">Je participe à l'évènement</p><!--Changer la pour récupérere si l'utilisateur est inscrit à l'évènement ou non-->
+      <div class="divParticipate" v-if="user && user.data && !user.data.isParticipated">
+          <p class="btn-custom" @click="parameterGame()">Je participe à l'évènement</p>
       </div>
-      <div class="invitation">
-          <a href="../logged/EventForm.vue">Inviter</a>
-          <a href="../logged/EventForm.vue">Voir ses invités</a>
+
+      <div class="invitation" v-else>
+          <a class="btn-custom" @click="">Inviter</a>
+          <a class="btn-custom" @click="parameterGame()">Voir ses invités</a>
       </div>
     </div>
   </main>
@@ -141,25 +152,14 @@ body {
 
 .countdown{
   background-color: var(--secondary);
+  padding-bottom: 20px ;
 }
 
 .invitation a{
   text-decoration: none;
-  color: #ffffff;
-  border: solid 3px #ffffff;
-  background-color: var(--secondary);
-  border-radius: 15px;
-  padding: 0.5%;
-  margin: 15px 10px;
-  transition: all .2s ease-in-out; 
+  margin: 0 20px;
 }
 
-.invitation a:hover{
-  color: #ffffff;
-  border-color: var(--primary);
-  background-color: var(--primary);
-  transform: scale(1.1);
-}
 
 .isParticipate{
   color: #ffffff;

@@ -110,6 +110,10 @@ export default {
       <div class="invitations">
         <div class="invitation" v-for="guest in guests.data">
           <div class="guest">
+            <div class="info">
+              <p>Invité : </p>
+              <p class="deleteGuest">x</p>
+            </div>
             <div class="name">
               <p>Nom : </p>
               <p>{{ guest.name }}</p>
@@ -220,6 +224,7 @@ body {
 
 .countdown{
   background-color: var(--secondary);
+  padding-bottom: 20px ;
 }
 
 h1 {
@@ -273,42 +278,6 @@ li span {
   }
 }
 
-.btn-custom {
-  display: inline-block;
-  padding: 0.9rem 1.8rem;
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--bg-navbar-link) !important;
-  border: 3px solid var(--primary);
-  cursor: pointer;
-  position: relative;
-  background-color: transparent;
-  text-decoration: none;
-  overflow: hidden;
-  z-index: 1;
-  font-family: inherit;
-}
-
-.btn-custom::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: var(--primary);
-  transform: translateX(-100%);
-  transition: all .3s;
-  z-index: -1;
-}
-
-.btn-custom:hover::before {
-  transform: translateX(0);
-}
-
-.btn-custom:hover {
-  color: var(--button-color-disable) !important;
-}
 .isParticipate{
     display: flex;
     justify-content: center;
