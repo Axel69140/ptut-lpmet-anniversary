@@ -90,6 +90,8 @@ h1 {
   margin-top: 100px !important;
 }
 
+
+/* Button custom */
 .btn-custom {
   display: inline-block;
   padding: 0.5rem 0.5rem;
@@ -139,6 +141,53 @@ h1 {
   border-radius: 5px;
 }
 
+/* Button modal custom */
+.btn-modal-neutre, .btn-modal-alert, .btn-modal-valid {
+  border-radius: 5px;
+}
+
+.btn-modal-neutre {
+  border: 3px solid rgba(46, 46, 46, 0.75);
+}
+
+.btn-modal-neutre:hover {
+  border: 3px solid transparent;
+  background: linear-gradient(var(--bg-navbar), var(--bg-navbar)) padding-box,
+      linear-gradient(to right, rgba(46, 46, 46, 0.75), rgba(112, 112, 112, 0.75)) border-box;
+}
+
+.btn-modal-neutre::before {
+  background: linear-gradient(to right, rgba(46, 46, 46, 0.75), rgba(112, 112, 112, 0.75));
+}
+
+.btn-modal-alert {
+  border: 3px solid rgba(204, 0, 0, 0.75);
+}
+
+.btn-modal-alert:hover {
+  border: 3px solid transparent;
+  background: linear-gradient(var(--bg-navbar), var(--bg-navbar)) padding-box,
+      linear-gradient(to right, rgba(204, 0, 0, 0.75), rgba(236, 43, 43, 0.75)) border-box;
+}
+
+.btn-modal-alert::before {
+  background: linear-gradient(to right, rgba(204, 0, 0, 0.75), rgba(236, 43, 43, 0.75));
+}
+
+.btn-modal-valid {
+  border: 3px solid rgba(4, 146, 28, 0.75);
+}
+
+.btn-modal-valid:hover {
+  border: 3px solid transparent;
+  background: linear-gradient(var(--bg-navbar), var(--bg-navbar)) padding-box,
+      linear-gradient(to right, rgba(4, 146, 28, 0.75), rgba(91, 172, 68, 0.75)) border-box;
+}
+
+.btn-modal-valid::before {
+  background: linear-gradient(to right, rgba(4, 146, 28, 0.75), rgba(91, 172, 68, 0.75));
+}
+
 .searchBar {
   outline: none;
   line-height: 26px;
@@ -163,5 +212,33 @@ h1 {
   font-weight: 600;
   font-size: 18px;
   margin: 0;
+}
+
+.modal-title {
+  font-weight: 600;
+  font-size: 25px;
+}
+
+.form-row {
+  display: flex;
+  margin: 16px 0px;
+  gap:16px;
+  flex-wrap: wrap;
+}
+
+.form-row__input {
+  padding:8px;
+  border: none;
+  border-radius: 8px;
+  background: var(--input-bg);
+  font-weight: 500;
+  font-size: 16px;
+  flex:1;
+  min-width: 100px;
+  color: black;
+}
+
+.form-row__input::placeholder {
+  color: var(--input-placeholder);
 }
 </style>

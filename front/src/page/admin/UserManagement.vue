@@ -316,9 +316,9 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="resetForm()">Fermer</button>
-                        <button v-if="!userEdit" type="button" class="btn btn-primary" @click="createUser()" data-bs-dismiss="modal">Enregistrer</button>
-                        <button v-else type="button" class="btn btn-primary" @click="editUser()" data-bs-dismiss="modal">Enregistrer</button>
+                        <button type="button" class="btn-modal-neutre btn-custom" data-bs-dismiss="modal" @click="resetForm()">Fermer</button>
+                        <button v-if="!userEdit" type="button" class="btn-modal-valid btn-custom" @click="createUser()" data-bs-dismiss="modal">Enregistrer</button>
+                        <button v-else type="button" class="btn-modal-valid btn-custom" @click="editUser()" data-bs-dismiss="modal">Enregistrer</button>
                     </div>
                 </div>
             </div>
@@ -335,8 +335,8 @@
                         <p>Voulez-vous supprimez l'utilisateur ?</p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                        <button type="button" class="btn btn-primary" @click="deleteUser()" data-bs-dismiss="modal">Supprimer</button>
+                        <button type="button" class="btn-modal-neutre btn-custom" data-bs-dismiss="modal">Fermer</button>
+                        <button type="button" class="btn-modal-alert btn-custom" @click="deleteUser()" data-bs-dismiss="modal">Supprimer</button>
                     </div>
                 </div>
             </div>
@@ -352,8 +352,8 @@
                         <p>Voulez-vous supprimez les utilisateurs ?</p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                        <button type="button" class="btn btn-primary" @click="deleteUsers()" data-bs-dismiss="modal">Supprimer</button>
+                        <button type="button" class="btn-modal-neutre btn-custom" data-bs-dismiss="modal">Fermer</button>
+                        <button type="button" class="btn-modal-alert btn-custom" @click="deleteUsers()" data-bs-dismiss="modal">Supprimer</button>
                     </div>
                 </div>
             </div>
@@ -369,8 +369,8 @@
                         <p>Voulez êtes sur le point de vider la table, voulez-vous continuez ?</p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn-gradient-2 " data-bs-dismiss="modal">Fermer</button>
-                        <button type="button" class="btn btn-primary" @click="clearUserTable()" data-bs-dismiss="modal">Vider</button>
+                        <button type="button" class="btn-modal-neutre btn-custom" data-bs-dismiss="modal">Fermer</button>
+                        <button type="button" class="btn-modal-alert btn-custom" @click="clearUserTable()" data-bs-dismiss="modal">Vider</button>
                     </div>
                 </div>
             </div>

@@ -251,29 +251,6 @@ main {
   background:var(--button-bg-disable);
 }
 
-.form-row {
-  display: flex;
-  margin: 16px 0px;
-  gap:16px;
-  flex-wrap: wrap;
-}
-
-.form-row__input {
-  padding:8px;
-  border: none;
-  border-radius: 8px;
-  background: var(--input-bg);
-  font-weight: 500;
-  font-size: 16px;
-  flex:1;
-  min-width: 100px;
-  color: black;
-}
-
-.form-row__input::placeholder {
-  color: var(--input-placeholder);
-}
-
 h1 {
   margin-top: 0px !important;
 }

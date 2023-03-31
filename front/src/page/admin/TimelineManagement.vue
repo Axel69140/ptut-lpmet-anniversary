@@ -247,9 +247,9 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="resetForm()">Fermer</button>
-                        <button v-if="!timelineEdit" type="button" class="btn btn-primary" @click="createTimelineStep()" data-bs-dismiss="modal">Enregistrer</button>
-                        <button v-else type="button" class="btn btn-primary" @click="editTimelineStep()" data-bs-dismiss="modal">Enregistrer</button>
+                        <button type="button" class="btn-modal-neutre btn-custom" data-bs-dismiss="modal" @click="resetForm()">Fermer</button>
+                        <button v-if="!timelineEdit" type="button" class="btn-modal-valid btn-custom" @click="createTimelineStep()" data-bs-dismiss="modal">Enregistrer</button>
+                        <button v-else type="button" class="btn-modal-valid btn-custom" @click="editTimelineStep()" data-bs-dismiss="modal">Enregistrer</button>
                     </div>
                 </div>
             </div>
@@ -266,8 +266,8 @@
                         <p>Voulez-vous supprimez l'étape ?</p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                        <button type="button" class="btn btn-primary" @click="deleteTimelineStep()" data-bs-dismiss="modal">Supprimer</button>
+                        <button type="button" class="btn-modal-neutre btn-custom" data-bs-dismiss="modal">Fermer</button>
+                        <button type="button" class="btn-modal-alert btn-custom" @click="deleteTimelineStep()" data-bs-dismiss="modal">Supprimer</button>
                     </div>
                 </div>
             </div>
@@ -283,8 +283,8 @@
                         <p>Voulez-vous supprimez les étapes ?</p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                        <button type="button" class="btn btn-primary" @click="deleteTimelineSteps()" data-bs-dismiss="modal">Supprimer</button>
+                        <button type="button" class="btn-modal-neutre btn-custom" data-bs-dismiss="modal">Fermer</button>
+                        <button type="button" class="btn-modal-alert btn-custom" @click="deleteTimelineSteps()" data-bs-dismiss="modal">Supprimer</button>
                     </div>
                 </div>
             </div>
@@ -300,8 +300,8 @@
                         <p>Voulez êtes sur le point de vider la table, voulez-vous continuez ?</p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                        <button type="button" class="btn btn-primary" @click="clearTimelineTable()" data-bs-dismiss="modal">Vider</button>
+                        <button type="button" class="btn-modal-neutre btn-custom" data-bs-dismiss="modal">Fermer</button>
+                        <button type="button" class="btn-modal-alert btn-custom" @click="clearTimelineTable()" data-bs-dismiss="modal">Vider</button>
                     </div>
                 </div>
             </div>

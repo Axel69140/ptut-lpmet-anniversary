@@ -197,9 +197,9 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="resetForm()">Fermer</button>
-                        <button v-if="!anecdoteEdit" type="button" class="btn btn-primary" @click="createAnecdote()" data-bs-dismiss="modal">Enregistrer</button>
-                        <button v-else type="button" class="btn btn-primary" @click="editAnecdote()" data-bs-dismiss="modal">Enregistrer</button>
+                        <button type="button" class="btn-modal-neutre btn-custom" data-bs-dismiss="modal" @click="resetForm()">Fermer</button>
+                        <button v-if="!anecdoteEdit" type="button" class="btn-modal-valid btn-custom" @click="createAnecdote()" data-bs-dismiss="modal">Enregistrer</button>
+                        <button v-else type="button" class="btn-modal-valid btn-custom" @click="editAnecdote()" data-bs-dismiss="modal">Enregistrer</button>
                     </div>
                 </div>
             </div>
@@ -216,8 +216,8 @@
                         <p>Voulez-vous supprimez l'anecdote ?</p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                        <button type="button" class="btn btn-primary" @click="deleteAnecdote()" data-bs-dismiss="modal">Supprimer</button>
+                        <button type="button" class="btn-modal-neutre btn-custom" data-bs-dismiss="modal">Fermer</button>
+                        <button type="button" class="btn-modal-alert btn-custom" @click="deleteAnecdote()" data-bs-dismiss="modal">Supprimer</button>
                     </div>
                 </div>
             </div>
@@ -233,8 +233,8 @@
                         <p>Voulez-vous supprimez les anecdotes ?</p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                        <button type="button" class="btn btn-primary" @click="deleteAnecdotes()" data-bs-dismiss="modal">Supprimer</button>
+                        <button type="button" class="btn-modal-neutre btn-custom" data-bs-dismiss="modal">Fermer</button>
+                        <button type="button" class="btn-modal-alert btn-custom" @click="deleteAnecdotes()" data-bs-dismiss="modal">Supprimer</button>
                     </div>
                 </div>
             </div>
@@ -250,8 +250,8 @@
                         <p>Voulez êtes sur le point de vider la table, voulez-vous continuez ?</p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                        <button type="button" class="btn btn-primary" @click="clearAnecdoteTable()" data-bs-dismiss="modal">Vider</button>
+                        <button type="button" class="btn-modal-neutre btn-custom" data-bs-dismiss="modal">Fermer</button>
+                        <button type="button" class="btn-modal-alert btn-custom" @click="clearAnecdoteTable()" data-bs-dismiss="modal">Vider</button>
                     </div>
                 </div>
             </div>

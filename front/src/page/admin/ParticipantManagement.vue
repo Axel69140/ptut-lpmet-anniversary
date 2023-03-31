@@ -194,9 +194,9 @@
                         </div>   
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="resetForm()">Fermer</button>
-                        <button v-if="!participantEdit" type="button" class="btn btn-primary" @click="createParticipant()" data-bs-dismiss="modal">Enregistrer</button>
-                        <button v-else type="button" class="btn btn-primary" @click="editParticipant()" data-bs-dismiss="modal">Enregistrer</button>
+                        <button type="button" class="btn-modal-neutre btn-custom" data-bs-dismiss="modal" @click="resetForm()">Fermer</button>
+                        <button v-if="!participantEdit" type="button" class="btn-modal-valid btn-custom" @click="createParticipant()" data-bs-dismiss="modal">Enregistrer</button>
+                        <button v-else type="button" class="btn-modal-valid btn-custom" @click="editParticipant()" data-bs-dismiss="modal">Enregistrer</button>
                     </div>
                 </div>
             </div>
@@ -213,8 +213,8 @@
                         <p>Voulez-vous supprimez le participant ?</p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                        <button type="button" class="btn btn-primary" @click="deleteParticipant()" data-bs-dismiss="modal">Supprimer</button>
+                        <button type="button" class="btn-modal-neutre btn-custom" data-bs-dismiss="modal">Fermer</button>
+                        <button type="button" class="btn-modal-alert btn-custom" @click="deleteParticipant()" data-bs-dismiss="modal">Supprimer</button>
                     </div>
                 </div>
             </div>
@@ -230,8 +230,8 @@
                         <p>Voulez-vous supprimez les participants ?</p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                        <button type="button" class="btn btn-primary" @click="deleteParticipants()" data-bs-dismiss="modal">Supprimer</button>
+                        <button type="button" class="btn-modal-neutre btn-custom" data-bs-dismiss="modal">Fermer</button>
+                        <button type="button" class="btn-modal-alert btn-custom" @click="deleteParticipants()" data-bs-dismiss="modal">Supprimer</button>
                     </div>
                 </div>
             </div>
