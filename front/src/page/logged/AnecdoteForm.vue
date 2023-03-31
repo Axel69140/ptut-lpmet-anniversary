@@ -1,43 +1,41 @@
 <script>
     import axios from 'axios';   
-    import Footer from '../../components/Footer.vue'; 
+    
+import Footer from '../../components/Footer.vue';
+import { anecdoteService } from '../../services/anecdote.services';
+import { accountService } from '../../services/account.services';
 
-    export default {
-        name: 'anecdoteForm',
-        data: () => ({ 
-            users: [],
-            content:''
-        }),       
-        computed: {            
-        },
-        methods: {    
-            parameterGame() {
-                if(this.content != undefined){
-                    alert('Content = ' + this.content);
-                    fetch("https://127.0.0.1:8000/anecdotes/create", {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            content: this.content
-                        })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log(data);
-                    }).catch(error => {
-                        console.error(error);
-                    });
-                }
-            }  
-        },
-        mounted() {       
-        },
-        components: {
-            Footer
-        }
+export default {
+  name: 'anecdoteForm',
+  data: () => ({
+    users: [],
+    content: '',
+    idUser: 1,
+  }),
+  computed: {
+
+  },
+  methods: {
+    async parameterGame() {
+      if (this.content !== undefined && this.content !== '') {
+        console.log(this.idUser);
+        await anecdoteService.createAnecdote({
+          content: this.content,
+          id_user: this.idUser,
+        });
+
+        // reset content input
+        this.content = '';
+      }
     }
+  },
+  async mounted() {
+    this.idUser = await accountService.getId();
+  },
+  components: {
+    Footer
+  }
+}
 </script>
 
 
@@ -55,7 +53,7 @@
                 <textarea class="textZone" rows="10" cols="100" v-model="content"></textarea>
             </div>
             <div class="sendButton">
-                <button @click="parameterGame()" class="validButton">Envoyer l'anecdote</button>
+                <button @click="parameterGame()" class="btn-custom">Envoyer l'anecdote</button>
             </div>
         </div>
     </main>
