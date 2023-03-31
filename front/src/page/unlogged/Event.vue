@@ -170,6 +170,11 @@ body {
   cursor: pointer;
 }
 
+h1 {
+  margin: 0!important;
+  padding-top: 100px;
+}
+
 .isParticipate:hover{
   color: #ffffff;
   border-color: var(--primary);
