@@ -155,18 +155,18 @@
 
         <div class="container">      
             <div id="function-datatable">
-                <input type="text" placeholder="Rechercher..." v-model="searchValue">
-                <button type="button" data-bs-toggle="modal" data-bs-target="#clearModal">Vider la table activité</button>
-                <button @click="exportData()">Exporter la liste des activités</button>
-                <button type="button" data-bs-toggle="modal" data-bs-target="#formModal">Créer un activité</button>
+                <input class="searchBar" type="text" placeholder="Rechercher..." v-model="searchValue">
+                <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#clearModal">Vider la table activité</a>
+                <a class="btn-custom btn-datatable" @click="exportData()">Exporter la liste des activités</a>
+                <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#formModal">Créer un activité</a>
 
                 <div v-if="itemsSelected.length === 1">
-                    <button type="button" data-bs-toggle="modal" data-bs-target="#formModal" @click="getActivityById(itemsSelected[0].id)">Modifier l'activité</button>
-                    <button type="button" data-bs-toggle="modal" data-bs-target="#deleteModal">Supprimer l'activité</button>
+                    <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#formModal" @click="getActivityById(itemsSelected[0].id)">Modifier l'activité</a>
+                    <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#deleteModal">Supprimer l'activité</a>
                 </div>
 
                 <div v-if="itemsSelected.length > 1">
-                    <button type="button" data-bs-toggle="modal" data-bs-target="#deletesModal">Supprimer les activités</button>
+                    <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#deletesModal">Supprimer les activités</a>
                 </div>
             </div>
 
@@ -297,7 +297,7 @@ h1 {
 }
 
 #function-datatable {
-    margin-bottom: 20px;
     display: flex;
+    flex-wrap: wrap;
 }
 </style>

@@ -208,18 +208,18 @@
 
         <div class="container">      
             <div id="function-datatable">
-                <input type="text" placeholder="Rechercher..." v-model="searchValue">
-                <button type="button" data-bs-toggle="modal" data-bs-target="#clearModal">Vider la table utilisateur</button>
-                <button @click="exportData()">Exporter la liste des utilisateurs</button>
-                <button type="button" data-bs-toggle="modal" data-bs-target="#formModal">Créer un utilisateur</button>
+                <input class="searchBar" type="text" placeholder="Rechercher..." v-model="searchValue">
+                <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#clearModal">Vider la table utilisateur</a>
+                <a class="btn-custom btn-datatable" @click="exportData()">Exporter la liste des utilisateurs</a>
+                <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#formModal">Créer un utilisateur</a>
 
                 <div v-if="itemsSelected.length === 1">
-                    <button type="button" data-bs-toggle="modal" data-bs-target="#formModal" @click="getUserById(itemsSelected[0].id)">Modifier l'utilisateur</button>
-                    <button type="button" data-bs-toggle="modal" data-bs-target="#deleteModal">Supprimer l'utilisateur</button>
+                    <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#formModal" @click="getUserById(itemsSelected[0].id)">Modifier l'utilisateur</a>
+                    <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#deleteModal">Supprimer l'utilisateur</a>
                 </div>
 
                 <div v-if="itemsSelected.length > 1">
-                    <button type="button" data-bs-toggle="modal" data-bs-target="#deletesModal">Supprimer les utilisateurs</button>
+                    <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#deletesModal">Supprimer les utilisateurs</a>
                 </div>
             </div>
 
@@ -369,7 +369,7 @@
                         <p>Voulez êtes sur le point de vider la table, voulez-vous continuez ?</p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                        <button type="button" class="btn-gradient-2 " data-bs-dismiss="modal">Fermer</button>
                         <button type="button" class="btn btn-primary" @click="clearUserTable()" data-bs-dismiss="modal">Vider</button>
                     </div>
                 </div>
@@ -386,7 +386,7 @@ h1 {
 }
 
 #function-datatable {
-    margin-bottom: 20px;
     display: flex;
+    flex-wrap: wrap;
 }
 </style>

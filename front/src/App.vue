@@ -89,4 +89,74 @@ main {
 h1 {
   margin-top: 100px !important;
 }
+
+.btn-custom {
+  display: inline-block;
+  padding: 0.5rem 0.5rem;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--bg-navbar-link) !important;
+  border: 3px solid transparent;
+  cursor: pointer;
+  position: relative;
+  background: linear-gradient(var(--bg-navbar), var(--bg-navbar)) padding-box,
+      linear-gradient(to right, rgba(231,81,18,0.75), rgba(253,175,23,0.75)) border-box;
+  text-decoration: none;
+  overflow: hidden;
+  z-index: 1;
+  font-family: inherit;  
+  margin-bottom: 20px !important;
+}
+
+.btn-custom::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to right, rgba(231,81,18,0.75), rgba(253,175,23,0.75));
+  transform: translateX(-100%);
+  transition: all .3s;
+  z-index: -1;
+}
+
+.btn-custom:hover::before {
+  transform: translateX(0);
+}
+
+.btn-custom:hover {
+  color: var(--button-color-disable) !important;
+}
+
+.btn-datatable {
+  margin-right: 20px;
+  border-radius: 5px;
+}
+
+.searchBar {
+  outline: none;
+  line-height: 26px;
+  font-size: 18px;
+  margin-right: 20px;
+  font-weight: 500;
+  color: var(--bg-navbar-link) !important;
+  padding: 0.5rem 0.875rem;
+  background: linear-gradient(var(--bg-navbar), var(--bg-navbar)) padding-box,
+      linear-gradient(to right, rgba(231,81,18,0.75), rgba(253,175,23,0.75)) border-box;
+  border: 3px solid transparent;
+  border-radius: 0.375rem;
+  width: 30%;
+  margin-bottom: 20px;
+}
+
+.searchBar::placeholder {
+  color: var(--bg-navbar-link) !important;
+}
+
+.modal-body p {
+  font-weight: 600;
+  font-size: 18px;
+  margin: 0;
+}
 </style>
