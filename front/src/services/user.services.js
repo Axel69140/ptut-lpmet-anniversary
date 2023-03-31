@@ -4,10 +4,6 @@ const getUsers = () => {
     return Axios.get('https://127.0.0.1:8000/users');
 }
 
-const getUsersParticipate = () => {    
-    return Axios.get('https://127.0.0.1:8000/users/participate');
-}
-
 const getUserById = (userId) => {    
     return Axios.get('https://127.0.0.1:8000/users/' + userId);
 }
@@ -48,6 +44,5 @@ export const userService = {
     deleteUser,
     deleteUsers,
     clearUserTable,
-    exportUserData,
-    getUsersParticipate
+    exportUserData
 }

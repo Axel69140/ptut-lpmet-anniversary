@@ -2,226 +2,147 @@
     import { defineComponent } from 'vue';
     import { Header, Item } from "vue3-easy-data-table";
     import { onMounted, ref, computed, watch, watchEffect } from "vue";
-    import axios from "axios";
     import Footer from '../../components/Footer.vue';    
     import Loader from '../../components/Loader.vue';
+    import { activityService } from '../../services/activity.services';
 
     const searchValue = ref('');
-    let users = ref([]);
+    let activities = ref([]);
     const itemsSelected = ref<Item[]>([]);
     let isLoading = ref(true);
-    let userEdit = false;
-    let deleteMode = '';
+    let activityEdit = false;
     const id = ref('');
-    const email = ref('');
-    const firstName = ref('');
-    const lastName = ref('');
-    const maidenName = ref('');
-    const password = ref('');
-    const password_confirmation = ref('');
-    const phone = ref('');
-    const activeYears = ref('');
-    const activeYears2 = ref('');
-    const _function = ref('');
-    const link = ref('');
-    const note = ref('');
-    const isParticipated = ref('');
-    const isPublic = ref('');
+    const name = ref('');
+    const description = ref('');
+    const startHour = ref('');
+    const duration = ref('');
+    const user = ref('');
 
     const headers: Header[] = [
-        { text: "Prénom", value: "firstName", sortable: true },
-        { text: "Nom", value: "lastName", sortable: true },
-        { text: "Nom de jeune fille", value: "maidenName", sortable: true },
-        { text: "Email", value: "email", sortable: true },
-        { text: "Numéro de téléphone", value: "phoneNumber", sortable: true },
-        { text: "Année d'activité", value: "activeYears", sortable: true },
-        { text: "Fonction", value: "function", sortable: true },
-        { text: "Lien linkedIn", value: "link", sortable: true },
-        { text: "Note", value: "note", sortable: true },
-        { text: "Participe à l'évènement", value: "participated", sortable: true },
-        { text: "Profil publique", value: "publicProfil", sortable: true }
+        { text: "Nom de l'activité", value: "name", sortable: true },
+        { text: "Utilisateur", value: "user", sortable: true },
+        { text: "Description", value: "description", sortable: true },
+        { text: "Heure du début de l'activité", value: "startHour", sortable: true },
+        { text: "Durée", value: "duration", sortable: true }
     ];
 
-    const items: Item[] = users.value;
+    const items: Item[] = activities.value;
 
     onMounted(async () => {
         // set datatable
-        getUsers();
+        getActivities();
         isLoading.value = false;  
     });    
-    
-    const getToken = () => {        
-        let user = localStorage.getItem('user');
-        if (user) {            
-            user = JSON.parse(user);
-            return user.token;
-        }
-        return null;
-    };
 
-    const getUsers = () => {
-        axios.get('http://127.0.0.1:8000/users', {
-            headers: {
-                Authorization: `Bearer ${getToken()}`
-            }
-        }).then(response => {
+    const getActivities = () => {    
+        activityService.getActivities().then((response) => { 
             items.splice(0, items.length);
-            const usersResponse = response.data;
-            usersResponse.forEach(user => {
-                user.publicProfil = user.publicProfil == true ? "Oui" : "Non";
-                user.participated = user.participated == true ? "Oui" : "Non";
-            });         
-            users.value.push(... usersResponse);
-            itemsSelected.value = [];                                         
-        }); 
-    };
-
-    const getUserById = (userId) => {        
-        axios.get('http://127.0.0.1:8000/users/' + userId).then(response => {  
-            userEdit = true;     
-            id.value = userId;
-            email.value = response.data.email;
-            firstName.value = response.data.firstName;
-            lastName.value = response.data.lastName;
-            maidenName.value = response.data.maidenName;
-            phone.value = response.data.phoneNumber;
-            activeYears.value = response.data.activeYears[0];
-            activeYears2.value = response.data.activeYears[1];
-            _function.value = response.data.function;
-            link.value = response.data.link;
-            note.value = response.data.note;
-            isParticipated.value = response.data.participated;
-            isPublic.value = response.data.publicProfil;                                       
+            const activitiesResponse = response.data;  
+            activities.value.push(... activitiesResponse);
+            itemsSelected.value = [];  
         });
     };
 
-    const createUser = () => {        
-        isLoading.value = true; 
-        axios.post('http://127.0.0.1:8000/users/register',{
-            email: email.value,
-            lastName: lastName.value,
-            firstName: firstName.value,
-            password: password.value,
-            roles: ["ROLE_USER"],
-            maidenName: maidenName.value,
-            phoneNumber: phone.value,
-            note: note.value,
-            isParticipated: isParticipated.value == true ? isParticipated.value : false,
-            isPublicProfil: isPublic.value == true ? isPublic.value : false,
-            activeYears: [activeYears.value, activeYears2.value],
-            function: _function.value,
-            link: link.value,
-            isVerified: false
-        }).then(async response => {
-            await getUsers();  
-            isLoading.value = false;                           
-        }); 
-    };
-
-    const editUser = () => {        
-        isLoading.value = true; 
-        axios.patch('http://127.0.0.1:8000/users/' + id.value,{
-            email: email.value,
-            lastName: lastName.value,
-            firstName: firstName.value,
-            maidenName: maidenName.value,
-            phoneNumber: phone.value,
-            note: note.value,
-            isParticipated: isParticipated.value == true ? isParticipated.value : false,
-            isPublicProfil: isPublic.value == true ? isPublic.value : false,
-            activeYears: [activeYears.value, activeYears2.value],
-            function: _function.value,
-            link: link.value
-        }).then(async response => {
-            await getUsers();  
-            isLoading.value = false;                           
-        }); 
-    };
-
-    const deleteUser = () => {        
-        isLoading.value = true; 
-        console.log(itemsSelected);
-        
-        axios.delete('http://127.0.0.1:8000/users/' + itemsSelected.value[0].id).then(async response => {               
-            await getUsers();
-            isLoading.value = false;  
+    const getActivityById = (activityId) => {  
+        activityService.getActivityById(activityId).then((response) => { 
+            activityEdit = true;     
+            id.value = activityId;
+            name.value = response.data.name;
+            description.value = response.data.description;
+            startHour.value = response.data.startHour;
+            duration.value = response.data.duration;
+            user.value = response.data.user;
         });
     };
 
-    const deleteUsers = () => {        
+    const createActivity = () => {        
+        isLoading.value = true; 
+        activityService.createActivity({
+            name: name.value,
+            description: description.value,
+            startHour: startHour.value,
+            duration: duration.value,
+            user: user.value
+        }).then(async (response) => { 
+            await getActivities();  
+            isLoading.value = false; 
+        });
+    };
+
+    const editActivity = () => {        
+        isLoading.value = true; 
+        activityService.editActivity(id.value, {
+            name: name.value,
+            description: description.value,
+            startHour: startHour.value,
+            duration: duration.value,
+            user: user.value
+        }).then(async (response) => { 
+            await getActivities();  
+            isLoading.value = false; 
+        }); 
+    };
+
+    const deleteActivity = () => {        
+        isLoading.value = true;         
+        activityService.deleteActivity(itemsSelected.value[0].id).then(async (response) => { 
+            await getActivities();
+            isLoading.value = false;     
+        });
+    };
+
+    const deleteActivities = () => {        
         isLoading.value = true; 
         let ids = [];
-        itemsSelected.value.forEach((user) => {
-            ids.push(user.id);
-        });     
-        axios.delete('http://127.0.0.1:8000/users/many', {
-            data: {
-                id: ids
-            }          
-        }).then(async response => {               
-            await getUsers();
-            isLoading.value = false;  
+        itemsSelected.value.forEach((activity) => {
+            ids.push(activity.id);
+        });    
+        activityService.deleteActivities(ids).then(async (response) => { 
+            await getActivities();
+            isLoading.value = false;     
         });
     };
 
-    const clearUserTable = () => {
+    const clearActivityTable = () => {
         isLoading.value = true; 
-        axios.delete('http://127.0.0.1:8000/users/clear').then(async response => {               
-            await getUsers();
-            isLoading.value = false;  
+        activityService.clearActivityTable().then(async (response) => { 
+            await getActivities();
+            isLoading.value = false;     
         }).catch(err => {
-            console.log("Error : impossible de vider la table utilisateur");
-        }) 
+            console.log("Error : Impossible de vider la table activité");
+        });
     };    
 
     const exportData = () => {
-        axios.get('http://127.0.0.1:8000/users/export').then(response => {
-            // upload le pdf reçu                                    
-        }); 
+        activityService.exportActivityData().then(async (response) => { 
+            // upload le pdf reçu     
+        })
     };
-
-    const setDeleteMode = (mode) => {
-        deleteMode = mode;
-    };
-
-    const range = (start, end) => {
-        return Array(end - start + 1).fill().map((_, index) => start + index);
-    }  
 
     const resetForm = () => {
-        email.value = '';
-        firstName.value = '';
-        lastName.value = '';
-        maidenName.value = '';
-        password.value = '';
-        password_confirmation.value = '';
-        phone.value = '';
-        activeYears.value = '';
-        activeYears2.value = '';
-        _function.value = '';
-        link.value = '';
-        note.value = '';
-        isParticipated.value = '';
-        isPublic.value = '';
+        name.value = '';
+        description.value = '';
+        startHour.value = '';
+        duration.value = '';
+        user.value = '';
     };
     
     defineComponent({
-        name: 'userManagement',
+        name: 'activityManagement',
         components: {
             Footer,
             Loader
         },
         setup() {
             return {
-                clearUserTable,
+                clearActivityTable,
                 exportData,
-                createUser,
-                getUserById,
+                createActivity,
+                getActivityById,
                 resetForm,
-                editUser,
-                deleteUser,
-                deleteUsers,
-                setDeleteMode
+                editActivity,
+                deleteActivity,
+                deleteActivities
             }
         }
     });
@@ -230,22 +151,22 @@
 
 <template>
     <main>
-        <h1>Gestion des utilisateurs</h1>     
+        <h1>Gestion des activités</h1>     
 
         <div class="container">      
             <div id="function-datatable">
                 <input type="text" placeholder="Rechercher..." v-model="searchValue">
-                <button type="button" data-bs-toggle="modal" data-bs-target="#clearModal">Vider la table utilisateur</button>
-                <button @click="exportData()">Exporter la liste des utilisateurs</button>
-                <button type="button" data-bs-toggle="modal" data-bs-target="#formModal">Créer un utilisateur</button>
+                <button type="button" data-bs-toggle="modal" data-bs-target="#clearModal">Vider la table activité</button>
+                <button @click="exportData()">Exporter la liste des activités</button>
+                <button type="button" data-bs-toggle="modal" data-bs-target="#formModal">Créer un activité</button>
 
                 <div v-if="itemsSelected.length === 1">
-                    <button type="button" data-bs-toggle="modal" data-bs-target="#formModal" @click="getUserById(itemsSelected[0].id)">Modifier l'utilisateur</button>
-                    <button type="button" data-bs-toggle="modal" data-bs-target="#deleteModal">Supprimer l'utilisateur</button>
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#formModal" @click="getActivityById(itemsSelected[0].id)">Modifier l'activité</button>
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#deleteModal">Supprimer l'activité</button>
                 </div>
 
                 <div v-if="itemsSelected.length > 1">
-                    <button type="button" data-bs-toggle="modal" data-bs-target="#deletesModal">Supprimer les utilisateurs</button>
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#deletesModal">Supprimer les activités</button>
                 </div>
             </div>
 
@@ -274,77 +195,41 @@
             </EasyDataTable>
         </div>
 
-        <!-- Pop-in d'ajout ou de modfication d'un utilisateur -->
+        <!-- Pop-in d'ajout ou de modfication d'un activité -->
         <div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="formModal" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="formModal">Créer un utilisateur</h5>
+                        <h5 class="modal-title" id="formModal">Créer un activité</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="resetForm()"></button>
                     </div>
                     <div class="modal-body">
                         <input v-model="id" type="hidden"/>
 
                         <div class="form-row">
-                            <input v-model="firstName" class="form-row__input" type="text" placeholder="Prénom*"/>
-                            <input v-model="lastName" class="form-row__input" type="text" placeholder="Nom*"/>
+                            <input v-model="name" class="form-row__input" type="text" placeholder="Nom de l'activité*"/>
                         </div>
 
                         <div class="form-row">
-                            <input v-model="maidenName" class="form-row__input" type="text" placeholder="Nom de jeune fille"/>
-                            <input v-model="phone" class="form-row__input" type="tel" placeholder="Numéro de téléphone"/>
+                            <textarea v-model="description" class="form-row__input" placeholder="Description*"/>
                         </div>
 
                         <div class="form-row">
-                            <input v-model="email" class="form-row__input" type="text" placeholder="Adresse mail*"/>
-                        </div>
-
-                        <div class="form-row" v-if="!userEdit">
-                            <input v-model="password" class="form-row__input" type="password" placeholder="Mot de passe*"/>
-                        </div>
-
-                        <div class="form-row" v-if="!userEdit">
-                            <input v-model="password_confirmation" class="form-row__input" type="password" placeholder="Confirmer mot de passe*"/>
+                            <input v-model="startHour" class="form-row__input" type="text" placeholder="Heure du début de l'activité"/>
                         </div>
 
                         <div class="form-row">
-                            <label for="activeYears">Année d'activité à l'IUT*</label>
-                            <select v-model="activeYears" name="activeYears" id="activeYears">
-                            <option value="">-</option>
-                            <option v-for="year in range(1993, 2023)" v-bind:key="year" v-bind:value="year">{{ year }}</option>
-                            </select>
-
-                            <span>/</span>
-
-                            <select v-model="activeYears2" name="activeYears2" id="activeYears2">
-                            <option value="">-</option>
-                            <option v-for="year in range(1993, 2023)" v-bind:key="year" v-bind:value="year">{{ year }}</option>
-                            </select>
+                            <input v-model="duration" class="form-row__input" type="text" placeholder="Durée de l'activité"/>
                         </div>
 
                         <div class="form-row">
-                            <input v-model="_function" class="form-row__input" type="text" placeholder="Fonction"/>
-                            <input v-model="link" class="form-row__input" type="text" placeholder="Lien linkedIn"/>
-                        </div>      
-
-                        <div class="form-row">
-                            <textarea v-model="note" class="form-row__input" placeholder="Note"/>
-                        </div>      
-
-                        <div class="form-row">
-                            <label for="isParticipated">Je participe à l'événement</label>
-                            <input v-model="isParticipated" type="checkbox"/>
-                        </div>
-
-                        <div class="form-row">
-                            <label for="isPublic">Je souhaite afficher publiquement mes informations</label>
-                            <input v-model="isPublic" type="checkbox"/>
-                        </div>
+                            <input v-model="user" class="form-row__input" type="text" placeholder="Utilisateur*"/>
+                        </div>   
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="resetForm()">Fermer</button>
-                        <button v-if="!userEdit" type="button" class="btn btn-primary" @click="createUser()" data-bs-dismiss="modal">Enregistrer</button>
-                        <button v-else type="button" class="btn btn-primary" @click="editUser()" data-bs-dismiss="modal">Enregistrer</button>
+                        <button v-if="!activityEdit" type="button" class="btn btn-primary" @click="createActivity()" data-bs-dismiss="modal">Enregistrer</button>
+                        <button v-else type="button" class="btn btn-primary" @click="editActivity()" data-bs-dismiss="modal">Enregistrer</button>
                     </div>
                 </div>
             </div>
@@ -358,11 +243,11 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <p>Voulez-vous supprimez l'utilisateur ?</p>
+                        <p>Voulez-vous supprimez l'activité ?</p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                        <button type="button" class="btn btn-primary" @click="deleteUser()" data-bs-dismiss="modal">Supprimer</button>
+                        <button type="button" class="btn btn-primary" @click="deleteActivity()" data-bs-dismiss="modal">Supprimer</button>
                     </div>
                 </div>
             </div>
@@ -375,11 +260,11 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <p>Voulez-vous supprimez les utilisateurs ?</p>
+                        <p>Voulez-vous supprimez les activités ?</p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                        <button type="button" class="btn btn-primary" @click="deleteUsers()" data-bs-dismiss="modal">Supprimer</button>
+                        <button type="button" class="btn btn-primary" @click="deleteActivities()" data-bs-dismiss="modal">Supprimer</button>
                     </div>
                 </div>
             </div>
@@ -396,7 +281,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                        <button type="button" class="btn btn-primary" @click="clearUserTable()" data-bs-dismiss="modal">Vider</button>
+                        <button type="button" class="btn btn-primary" @click="clearActivityTable()" data-bs-dismiss="modal">Vider</button>
                     </div>
                 </div>
             </div>

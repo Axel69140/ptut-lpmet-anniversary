@@ -36,7 +36,7 @@ const exportActivityData = () => {
     return Axios.get('https://127.0.0.1:8000/activities/export');
 }
 
-export const activitieservice = {
+export const activityService = {
     getActivities,
     getActivityById,
     createActivity,
