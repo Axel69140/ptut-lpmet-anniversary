@@ -1,6 +1,7 @@
 <script>
     import axios from 'axios';   
-    import Footer from '../../components/Footer.vue';   
+    import Footer from '../../components/Footer.vue';  
+    import { activityService } from '../../services/activity.services'; 
 
     export default {
     name: 'event',
@@ -12,7 +13,7 @@
       }
     },
     mounted() {   
-        axios.get('https://127.0.0.1:8000/activity/api/activity').then(response => {
+        activityService.getActivities().then(response => {
             console.log(response.data);
             this.activities = response.data;
         });        
