@@ -2,18 +2,17 @@
 
 namespace App\Controller;
 
+use App\Repository\UserRepository;
 use App\Service\EntryDataService;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\GuestRepository;
-use App\Service\RequestService;
 use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Guest;
-use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/guests')]
@@ -26,7 +25,7 @@ class GuestController extends AbstractController
         try {
 
             $guests = $guestRepository->findAll();
-            return $this->json($guests, 200);
+            return $this->json($guests, 200, [], ['groups' => ['guest-return']]);
 
         } catch (\Exception $e) {
 
@@ -37,7 +36,7 @@ class GuestController extends AbstractController
         }
     }
 
-    // Get one guests
+    // Get one guest
     #[Route('/{id}', name: 'app_api_guest_get_one', methods: ['GET'])]
     public function getGuestById(int $id, GuestRepository $guestRepository): JsonResponse
     {
@@ -51,7 +50,7 @@ class GuestController extends AbstractController
                 ], 404);
             }
 
-            return $this->json($guest, 200);
+            return $this->json($guest, 200, [], ['groups' => ['guest-return']]);
 
         } catch (\Exception $e) {
 
@@ -64,7 +63,7 @@ class GuestController extends AbstractController
 
     // Create guest
     #[Route('/create', name: 'app_api_guest_post', methods: ['POST'])]
-    public function createGuest(Request $request, EntryDataService $entryDataService, GuestRepository $guestRepository, ValidatorInterface $validator, EntityManagerInterface $em): JsonResponse
+    public function createGuest(Request $request, EntryDataService $entryDataService, GuestRepository $guestRepository, ValidatorInterface $validator, EntityManagerInterface $em, UserRepository $userRepository): JsonResponse
     {
         try {
 
@@ -78,12 +77,29 @@ class GuestController extends AbstractController
                 ], 400);
             }
 
-            // Check if guest already exist
-            $guestExisting = $guestRepository->findOneBy(['email' => $guest->getEmail()]);
-            if ($guestExisting && ($guestExisting->getInvitedBy()->getId() === $guest->getInvitedBy()->getId())) {
+            // Check if mail is available
+            $existingEntities = $entryDataService->getEntityUsingMail($guest->getEmail(), [$userRepository, $guestRepository]);
+            if(is_null($existingEntities))
+            {
+
                 return $this->json([
-                    'error' => 'You already invite this guest ! This mail is already use'
+                    'error' => 'No repository provided'
                 ], 403);
+
+            } else if (count($existingEntities) > 0) {
+
+                return $this->json([
+                    'error' => 'Email already used'
+                ], 403);
+
+            }
+
+            // Check if inviter is participating, can't invite if not
+            if($guest->getInvitedBy()->getIsParticipated() === false)
+            {
+                return $this->json([
+                    'error' => 'You can\'t invite someone if you don\'t participate'
+                ], 400);
             }
 
             //Symfony validation
@@ -95,12 +111,12 @@ class GuestController extends AbstractController
             }
 
             $guestRepository->save($guest, true);
-            return $this->json($guest, 201);
+            return $this->json($guest, 201, [], ['groups' => ['guest-return']]);
 
         } catch (\Exception $e) {
 
             return $this->json([
-                'error' => 'Server error'
+                'error' => 'Server error' . $e
             ], 500);
 
         }
@@ -108,62 +124,80 @@ class GuestController extends AbstractController
 
     // Update guest
     #[Route('/{id}', name: 'app_api_guest_update', methods: ['PATCH'])]
-    public function updateGuest(Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager, int $id): JsonResponse
+    public function updateGuest(int $id, Request $request, UserRepository $userRepository, GuestRepository $guestRepository, EntryDataService $entryDataService, ValidatorInterface $validator): JsonResponse
     {
         try {
-            $guest = $entityManager->getRepository(Guest::class)->find($id);
 
-            // Vérification de l'existence de l'guest
-            if ($guest === null) {
+            $content = json_decode($request->getContent(), true);
+            $guestToUpdate = $guestRepository->findOneBy(['id' => $id]);
+            if (!$guestToUpdate) {
                 return $this->json([
                     'error' => 'Guest not found'
                 ], 404);
             }
 
-            $content = json_decode($request->getContent(), true);
-
-            if (empty($content)) {
+            $guestToUpdate = $entryDataService->defineKeysInEntity($content, $guestToUpdate);
+            if ($guestToUpdate === null) {
                 return $this->json([
-                    'error' => 'No data provided'
+                    'error' => 'A problem has been encounter during entity modification'
                 ], 400);
             }
 
-            foreach ($content as $key => $value) {
-                // Vérification de l'existence de la propriété dans l'objet Guest
-                if (!property_exists(Guest::class, $key)) {
-                    return $this->json([
-                        'error' => "Unknown property '$key'"
-                    ], 400);
-                }
+            // Check if mail is available
+            $existingEntities = $entryDataService->getEntityUsingMail($guestToUpdate->getEmail(), [$userRepository, $guestRepository]);
+            if (is_null($existingEntities)) {
 
-                $setter = 'set' . ucfirst($key);
+                return $this->json([
+                    'error' => 'No repository provided'
+                ], 403);
 
-                // Vérification de l'existence de la méthode setter pour la propriété
-                if (!method_exists(Guest::class, $setter)) {
-                    return $this->json([
-                        'error' => "No setter found for property '$key'"
-                    ], 500);
-                }
+            } else if(count($existingEntities) > 1) {
 
-                // Appel de la méthode setter pour modifier la propriété
-                $guest->$setter($value);
+                return $this->json([
+                    'error' => 'Email already used'
+                ], 403);
+
+            } else if((count($existingEntities) === 1) && (get_class($guestToUpdate) !== get_class($existingEntities[0]))) {
+
+                return $this->json([
+                    'error' => 'Email already used'
+                ], 403);
+
+            } else if ((count($existingEntities) === 1) && (get_class($guestToUpdate) === get_class($existingEntities[0])) && ($existingEntities[0]->getId() !== $guestToUpdate->getId())) {
+
+                return $this->json([
+                    'error' => 'Email already used'
+                ], 403);
+
             }
 
-            $entityManager->flush();
+            //Symfony validation
+            $errors = $validator->validate($guestToUpdate);
+            if (count($errors) > 0) {
+                return $this->json([
+                    'error' => $errors
+                ], 400);
+            }
 
-            return $this->json($guest, 200);
+            $guestRepository->save($guestToUpdate, true);
+            return $this->json($guestToUpdate, 200, [], ['groups' => ['guest-return']]);
+
         } catch (\Exception $e) {
+
             return $this->json([
-                'error' => 'Server error'
+                'error' => 'Server error' . $e
             ], 500);
+
         }
     }
 
     // Delete guests
     #[Route('/many', name: 'app_api_guest_delete_many', methods: ['DELETE'])]
+    #[IsGranted('ROLE_ADMIN', statusCode: 403, message: 'Vous n\'avez pas les droits suffisants')]
     public function deleteGuests(Request $request, EntityManagerInterface $entityManager): Response
     {
         try {
+
             $data = json_decode($request->getContent(), true);
             $ids = $data['id'] ?? [];
     
@@ -172,72 +206,90 @@ class GuestController extends AbstractController
                     'error' => 'No IDs provided'
                 ], 400);
             }
-    
-            $guests = $entityManager->getRepository(Guest::class)->findBy([
+
+            $guestsToDelete = $entityManager->getRepository(Guest::class)->findBy([
                 'id' => $ids
             ]);
     
-            if (empty($guests)) {
+            if (empty($guestsToDelete)) {
                 return $this->json([
                     'error' => 'Guests not found'
                 ], 404);
             }
     
-            foreach ($guests as $guest) {
+            foreach ($guestsToDelete as $guest) {
                 $entityManager->remove($guest);
             }
-    
+
             $entityManager->flush();
-    
             return $this->json([], 204);
+
         } catch (\Exception $e) {
+
             return $this->json([
                 'error' => 'Server error'
             ], 500);
+
         }
     }  
 
     // Clear guests
     #[Route('/clear', name: 'app_api_guest_delete_all', methods: ['DELETE'])]
+    #[IsGranted('ROLE_ADMIN', statusCode: 403, message: 'Vous n\'avez pas les droits suffisants')]
     public function clearGuests(EntityManagerInterface $entityManager): Response
     {
         try {
-            $guestRepository = $entityManager->getRepository(Guest::class);
-            $guests = $guestRepository->findAll();
 
-            foreach ($guests as $guest) {
+            $guestsToDelete = $entityManager->getRepository(Guest::class)->findAll();
+
+            if(!$guestsToDelete)
+            {
+                return $this->json([
+                    'error' => 'Guests not found'
+                ], 404);
+            }
+
+            foreach ($guestsToDelete as $guest)
+            {
                 $entityManager->remove($guest);
             }
 
             $entityManager->flush();
-
             return $this->json([], 204);
+
         } catch (\Exception $e) {
+
             return $this->json([
                 'error' => 'Server error'
             ], 500);
+
         }
     }
 
     // Delete guest
     #[Route('/{id}', name: 'app_api_guest_delete', methods: ['DELETE'])]
-    public function deleteGuest(Guest $guest = null, EntityManagerInterface $entityManager): Response
+    public function deleteGuest(int $id, GuestRepository $guestRepository): Response
     {
         try {
-            if (!$guest) {
+
+            $guestToDelete = $guestRepository->findOneBy(['id' => $id]);
+
+            if(!$guestToDelete)
+            {
                 return $this->json([
                     'error' => 'Guest not found'
                 ], 404);
             }
 
-            $entityManager->remove($guest);
-            $entityManager->flush();
-
+            $guestRepository->remove($guestToDelete, true);
             return $this->json([], 204);
+
         } catch (\Exception $e) {
+
             return $this->json([
                 'error' => 'Server error'
             ], 500);
+
         }
     } 
 }

@@ -9,6 +9,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -24,65 +25,84 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->allowedFunctions;
     }
 
+    #[Groups(['guest-return', 'user-return'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups(['guest-return', 'user-return'])]
     #[ORM\Column(length: 180, unique: true)]
     private ?string $email = null;
 
+    #[Groups(['guest-return', 'user-return'])]
     #[ORM\Column]
     private array $roles = [];
 
     /**
      * @var string The hashed password
      */
+    #[Groups(['guest-return', 'user-return'])]
     #[ORM\Column]
     private ?string $password = null;
 
+    #[Groups(['guest-return', 'user-return'])]
     #[ORM\Column(length: 255)]
     private ?string $firstName = null;
 
+    #[Groups(['guest-return', 'user-return'])]
     #[ORM\Column(length: 255)]
     private ?string $lastName = null;
 
+    #[Groups(['guest-return', 'user-return'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $maidenName = null;
 
+    #[Groups(['guest-return', 'user-return'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $phoneNumber = null;
 
+    #[Groups(['guest-return', 'user-return'])]
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $note = null;
 
+    #[Groups(['guest-return', 'user-return'])]
     #[ORM\Column]
     private ?bool $isParticipated = null;
 
+    #[Groups(['guest-return', 'user-return'])]
     #[ORM\Column]
     private ?bool $isPublicProfil = null;
 
+    #[Groups(['guest-return', 'user-return'])]
     #[ORM\Column(type: Types::ARRAY)]
     private array $activeYears = [];
 
+    #[Groups(['guest-return', 'user-return'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $function = null;
 
+    #[Groups(['guest-return', 'user-return'])]
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $link = null;
 
+    #[Groups(['user-return'])]
     #[ORM\OneToMany(mappedBy: 'invitedBy', targetEntity: Guest::class, orphanRemoval: true)]
     private Collection $guests;
 
+    #[Groups(['user-return'])]
     #[ORM\OneToMany(mappedBy: 'creator', targetEntity: Activity::class)]
     private Collection $activities;
 
+    #[Groups(['user-return'])]
     #[ORM\OneToMany(mappedBy: 'creator', targetEntity: Article::class)]
     private Collection $articles;
 
+    #[Groups(['user-return'])]
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?Media $profilPicture = null;
 
+    #[Groups(['user-return'])]
     #[ORM\OneToMany(mappedBy: 'User', targetEntity: Anecdote::class)]
     private Collection $anecdotes;
 
