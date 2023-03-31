@@ -141,6 +141,7 @@ body {
 
 .countdown{
   background-color: var(--secondary);
+  padding-bottom: 20px ;
 }
 
 .invitation a{
