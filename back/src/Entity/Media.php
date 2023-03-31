@@ -10,21 +10,21 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\Entity(repositoryClass: MediaRepository::class)]
 class Media
 {
-    #[Groups(['user-return'])]
+    #[Groups(['user-return', 'article-return', 'activity-return'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['user-return'])]
+    #[Groups(['user-return', 'article-return', 'activity-return'])]
     #[ORM\Column(type: Types::TEXT)]
     private ?string $name = null;
 
-    #[Groups(['user-return'])]
+    #[Groups(['user-return', 'article-return', 'activity-return'])]
     #[ORM\Column(type: Types::TEXT)]
     private ?string $path = null;
 
-    #[Groups(['user-return'])]
+    #[Groups(['user-return', 'article-return', 'activity-return'])]
     #[ORM\Column(length: 255)]
     private ?string $format = null;
 
