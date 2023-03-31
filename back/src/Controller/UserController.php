@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Repository\GuestRepository;
 use App\Repository\UserRepository;
 use App\Service\EntryDataService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -27,7 +28,7 @@ class UserController extends AbstractController
         try {
 
             $users = $userRepository->findAll();
-            return $this->json($users, 200);
+            return $this->json($users, 200, [], ['groups' => ['user-return']]);
 
         } catch (\Exception $e) {
 
@@ -81,7 +82,32 @@ class UserController extends AbstractController
                 ], 404);
             }
 
-            return $this->json($user->getProfilPicture(), 200);
+            return $this->json($user->getProfilPicture(), 200, [], ['groups' => ['user-return']]);
+
+        } catch (\Exception $e) {
+
+            return $this->json([
+                'error' => 'Server error'
+            ], 500);
+
+        }
+    }
+
+    // Get user's guests
+    #[Route('/{id}/guests', name: 'app_api_users_guests_get', methods: ['GET'])]
+    public function getUsersGuests(int $id, UserRepository $userRepository): JsonResponse
+    {
+        try {
+
+            $user = $userRepository->findOneBy(['id' => $id]);
+
+            if (!$user) {
+                return $this->json([
+                    'error' => 'User not found'
+                ], 404);
+            }
+
+            return $this->json($user->getGuests(), 200, [], ['groups' => ['user-return']]);
 
         } catch (\Exception $e) {
 
@@ -99,7 +125,7 @@ class UserController extends AbstractController
         try {
 
             $user = new User();
-            return $this->json($user->getAllowedFunctions(), 200);
+            return $this->json($user->getAllowedFunctions(), 200, [], ['groups' => ['user-return']]);
 
         } catch (\Exception $e) {
 
@@ -125,7 +151,7 @@ class UserController extends AbstractController
                 ], 404);
             }
 
-            return $this->json($user, 200);
+            return $this->json($user, 200, [], ['groups' => ['user-return']]);
 
         } catch (\Exception $e) {
 
@@ -151,7 +177,7 @@ class UserController extends AbstractController
                 ], 404);
             }
 
-            return $this->json($user, 200);
+            return $this->json($user, 200, [], ['groups' => ['user-return']]);
 
         } catch (\Exception $e) {
 
@@ -175,7 +201,7 @@ class UserController extends AbstractController
                 ], 404);
             }
 
-            return $this->json(["role" => $user->getRoles()], 200);
+            return $this->json(["role" => $user->getRoles()], 200, [], ['groups' => ['user-return']]);
 
         } catch (\Exception $e) {
 
@@ -212,7 +238,7 @@ class UserController extends AbstractController
             }
 
             $token = $jwtManager->create($user);
-            return $this->json(["id" => $user->getId(), "email" => $user->getEmail(), "firstName" => $user->getFirstName(), "lastName" => $user->getLastName(), "token" => $token ], 201);
+            return $this->json(["id" => $user->getId(), "email" => $user->getEmail(), "firstName" => $user->getFirstName(), "lastName" => $user->getLastName(), "token" => $token ], 201, [], ['groups' => ['user-return']]);
 
         } catch (\Exception $e) {
 
@@ -225,7 +251,7 @@ class UserController extends AbstractController
 
     // Create user
     #[Route('/register', name: 'app_api_user_post', methods: ['POST'])]
-    public function register(Request $request, UserRepository $userRepository, UserPasswordHasherInterface $userPasswordHasher, ValidatorInterface $validator, EntryDataService $entryDataService): JsonResponse
+    public function register(Request $request, UserRepository $userRepository, UserPasswordHasherInterface $userPasswordHasher, ValidatorInterface $validator, EntryDataService $entryDataService, GuestRepository $guestRepository): JsonResponse
     {
         try {
 
@@ -238,12 +264,21 @@ class UserController extends AbstractController
                 ], 400);
             }
 
-            // Vérification de l'existence de l'utilisateur
-            $userExisting = $userRepository->findOneBy(['email' => $user->getEmail()]);
-            if ($userExisting) {
+            // Check if mail is available
+            $existingEntities = $entryDataService->getEntityUsingMail($user->getEmail(), [$userRepository, $guestRepository]);
+            if(is_null($existingEntities))
+            {
+
+                return $this->json([
+                    'error' => 'No repository provided'
+                ], 403);
+
+            } else if (count($existingEntities) > 0) {
+
                 return $this->json([
                     'error' => 'Email already used'
                 ], 403);
+
             }
 
             $user->setPassword(
@@ -262,7 +297,7 @@ class UserController extends AbstractController
             }
 
             $userRepository->save($user, true);
-            return $this->json($user, 201);
+            return $this->json($user, 201, [], ['groups' => ['user-return']]);
 
         } catch (\Exception $e) {
 
@@ -275,7 +310,7 @@ class UserController extends AbstractController
 
     // Update user
     #[Route('/{id}', name: 'app_api_user_update', methods: ['PATCH'])]
-    public function updateUser(int $id, Request $request, UserRepository $userRepository, EntryDataService $entryDataService, ValidatorInterface $validator): JsonResponse
+    public function updateUser(int $id, Request $request, UserRepository $userRepository, EntryDataService $entryDataService, ValidatorInterface $validator, GuestRepository $guestRepository): JsonResponse
     {
         try {
 
@@ -294,6 +329,34 @@ class UserController extends AbstractController
                 ], 400);
             }
 
+            // Check if mail is available
+            $existingEntities = $entryDataService->getEntityUsingMail($userToUpdate->getEmail(), [$userRepository, $guestRepository]);
+            if (is_null($existingEntities)) {
+
+                return $this->json([
+                    'error' => 'No repository provided'
+                ], 403);
+
+            } else if(count($existingEntities) > 1) {
+
+                return $this->json([
+                    'error' => 'Email already used'
+                ], 403);
+
+            } else if((count($existingEntities) === 1) && (get_class($userToUpdate) !== get_class($existingEntities[0]))) {
+
+                return $this->json([
+                    'error' => 'Email already used'
+                ], 403);
+
+            } else if ((count($existingEntities) === 1) && (get_class($userToUpdate) === get_class($existingEntities[0])) && ($existingEntities[0]->getId() !== $userToUpdate->getId())) {
+
+                return $this->json([
+                    'error' => 'Email already used'
+                ], 403);
+
+            }
+
             //Symfony validation
             $errors = $validator->validate($userToUpdate);
             if (count($errors) > 0) {
@@ -303,7 +366,7 @@ class UserController extends AbstractController
             }
 
             $userRepository->save($userToUpdate, true);
-            return $this->json($userToUpdate, 200);
+            return $this->json($userToUpdate, 200, [], ['groups' => ['user-return']]);
 
         } catch (\Exception $e) {
 
@@ -317,7 +380,7 @@ class UserController extends AbstractController
     // Delete users
     #[Route('/many', name: 'app_api_user_delete_many', methods: ['DELETE'])]
     #[IsGranted('ROLE_ADMIN', statusCode: 403, message: 'Vous n\'avez pas les droits suffisants')]
-    public function deleteUsers(Request $request, UserRepository $userRepository): Response
+    public function deleteUsers(Request $request, UserRepository $userRepository, EntityManagerInterface $entityManager): Response
     {
         try {
 
@@ -339,8 +402,10 @@ class UserController extends AbstractController
             }
 
             foreach ($users as $user) {
-                $userRepository->remove($user, true);
+                $entityManager->remove($user);
             }
+
+            $entityManager->flush();
 
             return $this->json([], 204);
 

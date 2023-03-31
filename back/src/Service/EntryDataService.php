@@ -7,7 +7,7 @@ use ReflectionClass;
 
 class EntryDataService
 {
-    public function isDifferentType($value, $parameterType)
+    public function isDifferentType($value, $parameterType): bool
     {
         if(gettype($value) !== $parameterType->getName())
         {
@@ -32,6 +32,25 @@ class EntryDataService
             return false;
         }
         return true;
+    }
+
+    public function getEntityUsingMail($email, $entityRepos)
+    {
+        if(empty($entityRepos))
+        {
+            return null;
+        }
+
+        $entities = [];
+        foreach ($entityRepos as $entityRepo)
+        {
+            $existingEntity = $entityRepo->findOneBy(['email' => $email]);
+            if($existingEntity)
+            {
+                array_push($entities, $existingEntity);
+            }
+        }
+        return $entities;
     }
 
     public function defineKeysInEntity($keys, $entity, $em = null)
@@ -95,24 +114,21 @@ class EntryDataService
                         return null;
                     }
 
-                    $metadata = $em->getClassMetadata($parameterTypeName);
-                    var_dump($key);
-                    dd($metadata->hasAssociation($key));
-                    if (!$metadata->hasAssociation($key)) {
-                        throw new \InvalidArgumentException(sprintf('The entity %s does not have an association named %s', $parameterTypeName, $key));
-                    }
+//                    if (!$metadata->hasAssociation($key)) {
+//                        throw new \InvalidArgumentException(sprintf('The entity %s does not have an association named %s', $parameterTypeName, $key));
+//                    }
 
-                    $targetEntity = $metadata->getAssociationTargetClass($key);
+//                    $targetEntity = $metadata->getAssociationTargetClass($key);
 
-                    $entityRepository =  $em->getRepository($targetEntity);
-                    $entityAttribute = $entityRepository->findOneBy(['id' => $value]);
+                    $entityRepository =  $em->getRepository($parameterTypeName);
+                    $entityToAffiliate = $entityRepository->findOneBy(['id' => $value]);
 
-                    if(!$entityAttribute)
+                    if(!$entityToAffiliate)
                     {
                         return null;
                     }
 
-                    $entity->$setter($entityAttribute);
+                    $entity->$setter($entityToAffiliate);
 
                 } else {
 

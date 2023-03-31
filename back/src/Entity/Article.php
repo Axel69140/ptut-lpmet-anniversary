@@ -7,21 +7,26 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
 class Article
 {
+    #[Groups(['user-return'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups(['user-return'])]
     #[ORM\Column(type: Types::TEXT)]
     private ?string $title = null;
 
+    #[Groups(['user-return'])]
     #[ORM\Column(type: Types::TEXT)]
     private ?string $content = null;
 
+    #[Groups(['user-return'])]
     #[ORM\Column]
     private ?bool $isValidate = null;
 
@@ -29,6 +34,7 @@ class Article
     #[ORM\JoinColumn(nullable: false)]
     private ?User $creator = null;
 
+    #[Groups(['user-return'])]
     #[ORM\OneToMany(mappedBy: 'article', targetEntity: Media::class, orphanRemoval: true)]
     private Collection $medias;
 
