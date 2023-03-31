@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Repository\SettingsRepository;
 use App\Repository\UserRepository;
 use App\Service\EntryDataService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -25,6 +26,13 @@ class GuestController extends AbstractController
         try {
 
             $guests = $guestRepository->findAll();
+
+            if (!$guests) {
+                return $this->json([
+                    'error' => 'Guests not found'
+                ], 404);
+            }
+
             return $this->json($guests, 200, [], ['groups' => ['guest-return']]);
 
         } catch (\Exception $e) {
@@ -63,7 +71,7 @@ class GuestController extends AbstractController
 
     // Create guest
     #[Route('/create', name: 'app_api_guest_post', methods: ['POST'])]
-    public function createGuest(Request $request, EntryDataService $entryDataService, GuestRepository $guestRepository, ValidatorInterface $validator, EntityManagerInterface $em, UserRepository $userRepository): JsonResponse
+    public function createGuest(Request $request, EntryDataService $entryDataService, GuestRepository $guestRepository, ValidatorInterface $validator, EntityManagerInterface $em, UserRepository $userRepository, SettingsRepository $settingsRepository): JsonResponse
     {
         try {
 
@@ -74,6 +82,14 @@ class GuestController extends AbstractController
             if ($guest === null) {
                 return $this->json([
                     'error' => 'A problem has been encounter during entity creation'
+                ], 400);
+            }
+
+            // Check if inviter already has reach guest limit
+            if((count($guest->getInvitedBy()->getGuests()) > ($settingsRepository->findAll()[0]->getMaxNumberGuests() - 1)) && !in_array("ROLE_ADMIN", $guest->getInvitedBy()->getRoles()))
+            {
+                return $this->json([
+                    'error' => 'The number of guests of this user reach the maximum. He can\'t invite someone else'
                 ], 400);
             }
 
