@@ -18,6 +18,7 @@ import ArticleManagement from '../page/admin/ArticleManagement.vue';
 import ParticipantManagement from '../page/admin/ParticipantManagement.vue';
 import TimelineManagement from '../page/admin/TimelineManagement.vue';
 import UserManagement from '../page/admin/UserManagement.vue';
+import AdminManagement from '../page/admin/AdminManagement.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import Axios from '../services/caller.services';
 import { accountService } from '../services/account.services';
@@ -47,27 +48,43 @@ const isUserConnected = (to, from, next) => {
 }
 
 const routes = [
-    { path: '/', name: 'Home', component: Home },
-    { path: '/login', name: 'Login', component: Login },
-    { path: '/article', name: 'Article', component: Article },
-    { path: '/articles', name: 'Articles', component: Articles },
+    { path: '/', name: 'Accueil', component: Home },
+    { path: '/login', name: 'Connexion', component: Login },
     { path: '/contact', name: 'Contact', component: Contact },
-    { path: '/mentions-legales', name: 'MentionsLegales', component: MentionsLegales },
-    { path: '/plan', name: 'Plan', component: Plan },
-    { path: '/event', name: 'Event', component: Event },
-    { path: '/users', name: 'Users', component: Users, beforeEnter: isUserConnected },
-    { path: '/user', name: 'User', component: User, beforeEnter: isUserConnected },
-    { path: '/event/registration', name: 'EventForm', component: EventForm, beforeEnter: isUserConnected },
-    { path: '/article/form', name: 'ArticleForm', component: ArticleForm, beforeEnter: isUserConnected },
-    { path: '/anecdote/form', name: 'AnecdoteForm', component: AnecdoteForm, beforeEnter: isUserConnected },
-    { path: '/activity/form', name: 'ActivityForm', component: ActivityForm, beforeEnter: isUserConnected },
-    { path: '/admin/activity', name: 'ActivityManagement', component: ActivityManagement, beforeEnter: isAdmin },
-    { path: '/admin/anecdote', name: 'AnecdoteManagement', component: AnecdoteManagement, beforeEnter: isAdmin },
-    { path: '/admin/article', name: 'ArticleManagement', component: ArticleManagement, beforeEnter: isAdmin },
-    { path: '/admin/participant', name: 'ParticipantManagement', component: ParticipantManagement, beforeEnter: isAdmin },
-    { path: '/admin/timeline', name: 'TimelineManagement', component: TimelineManagement, beforeEnter: isAdmin },
-    { path: '/admin/user', name: 'UserManagement', component: UserManagement, beforeEnter: isAdmin },    
-    { path: '/:catchAll(.*)', redirect: '/' },   
+    { path: '/mentions-legales', name: 'Mentions légales', component: MentionsLegales },
+    { path: '/plan', name: 'Plan d\'accès', component: Plan },
+    { path: '/articles',
+      children: [
+        { path: '', name: 'Articles', component: Articles },
+        { path: 'form', name: 'Formulaire d\'article', component: ArticleForm, beforeEnter: isUserConnected },
+        { path: ':id', component: Article }        
+      ]
+    },   
+    { path: '/event',
+      children: [
+        { path: '', name: 'Evènement', component: Event },
+        { path: 'registration', name: 'Formulaire d\'inscription à l\'évènement', component: EventForm, beforeEnter: isUserConnected },
+        { path: 'users', name: 'Utilisateurs qui participe à l\'évènement', component: Users, beforeEnter: isUserConnected,
+          children : [ 
+            { path: ':id', component: User, beforeEnter: isUserConnected } 
+          ] 
+        },
+        { path: 'activity/form', name: 'Formulaire d\'activité', component: ActivityForm, beforeEnter: isUserConnected }
+      ]
+    },       
+    { path: '/anecdote/form', name: 'Formulaire d\'anecdote', component: AnecdoteForm, beforeEnter: isUserConnected },            
+    { path: '/admin', beforeEnter: isAdmin,
+      children: [
+        { path: '', component: AdminManagement },
+        { path: 'activity', component: ActivityManagement },
+        { path: 'anecdote', component: AnecdoteManagement },
+        { path: 'article', component: ArticleManagement },
+        { path: 'participant', component: ParticipantManagement },
+        { path: 'timeline', component: TimelineManagement },
+        { path: 'user', component: UserManagement } 
+      ]
+    },     
+    { path: '/:catchAll(.*)', name:"All", redirect: '/' },   
 ];
 
 export const router = createRouter({
