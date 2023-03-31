@@ -51,6 +51,14 @@
             <a class="nav-link dropdown-toggle" href="/" id="dropdown3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ getFirstName }} {{ getLastName }}</a>
             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown3">
               <a class="dropdown-item" href="" @click="logout()">Déconnexion</a>
+              <div v-if="isAdmin">
+                <a class="dropdown-item" href="/admin/user">Gestion des utilisateurs</a>
+                <a class="dropdown-item" href="/admin/participant">Gestion des participants</a>
+                <a class="dropdown-item" href="/admin/timeline">Gestion des la timeline</a>
+                <a class="dropdown-item" href="/admin/article">Gestion des articles</a>
+                <a class="dropdown-item" href="/admin/activity">Gestion des activités</a>
+                <a class="dropdown-item" href="/admin/anecdote">Gestion des anecdotes</a>
+              </div>
             </div>
           </div>
         </div>
@@ -351,6 +359,7 @@
   overflow: hidden;
   z-index: 1;
   font-family: inherit;
+  margin-bottom: 0px !important;
 }
 
 .btn-custom::before {

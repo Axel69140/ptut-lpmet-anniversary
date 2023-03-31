@@ -141,18 +141,18 @@
 
         <div class="container">      
             <div id="function-datatable">
-                <input type="text" placeholder="Rechercher..." v-model="searchValue">
-                <button type="button" data-bs-toggle="modal" data-bs-target="#clearModal">Vider la table anecdote</button>
-                <button @click="exportData()">Exporter la liste des anecdotes</button>
-                <button type="button" data-bs-toggle="modal" data-bs-target="#formModal">Créer un anecdote</button>
+                <input class="searchBar" type="text" placeholder="Rechercher..." v-model="searchValue">
+                <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#clearModal">Vider la table anecdote</a>
+                <a class="btn-custom btn-datatable" @click="exportData()">Exporter la liste des anecdotes</a>
+                <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#formModal">Créer un anecdote</a>
 
                 <div v-if="itemsSelected.length === 1">
-                    <button type="button" data-bs-toggle="modal" data-bs-target="#formModal" @click="getAnecdoteById(itemsSelected[0].id)">Modifier l'anecdote</button>
-                    <button type="button" data-bs-toggle="modal" data-bs-target="#deleteModal">Supprimer l'anecdote</button>
+                    <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#formModal" @click="getAnecdoteById(itemsSelected[0].id)">Modifier l'anecdote</a>
+                    <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#deleteModal">Supprimer l'anecdote</a>
                 </div>
 
                 <div v-if="itemsSelected.length > 1">
-                    <button type="button" data-bs-toggle="modal" data-bs-target="#deletesModal">Supprimer les anecdotes</button>
+                    <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#deletesModal">Supprimer les anecdotes</a>
                 </div>
             </div>
 
@@ -197,9 +197,9 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="resetForm()">Fermer</button>
-                        <button v-if="!anecdoteEdit" type="button" class="btn btn-primary" @click="createAnecdote()" data-bs-dismiss="modal">Enregistrer</button>
-                        <button v-else type="button" class="btn btn-primary" @click="editAnecdote()" data-bs-dismiss="modal">Enregistrer</button>
+                        <button type="button" class="btn-modal-neutre btn-custom" data-bs-dismiss="modal" @click="resetForm()">Fermer</button>
+                        <button v-if="!anecdoteEdit" type="button" class="btn-modal-valid btn-custom" @click="createAnecdote()" data-bs-dismiss="modal">Enregistrer</button>
+                        <button v-else type="button" class="btn-modal-valid btn-custom" @click="editAnecdote()" data-bs-dismiss="modal">Enregistrer</button>
                     </div>
                 </div>
             </div>
@@ -216,8 +216,8 @@
                         <p>Voulez-vous supprimez l'anecdote ?</p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                        <button type="button" class="btn btn-primary" @click="deleteAnecdote()" data-bs-dismiss="modal">Supprimer</button>
+                        <button type="button" class="btn-modal-neutre btn-custom" data-bs-dismiss="modal">Fermer</button>
+                        <button type="button" class="btn-modal-alert btn-custom" @click="deleteAnecdote()" data-bs-dismiss="modal">Supprimer</button>
                     </div>
                 </div>
             </div>
@@ -233,8 +233,8 @@
                         <p>Voulez-vous supprimez les anecdotes ?</p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                        <button type="button" class="btn btn-primary" @click="deleteAnecdotes()" data-bs-dismiss="modal">Supprimer</button>
+                        <button type="button" class="btn-modal-neutre btn-custom" data-bs-dismiss="modal">Fermer</button>
+                        <button type="button" class="btn-modal-alert btn-custom" @click="deleteAnecdotes()" data-bs-dismiss="modal">Supprimer</button>
                     </div>
                 </div>
             </div>
@@ -250,8 +250,8 @@
                         <p>Voulez êtes sur le point de vider la table, voulez-vous continuez ?</p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                        <button type="button" class="btn btn-primary" @click="clearAnecdoteTable()" data-bs-dismiss="modal">Vider</button>
+                        <button type="button" class="btn-modal-neutre btn-custom" data-bs-dismiss="modal">Fermer</button>
+                        <button type="button" class="btn-modal-alert btn-custom" @click="clearAnecdoteTable()" data-bs-dismiss="modal">Vider</button>
                     </div>
                 </div>
             </div>
@@ -267,7 +267,7 @@ h1 {
 }
 
 #function-datatable {
-    margin-bottom: 20px;
     display: flex;
+    flex-wrap: wrap;
 }
 </style>

@@ -147,18 +147,18 @@
 
         <div class="container">      
             <div id="function-datatable">
-                <input type="text" placeholder="Rechercher..." v-model="searchValue">
-                <button type="button" data-bs-toggle="modal" data-bs-target="#clearModal">Vider la table article</button>
-                <button @click="exportData()">Exporter la liste des articles</button>
-                <button type="button" data-bs-toggle="modal" data-bs-target="#formModal">Créer un article</button>
+                <input class="searchBar" type="text" placeholder="Rechercher..." v-model="searchValue">
+                <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#clearModal">Vider la table article</a>
+                <a class="btn-custom btn-datatable" @click="exportData()">Exporter la liste des articles</a>
+                <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#formModal">Créer un article</a>
 
                 <div v-if="itemsSelected.length === 1">
-                    <button type="button" data-bs-toggle="modal" data-bs-target="#formModal" @click="getArticleById(itemsSelected[0].id)">Modifier l'article</button>
-                    <button type="button" data-bs-toggle="modal" data-bs-target="#deleteModal">Supprimer l'article</button>
+                    <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#formModal" @click="getArticleById(itemsSelected[0].id)">Modifier l'article</a>
+                    <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#deleteModal">Supprimer l'article</a>
                 </div>
 
                 <div v-if="itemsSelected.length > 1">
-                    <button type="button" data-bs-toggle="modal" data-bs-target="#deletesModal">Supprimer les articles</button>
+                    <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#deletesModal">Supprimer les articles</a>
                 </div>
             </div>
 
@@ -207,9 +207,9 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="resetForm()">Fermer</button>
-                        <button v-if="!articleEdit" type="button" class="btn btn-primary" @click="createArticle()" data-bs-dismiss="modal">Enregistrer</button>
-                        <button v-else type="button" class="btn btn-primary" @click="editArticle()" data-bs-dismiss="modal">Enregistrer</button>
+                        <button type="button" class="btn-modal-neutre btn-custom" data-bs-dismiss="modal" @click="resetForm()">Fermer</button>
+                        <button v-if="!articleEdit" type="button" class="btn-modal-valid btn-custom" @click="createArticle()" data-bs-dismiss="modal">Enregistrer</button>
+                        <button v-else type="button" class="btn-modal-valid btn-custom" @click="editArticle()" data-bs-dismiss="modal">Enregistrer</button>
                     </div>
                 </div>
             </div>
@@ -226,8 +226,8 @@
                         <p>Voulez-vous supprimez l'article ?</p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                        <button type="button" class="btn btn-primary" @click="deleteArticle()" data-bs-dismiss="modal">Supprimer</button>
+                        <button type="button" class="btn-modal-neutre btn-custom" data-bs-dismiss="modal">Fermer</button>
+                        <button type="button" class="btn-modal-alert btn-custom" @click="deleteArticle()" data-bs-dismiss="modal">Supprimer</button>
                     </div>
                 </div>
             </div>
@@ -243,8 +243,8 @@
                         <p>Voulez-vous supprimez les articles ?</p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                        <button type="button" class="btn btn-primary" @click="deleteArticles()" data-bs-dismiss="modal">Supprimer</button>
+                        <button type="button" class="btn-modal-neutre btn-custom" data-bs-dismiss="modal">Fermer</button>
+                        <button type="button" class="btn-modal-alert btn-custom" @click="deleteArticles()" data-bs-dismiss="modal">Supprimer</button>
                     </div>
                 </div>
             </div>
@@ -260,8 +260,8 @@
                         <p>Voulez êtes sur le point de vider la table, voulez-vous continuez ?</p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                        <button type="button" class="btn btn-primary" @click="clearArticleTable()" data-bs-dismiss="modal">Vider</button>
+                        <button type="button" class="btn-modal-neutre btn-custom" data-bs-dismiss="modal">Fermer</button>
+                        <button type="button" class="btn-modal-alert btn-custom" @click="clearArticleTable()" data-bs-dismiss="modal">Vider</button>
                     </div>
                 </div>
             </div>
@@ -277,7 +277,7 @@ h1 {
 }
 
 #function-datatable {
-    margin-bottom: 20px;
     display: flex;
+    flex-wrap: wrap;
 }
 </style>

@@ -19,7 +19,6 @@ import ParticipantManagement from '../page/admin/ParticipantManagement.vue';
 import TimelineManagement from '../page/admin/TimelineManagement.vue';
 import UserManagement from '../page/admin/UserManagement.vue';
 import { createRouter, createWebHistory } from 'vue-router';
-import store from '../store';
 import Axios from '../services/caller.services';
 import { accountService } from '../services/account.services';
 

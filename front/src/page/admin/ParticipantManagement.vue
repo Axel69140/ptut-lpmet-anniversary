@@ -131,17 +131,17 @@
 
         <div class="container">      
             <div id="function-datatable">
-                <input type="text" placeholder="Rechercher..." v-model="searchValue">
-                <button @click="exportData()">Exporter la liste des participants</button>
-                <button type="button" data-bs-toggle="modal" data-bs-target="#formModal">Créer un participant</button>
+                <input class="searchBar" type="text" placeholder="Rechercher..." v-model="searchValue">
+                <a class="btn-custom btn-datatable" @click="exportData()">Exporter la liste des participants</a>
+                <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#formModal">Créer un participant</a>
 
                 <div v-if="itemsSelected.length === 1">
-                    <button type="button" data-bs-toggle="modal" data-bs-target="#formModal" @click="getParticipantByEMail(itemsSelected[0].email)">Modifier le participant</button>
-                    <button type="button" data-bs-toggle="modal" data-bs-target="#deleteModal">Supprimer le participant</button>
+                    <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#formModal" @click="getParticipantByEMail(itemsSelected[0].email)">Modifier le participant</a>
+                    <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#deleteModal">Supprimer le participant</a>
                 </div>
 
                 <div v-if="itemsSelected.length > 1">
-                    <button type="button" data-bs-toggle="modal" data-bs-target="#deletesModal">Supprimer les participants</button>
+                    <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#deletesModal">Supprimer les participants</a>
                 </div>
             </div>
 
@@ -194,9 +194,9 @@
                         </div>   
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="resetForm()">Fermer</button>
-                        <button v-if="!participantEdit" type="button" class="btn btn-primary" @click="createParticipant()" data-bs-dismiss="modal">Enregistrer</button>
-                        <button v-else type="button" class="btn btn-primary" @click="editParticipant()" data-bs-dismiss="modal">Enregistrer</button>
+                        <button type="button" class="btn-modal-neutre btn-custom" data-bs-dismiss="modal" @click="resetForm()">Fermer</button>
+                        <button v-if="!participantEdit" type="button" class="btn-modal-valid btn-custom" @click="createParticipant()" data-bs-dismiss="modal">Enregistrer</button>
+                        <button v-else type="button" class="btn-modal-valid btn-custom" @click="editParticipant()" data-bs-dismiss="modal">Enregistrer</button>
                     </div>
                 </div>
             </div>
@@ -213,8 +213,8 @@
                         <p>Voulez-vous supprimez le participant ?</p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                        <button type="button" class="btn btn-primary" @click="deleteParticipant()" data-bs-dismiss="modal">Supprimer</button>
+                        <button type="button" class="btn-modal-neutre btn-custom" data-bs-dismiss="modal">Fermer</button>
+                        <button type="button" class="btn-modal-alert btn-custom" @click="deleteParticipant()" data-bs-dismiss="modal">Supprimer</button>
                     </div>
                 </div>
             </div>
@@ -230,8 +230,8 @@
                         <p>Voulez-vous supprimez les participants ?</p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                        <button type="button" class="btn btn-primary" @click="deleteParticipants()" data-bs-dismiss="modal">Supprimer</button>
+                        <button type="button" class="btn-modal-neutre btn-custom" data-bs-dismiss="modal">Fermer</button>
+                        <button type="button" class="btn-modal-alert btn-custom" @click="deleteParticipants()" data-bs-dismiss="modal">Supprimer</button>
                     </div>
                 </div>
             </div>
@@ -247,7 +247,7 @@ h1 {
 }
 
 #function-datatable {
-    margin-bottom: 20px;
     display: flex;
+    flex-wrap: wrap;
 }
 </style>
