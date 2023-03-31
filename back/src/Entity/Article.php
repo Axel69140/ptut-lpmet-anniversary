@@ -12,29 +12,30 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
 class Article
 {
-    #[Groups(['user-return'])]
+    #[Groups(['user-return', 'article-return'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['user-return'])]
+    #[Groups(['user-return', 'article-return'])]
     #[ORM\Column(type: Types::TEXT)]
     private ?string $title = null;
 
-    #[Groups(['user-return'])]
+    #[Groups(['user-return', 'article-return'])]
     #[ORM\Column(type: Types::TEXT)]
     private ?string $content = null;
 
-    #[Groups(['user-return'])]
+    #[Groups(['user-return', 'article-return'])]
     #[ORM\Column]
     private ?bool $isValidate = null;
 
+    #[Groups(['article-return'])]
     #[ORM\ManyToOne(inversedBy: 'articles')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $creator = null;
 
-    #[Groups(['user-return'])]
+    #[Groups(['user-return', 'article-return'])]
     #[ORM\OneToMany(mappedBy: 'article', targetEntity: Media::class, orphanRemoval: true)]
     private Collection $medias;
 

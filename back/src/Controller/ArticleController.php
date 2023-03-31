@@ -23,7 +23,7 @@ class ArticleController extends AbstractController
     {
         try {
             $articles = $articleRepository->findAll();
-            return $this->json($articles, 200);
+            return $this->json($articles, 200, [], ['groups' => ['article-return']]);
         } catch (\Exception $e) {
             return $this->json([
                 'error' => 'Server error'

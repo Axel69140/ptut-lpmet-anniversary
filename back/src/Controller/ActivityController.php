@@ -23,7 +23,7 @@ class ActivityController extends AbstractController
     public function getActivities(ActivityRepository $activityRepository): JsonResponse
     {
             $activities = $activityRepository->findAll();
-            return $this->json($activities, 200);
+            return $this->json($activities, 200, [], ['groups' => ['activity-return']]);
         
     }
 
@@ -95,7 +95,7 @@ class ActivityController extends AbstractController
             $entityManager->persist($activity);
             $entityManager->flush();
 
-            return $this->json($activity, 201);              
+            return $this->json($activity, 201, [], ['groups' => ['activity-return']]);
     }
 
     // Update activity
@@ -231,5 +231,5 @@ class ActivityController extends AbstractController
                 'error' => 'Server error'
             ], 500);
         }
-    } 
+    }
 }
