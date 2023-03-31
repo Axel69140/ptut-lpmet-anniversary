@@ -2,186 +2,124 @@
     import { defineComponent } from 'vue';
     import { Header, Item } from "vue3-easy-data-table";
     import { onMounted, ref, computed, watch, watchEffect } from "vue";
-    import axios from "axios";
     import Footer from '../../components/Footer.vue';    
     import Loader from '../../components/Loader.vue';
+    import { timelineService } from '../../services/timeline.services';
 
     const searchValue = ref('');
-    let users = ref([]);
+    let timelineSteps = ref([]);
     const itemsSelected = ref<Item[]>([]);
     let isLoading = ref(true);
-    let userEdit = false;
-    let deleteMode = '';
+    let timelineEdit = false;
     const id = ref('');
-    const email = ref('');
-    const firstName = ref('');
-    const lastName = ref('');
-    const maidenName = ref('');
-    const password = ref('');
-    const password_confirmation = ref('');
-    const phone = ref('');
-    const activeYears = ref('');
-    const activeYears2 = ref('');
-    const _function = ref('');
-    const link = ref('');
-    const note = ref('');
-    const isParticipated = ref('');
-    const isPublic = ref('');
+    const title = ref('');
+    const day = ref('');
+    const month = ref('');
+    const year = ref('');
+    const content = ref('');
+    const media = ref('');
 
     const headers: Header[] = [
-        { text: "Prénom", value: "firstName", sortable: true },
-        { text: "Nom", value: "lastName", sortable: true },
-        { text: "Nom de jeune fille", value: "maidenName", sortable: true },
-        { text: "Email", value: "email", sortable: true },
-        { text: "Numéro de téléphone", value: "phoneNumber", sortable: true },
-        { text: "Année d'activité", value: "activeYears", sortable: true },
-        { text: "Fonction", value: "function", sortable: true },
-        { text: "Lien linkedIn", value: "link", sortable: true },
-        { text: "Note", value: "note", sortable: true },
-        { text: "Participe à l'évènement", value: "participated", sortable: true },
-        { text: "Profil publique", value: "publicProfil", sortable: true }
+        { text: "Titre", value: "title", sortable: true },
+        { text: "Date", value: "date", sortable: true },
+        { text: "Contenu", value: "content", sortable: true },
+        { text: "Lien de l'image", value: "media", sortable: true }
     ];
 
-    const items: Item[] = users.value;
+    const items: Item[] = timelineSteps.value;
 
     onMounted(async () => {
         // set datatable
-        getUsers();
+        getTimelineSteps();
         isLoading.value = false;  
     });    
-    
-    const getToken = () => {        
-        let user = localStorage.getItem('user');
-        if (user) {            
-            user = JSON.parse(user);
-            return user.token;
-        }
-        return null;
-    };
 
-    const getUsers = () => {
-        axios.get('http://127.0.0.1:8000/users', {
-            headers: {
-                Authorization: `Bearer ${getToken()}`
-            }
-        }).then(response => {
+    const getTimelineSteps = () => {    
+        timelineService.getTimelineSteps().then((response) => { 
             items.splice(0, items.length);
-            const usersResponse = response.data;
-            usersResponse.forEach(user => {
-                user.publicProfil = user.publicProfil == true ? "Oui" : "Non";
-                user.participated = user.participated == true ? "Oui" : "Non";
-            });         
-            users.value.push(... usersResponse);
-            itemsSelected.value = [];                                         
-        }); 
-    };
-
-    const getUserById = (userId) => {        
-        axios.get('http://127.0.0.1:8000/users/' + userId).then(response => {  
-            userEdit = true;     
-            id.value = userId;
-            email.value = response.data.email;
-            firstName.value = response.data.firstName;
-            lastName.value = response.data.lastName;
-            maidenName.value = response.data.maidenName;
-            phone.value = response.data.phoneNumber;
-            activeYears.value = response.data.activeYears[0];
-            activeYears2.value = response.data.activeYears[1];
-            _function.value = response.data.function;
-            link.value = response.data.link;
-            note.value = response.data.note;
-            isParticipated.value = response.data.participated;
-            isPublic.value = response.data.publicProfil;                                       
+            const timelinesResponse = response.data;
+            /*timelinesResponse.forEach(timelineStep => {
+                timelineStep.publicProfil = timelineStep.publicProfil == true ? "Oui" : "Non";
+                timelineStep.participated = timelineStep.participated == true ? "Oui" : "Non";
+            }); */        
+            timelineSteps.value.push(... timelinesResponse);
+            itemsSelected.value = [];  
         });
     };
 
-    const createUser = () => {        
-        isLoading.value = true; 
-        axios.post('http://127.0.0.1:8000/users/register',{
-            email: email.value,
-            lastName: lastName.value,
-            firstName: firstName.value,
-            password: password.value,
-            roles: ["ROLE_USER"],
-            maidenName: maidenName.value,
-            phoneNumber: phone.value,
-            note: note.value,
-            isParticipated: isParticipated.value == true ? isParticipated.value : false,
-            isPublicProfil: isPublic.value == true ? isPublic.value : false,
-            activeYears: [activeYears.value, activeYears2.value],
-            function: _function.value,
-            link: link.value,
-            isVerified: false
-        }).then(async response => {
-            await getUsers();  
-            isLoading.value = false;                           
-        }); 
-    };
-
-    const editUser = () => {        
-        isLoading.value = true; 
-        axios.patch('http://127.0.0.1:8000/users/' + id.value,{
-            email: email.value,
-            lastName: lastName.value,
-            firstName: firstName.value,
-            maidenName: maidenName.value,
-            phoneNumber: phone.value,
-            note: note.value,
-            isParticipated: isParticipated.value == true ? isParticipated.value : false,
-            isPublicProfil: isPublic.value == true ? isPublic.value : false,
-            activeYears: [activeYears.value, activeYears2.value],
-            function: _function.value,
-            link: link.value
-        }).then(async response => {
-            await getUsers();  
-            isLoading.value = false;                           
-        }); 
-    };
-
-    const deleteUser = () => {        
-        isLoading.value = true; 
-        console.log(itemsSelected);
-        
-        axios.delete('http://127.0.0.1:8000/users/' + itemsSelected.value[0].id).then(async response => {               
-            await getUsers();
-            isLoading.value = false;  
+    const getTimelineStepById = (timelineStepId) => {  
+        timelineService.getTimelineStepById(timelineStepId).then((response) => { 
+            timelineEdit = true;     
+            id.value = timelineStepId;
+            title.value = response.data.title;
+            //day.value = response.data.date;
+            //month.value = response.data.date;
+            //year.value = response.data.date;
+            content.value = response.data.content;
+            media.value = response.data.media; 
         });
     };
 
-    const deleteUsers = () => {        
+    const createTimelineStep = () => {        
+        isLoading.value = true; 
+        timelineService.createTimelineStep({
+            title: title.value,
+            //date: date.value,
+            media: media.value,
+            content: content.value
+        }).then(async (response) => { 
+            await getTimelineSteps();  
+            isLoading.value = false; 
+        });
+    };
+
+    const editTimelineStep = () => {
+        isLoading.value = true; 
+        timelineService.editTimelineStep(id.value, {
+            title: title.value,
+            //date: date.value,
+            media: media.value,
+            content: content.value
+        }).then(async (response) => { 
+            await getTimelineSteps();  
+            isLoading.value = false; 
+        }); 
+    };
+
+    const deleteTimelineStep = () => {        
+        isLoading.value = true;         
+        timelineService.deleteTimelineStep(itemsSelected.value[0].id).then(async (response) => { 
+            await getTimelineSteps();
+            isLoading.value = false;     
+        });
+    };
+
+    const deleteTimelineSteps = () => {        
         isLoading.value = true; 
         let ids = [];
-        itemsSelected.value.forEach((user) => {
-            ids.push(user.id);
-        });     
-        axios.delete('http://127.0.0.1:8000/users/many', {
-            data: {
-                id: ids
-            }          
-        }).then(async response => {               
-            await getUsers();
-            isLoading.value = false;  
+        itemsSelected.value.forEach((timelineStep) => {
+            ids.push(timelineStep.id);
+        });    
+        timelineService.deleteTimelineSteps(ids).then(async (response) => { 
+            await getTimelineSteps();
+            isLoading.value = false;     
         });
     };
 
-    const clearUserTable = () => {
+    const clearTimelineTable = () => {
         isLoading.value = true; 
-        axios.delete('http://127.0.0.1:8000/users/clear').then(async response => {               
-            await getUsers();
-            isLoading.value = false;  
+        timelineService.clearTimelineTable().then(async (response) => { 
+            await getTimelineSteps();
+            isLoading.value = false;     
         }).catch(err => {
-            console.log("Error : impossible de vider la table utilisateur");
-        }) 
+            console.log("Error : Impossible de vider la table timeline");
+        });
     };    
 
     const exportData = () => {
-        axios.get('http://127.0.0.1:8000/users/export').then(response => {
-            // upload le pdf reçu                                    
-        }); 
-    };
-
-    const setDeleteMode = (mode) => {
-        deleteMode = mode;
+        timelineService.exportTimelineData().then(async (response) => { 
+            // upload le pdf reçu     
+        })
     };
 
     const range = (start, end) => {
@@ -189,39 +127,30 @@
     }  
 
     const resetForm = () => {
-        email.value = '';
-        firstName.value = '';
-        lastName.value = '';
-        maidenName.value = '';
-        password.value = '';
-        password_confirmation.value = '';
-        phone.value = '';
-        activeYears.value = '';
-        activeYears2.value = '';
-        _function.value = '';
-        link.value = '';
-        note.value = '';
-        isParticipated.value = '';
-        isPublic.value = '';
+        title.value = '',
+        day.value = '',
+        month.value = '',
+        year.value = '',
+        media.value = '',
+        content.value = ''
     };
     
     defineComponent({
-        name: 'userManagement',
+        name: 'timelineManagement',
         components: {
             Footer,
             Loader
         },
         setup() {
             return {
-                clearUserTable,
+                createTimelineStep,
                 exportData,
-                createUser,
-                getUserById,
+                clearTimelineTable,
+                getTimelineStepById,
                 resetForm,
-                editUser,
-                deleteUser,
-                deleteUsers,
-                setDeleteMode
+                editTimelineStep,
+                deleteTimelineStep,
+                deleteTimelineSteps
             }
         }
     });
@@ -230,22 +159,22 @@
 
 <template>
     <main>
-        <h1>Gestion des utilisateurs</h1>     
+        <h1>Gestion de la timeline</h1>     
 
         <div class="container">      
             <div id="function-datatable">
                 <input type="text" placeholder="Rechercher..." v-model="searchValue">
-                <button type="button" data-bs-toggle="modal" data-bs-target="#clearModal">Vider la table utilisateur</button>
-                <button @click="exportData()">Exporter la liste des utilisateurs</button>
-                <button type="button" data-bs-toggle="modal" data-bs-target="#formModal">Créer un utilisateur</button>
+                <button type="button" data-bs-toggle="modal" data-bs-target="#clearModal">Vider la table de la timeline</button>
+                <button @click="exportData()">Exporter la liste des étapes de la timeline</button>
+                <button type="button" data-bs-toggle="modal" data-bs-target="#formModal">Créer une étape de la timeline</button>
 
                 <div v-if="itemsSelected.length === 1">
-                    <button type="button" data-bs-toggle="modal" data-bs-target="#formModal" @click="getUserById(itemsSelected[0].id)">Modifier l'utilisateur</button>
-                    <button type="button" data-bs-toggle="modal" data-bs-target="#deleteModal">Supprimer l'utilisateur</button>
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#formModal" @click="getTimelineStepById(itemsSelected[0].id)">Modifier l'étape</button>
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#deleteModal">Supprimer l'étape</button>
                 </div>
 
                 <div v-if="itemsSelected.length > 1">
-                    <button type="button" data-bs-toggle="modal" data-bs-target="#deletesModal">Supprimer les utilisateurs</button>
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#deletesModal">Supprimer les étapes</button>
                 </div>
             </div>
 
@@ -267,10 +196,6 @@
                 <template #empty-message>
                     <p>Aucun résultat</p>
                 </template>
-
-                <template #item-activeYears="item">
-                    {{ item.activeYears.length > 0 ? item.activeYears[0] + "/" + item.activeYears[1] : "" }}                    
-                </template>
             </EasyDataTable>
         </div>
 
@@ -279,72 +204,52 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="formModal">Créer un utilisateur</h5>
+                        <h5 class="modal-title" id="formModal">Créer une étape</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="resetForm()"></button>
                     </div>
                     <div class="modal-body">
                         <input v-model="id" type="hidden"/>
 
                         <div class="form-row">
-                            <input v-model="firstName" class="form-row__input" type="text" placeholder="Prénom*"/>
-                            <input v-model="lastName" class="form-row__input" type="text" placeholder="Nom*"/>
+                            <input v-model="title" class="form-row__input" type="text" placeholder="Titre*"/>
                         </div>
 
                         <div class="form-row">
-                            <input v-model="maidenName" class="form-row__input" type="text" placeholder="Nom de jeune fille"/>
-                            <input v-model="phone" class="form-row__input" type="tel" placeholder="Numéro de téléphone"/>
+                            <textarea v-model="content" class="form-row__input" placeholder="Contenu*"/>
+                        </div> 
+
+                        <div class="form-row">
+                            <input v-model="media" class="form-row__input" type="text" placeholder="Lien de l'image*"/>
                         </div>
 
                         <div class="form-row">
-                            <input v-model="email" class="form-row__input" type="text" placeholder="Adresse mail*"/>
-                        </div>
-
-                        <div class="form-row" v-if="!userEdit">
-                            <input v-model="password" class="form-row__input" type="password" placeholder="Mot de passe*"/>
-                        </div>
-
-                        <div class="form-row" v-if="!userEdit">
-                            <input v-model="password_confirmation" class="form-row__input" type="password" placeholder="Confirmer mot de passe*"/>
-                        </div>
-
-                        <div class="form-row">
-                            <label for="activeYears">Année d'activité à l'IUT*</label>
-                            <select v-model="activeYears" name="activeYears" id="activeYears">
-                            <option value="">-</option>
-                            <option v-for="year in range(1993, 2023)" v-bind:key="year" v-bind:value="year">{{ year }}</option>
+                            <label for="day">Date de l'étape</label>
+                            <select v-model="day" name="day" id="day">
+                                <option value="">-</option>
+                                <option v-for="year in range(1993, 2023)" v-bind:key="year" v-bind:value="year">{{ year }}</option>
                             </select>
 
                             <span>/</span>
 
-                            <select v-model="activeYears2" name="activeYears2" id="activeYears2">
-                            <option value="">-</option>
-                            <option v-for="year in range(1993, 2023)" v-bind:key="year" v-bind:value="year">{{ year }}</option>
+                            <select v-model="month" name="month" id="month">
+                                <option value="">-</option>
+                                <option v-for="year in range(1993, 2023)" v-bind:key="year" v-bind:value="year">{{ year }}</option>
                             </select>
-                        </div>
 
-                        <div class="form-row">
-                            <input v-model="_function" class="form-row__input" type="text" placeholder="Fonction"/>
-                            <input v-model="link" class="form-row__input" type="text" placeholder="Lien linkedIn"/>
-                        </div>      
+                            <span>/</span>
 
-                        <div class="form-row">
-                            <textarea v-model="note" class="form-row__input" placeholder="Note"/>
-                        </div>      
+                            <select v-model="year" name="year" id="year">
+                                <option value="">-</option>
+                                <option v-for="year in range(1993, 2023)" v-bind:key="year" v-bind:value="year">{{ year }}</option>
+                            </select>
 
-                        <div class="form-row">
-                            <label for="isParticipated">Je participe à l'événement</label>
-                            <input v-model="isParticipated" type="checkbox"/>
-                        </div>
-
-                        <div class="form-row">
-                            <label for="isPublic">Je souhaite afficher publiquement mes informations</label>
-                            <input v-model="isPublic" type="checkbox"/>
+                            <span>/</span>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="resetForm()">Fermer</button>
-                        <button v-if="!userEdit" type="button" class="btn btn-primary" @click="createUser()" data-bs-dismiss="modal">Enregistrer</button>
-                        <button v-else type="button" class="btn btn-primary" @click="editUser()" data-bs-dismiss="modal">Enregistrer</button>
+                        <button v-if="!timelineEdit" type="button" class="btn btn-primary" @click="createTimelineStep()" data-bs-dismiss="modal">Enregistrer</button>
+                        <button v-else type="button" class="btn btn-primary" @click="editTimelineStep()" data-bs-dismiss="modal">Enregistrer</button>
                     </div>
                 </div>
             </div>
@@ -358,11 +263,11 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <p>Voulez-vous supprimez l'utilisateur ?</p>
+                        <p>Voulez-vous supprimez l'étape ?</p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                        <button type="button" class="btn btn-primary" @click="deleteUser()" data-bs-dismiss="modal">Supprimer</button>
+                        <button type="button" class="btn btn-primary" @click="deleteTimelineStep()" data-bs-dismiss="modal">Supprimer</button>
                     </div>
                 </div>
             </div>
@@ -375,11 +280,11 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <p>Voulez-vous supprimez les utilisateurs ?</p>
+                        <p>Voulez-vous supprimez les étapes ?</p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                        <button type="button" class="btn btn-primary" @click="deleteUsers()" data-bs-dismiss="modal">Supprimer</button>
+                        <button type="button" class="btn btn-primary" @click="deleteTimelineSteps()" data-bs-dismiss="modal">Supprimer</button>
                     </div>
                 </div>
             </div>
@@ -396,7 +301,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                        <button type="button" class="btn btn-primary" @click="clearUserTable()" data-bs-dismiss="modal">Vider</button>
+                        <button type="button" class="btn btn-primary" @click="clearTimelineTable()" data-bs-dismiss="modal">Vider</button>
                     </div>
                 </div>
             </div>

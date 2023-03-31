@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Repository\UserRepository;
 use App\Service\EntryDataService;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -93,6 +92,42 @@ class UserController extends AbstractController
         }
     }
 
+    // Get all functions
+    #[Route('/functions', name: 'app_api_get_functions', methods: ['GET'])]
+    public function getFunctions(): JsonResponse
+    {
+        try {
+
+            $user = new User();
+            return $this->json($user->getAllowedFunctions(), 200);
+
+        } catch (\Exception $e) {
+
+            return $this->json([
+                'error' => 'Server error'
+            ], 500);
+
+        }
+    }
+
+    // Get all functions
+    #[Route('/participate', name: 'app_api_users_participate_get', methods: ['GET'])]
+    public function getUsersParticipate(UserRepository $userRepository): JsonResponse
+    {
+        try {
+
+            $users = $userRepository->findBy(['isParticipated' => true]);
+            return $this->json($users, 200);
+
+        } catch (\Exception $e) {
+
+            return $this->json([
+                'error' => $e->getMessage()
+            ], 500);
+
+        }
+    }
+
     // Get one user
     #[Route('/{id}', name: 'app_api_user_get_one', methods: ['GET'])]
     public function getUserById(int $id, UserRepository $userRepository): JsonResponse
@@ -118,31 +153,6 @@ class UserController extends AbstractController
 
         }
 
-    }
-
-    // Get user by email
-    #[Route('/{email}', name: 'app_api_user_get_one_by_email', methods: ['GET'])]
-    public function getUserByEmail(string $email, UserRepository $userRepository): JsonResponse
-    {
-        try {
-
-            $user = $userRepository->findOneBy(['email' => $email]);
-
-            if (!$user) {
-                return $this->json([
-                    'error' => 'User not found'
-                ], 404);
-            }
-
-            return $this->json($user, 200);
-
-        } catch (\Exception $e) {
-
-            return $this->json([
-                'error' => 'Server error'
-            ], 500);
-
-        }
     }
 
     // Get role's user
@@ -208,16 +218,16 @@ class UserController extends AbstractController
 
     // Create user
     #[Route('/register', name: 'app_api_user_post', methods: ['POST'])]
-    public function register(Request $request, UserRepository $userRepository, UserPasswordHasherInterface $userPasswordHasher, ValidatorInterface $validator, EntryDataService $entryDataService, EntityManagerInterface $em): JsonResponse
+    public function register(Request $request, UserRepository $userRepository, UserPasswordHasherInterface $userPasswordHasher, ValidatorInterface $validator, EntryDataService $entryDataService): JsonResponse
     {
         try {
 
             $content = json_decode($request->getContent(), true);
             $user = new User();
-            $user = $entryDataService->defineKeysInEntity($content, $user, $em);
+            $user = $entryDataService->defineKeysInEntity($content, $user);
             if ($user === null) {
                 return $this->json([
-                    'error' => 'A problem has been encounter during entity modification'
+                    'error' => 'A problem has been encounter during entity creation'
                 ], 400);
             }
 
@@ -238,7 +248,6 @@ class UserController extends AbstractController
 
             //Symfony validation
             $errors = $validator->validate($user);
-
             if (count($errors) > 0) {
                 return $this->json([
                     'error' => $errors
@@ -259,7 +268,7 @@ class UserController extends AbstractController
 
     // Update user
     #[Route('/{id}', name: 'app_api_user_update', methods: ['PATCH'])]
-    public function updateUser(int $id, Request $request, UserRepository $userRepository, EntryDataService $entryDataService): JsonResponse
+    public function updateUser(int $id, Request $request, UserRepository $userRepository, EntryDataService $entryDataService, ValidatorInterface $validator): JsonResponse
     {
         try {
 
@@ -275,6 +284,14 @@ class UserController extends AbstractController
             if ($userToUpdate === null) {
                 return $this->json([
                     'error' => 'A problem has been encounter during entity modification'
+                ], 400);
+            }
+
+            //Symfony validation
+            $errors = $validator->validate($userToUpdate);
+            if (count($errors) > 0) {
+                return $this->json([
+                    'error' => $errors
                 ], 400);
             }
 
@@ -315,7 +332,7 @@ class UserController extends AbstractController
             }
 
             foreach ($users as $user) {
-                $userRepository->remove($user);
+                $userRepository->remove($user, true);
             }
 
             return $this->json([], 204);
@@ -339,7 +356,7 @@ class UserController extends AbstractController
             $users = $userRepository->findAll();
 
             foreach ($users as $user) {
-                $userRepository->remove($user);
+                $userRepository->remove($user, true);
             }
 
             return $this->json([], 204);
@@ -366,7 +383,7 @@ class UserController extends AbstractController
                 ], 404);
             }
 
-            $userRepository->remove($userToDelete);
+            $userRepository->remove($userToDelete, true);
             return $this->json([], 204);
 
         } catch (\Exception $e) {

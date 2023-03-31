@@ -14,6 +14,16 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[ORM\Table(name: '`user`')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    private array $allowedFunctions = ["", "Enseignant", "Élève", "Autre"];
+
+    /**
+     * @return array
+     */
+    public function getAllowedFunctions(): array
+    {
+        return $this->allowedFunctions;
+    }
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
