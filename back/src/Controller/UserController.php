@@ -120,7 +120,7 @@ class UserController extends AbstractController
 
     // Get all functions
     #[Route('/functions', name: 'app_api_get_functions', methods: ['GET'])]
-    public function getFunctions(): Response
+    public function getFunctions(): JsonResponse
     {
         try {
 
@@ -140,7 +140,6 @@ class UserController extends AbstractController
     #[Route('/{id}', name: 'app_api_user_get_one', methods: ['GET'])]
     public function getUserById(int $id, UserRepository $userRepository): JsonResponse
     {
-
         try {
 
             $user = $userRepository->findOneBy(['id' => $id]);
@@ -160,7 +159,6 @@ class UserController extends AbstractController
             ], 500);
 
         }
-
     }
 
     // Get user by email

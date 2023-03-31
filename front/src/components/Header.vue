@@ -1,13 +1,34 @@
 <script>
+    import { accountService } from '../services/account.services';
+    import Axios from '../services/caller.services';
+
     export default {
         name: 'header',
-        data: () => ({}),       
+        data: () => ({ user: null }),       
         computed: {  
+          getFirstName: function() {
+            return accountService.getFirstName();
+          },
+          getLastName: function() {
+            return accountService.getLastName();
+          }
         },
         methods: {  
           logout: async function () {
-            await this.$store.commit('logout');
-            this.$router.push('/');
+            accountService.logout();
+          },
+          isAdmin: function () {
+            if (accountService.getToken()) {
+              Axios.get(`https://127.0.0.1:8000/users/${accountService.getId()}/role`).then((response) => {
+                if (response.data && response.data.role[0] === 'ROLE_ADMIN') {
+                  return true;
+                } else {
+                  return false;
+                }                         
+              });       
+            } else {
+              return false
+            }
           }
         }
     }
@@ -25,9 +46,9 @@
 
       <div class="navbar-mobile">
         <div class="form-inline my-md-0 display-mobile">
-          <a v-if="this.$store.state.user.token === ''" class="btn-custom btn" href="/login" role="button">Connexion</a>
-          <div v-if="this.$store.state.user.token !== ''" class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="/" id="dropdown3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ this.$store.state.user.firstName }} {{ this.$store.state.user.lastName }}</a>
+          <a v-if="!this.$store.state.user.token" class="btn-custom btn" href="/login" role="button">Connexion</a>
+          <div v-if="this.$store.state.user.token" class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="/" id="dropdown3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ getFirstName }} {{ getLastName }}</a>
             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown3">
               <a class="dropdown-item" href="" @click="logout()">Déconnexion</a>
             </div>
@@ -65,12 +86,20 @@
           </li>
         </ul>  
 
-        <div class="form-inline my-md-0 display-desktop" :class="{addmargin : this.$store.state.user.token === ''}">
-          <a v-if="this.$store.state.user.token === ''" class="btn-custom btn" href="/login" role="button">Connexion</a>
-          <div v-if="this.$store.state.user.token !== ''" class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="/" id="dropdown3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ this.$store.state.user.firstName }} {{ this.$store.state.user.lastName }}</a>   
+        <div class="form-inline my-md-0 display-desktop" :class="{addmargin : !this.$store.state.user.token}">
+          <a v-if="!this.$store.state.user.token" class="btn-custom btn" href="/login" role="button">Connexion</a>
+          <div v-if="this.$store.state.user.token" class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="/" id="dropdown3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ getFirstName }} {{ getLastName }}</a>   
             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown3">
               <a class="dropdown-item" href="" @click="logout()">Déconnexion</a>
+              <div v-if="isAdmin">
+                <a class="dropdown-item" href="/admin/user">Gestion des utilisateurs</a>
+                <a class="dropdown-item" href="/admin/participant">Gestion des participants</a>
+                <a class="dropdown-item" href="/admin/timeline">Gestion des la timeline</a>
+                <a class="dropdown-item" href="/admin/article">Gestion des articles</a>
+                <a class="dropdown-item" href="/admin/activity">Gestion des activités</a>
+                <a class="dropdown-item" href="/admin/anecdote">Gestion des anecdotes</a>
+              </div>
             </div>
           </div>
         </div>      
@@ -245,7 +274,7 @@
   }
 }
 
-.navbar-ul li a:active {
+.navbar-ul li a:active, .dropdown-item:active {
   background-color: var(--bs-dropdown-link-hover-bg);
 }
 
@@ -257,7 +286,7 @@
   width: 90%;
 }
 
-.navbar .nav-link:hover, .navbar .nav-link:focus, .dropdown-item:hover {
+.navbar .nav-link:hover, .navbar .nav-link:focus, .dropdown-item:hover, .dropdown-item:focus {
   color: var(--primary) !important;
 }
 

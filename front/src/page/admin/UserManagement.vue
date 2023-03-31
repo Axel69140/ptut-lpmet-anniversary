@@ -2,9 +2,9 @@
     import { defineComponent } from 'vue';
     import { Header, Item } from "vue3-easy-data-table";
     import { onMounted, ref, computed, watch, watchEffect } from "vue";
-    import axios from "axios";
     import Footer from '../../components/Footer.vue';    
     import Loader from '../../components/Loader.vue';
+    import { userService } from '../../services/user.services';
 
     const searchValue = ref('');
     let users = ref([]);
@@ -48,22 +48,9 @@
         getUsers();
         isLoading.value = false;  
     });    
-    
-    const getToken = () => {        
-        let user = localStorage.getItem('user');
-        if (user) {            
-            user = JSON.parse(user);
-            return user.token;
-        }
-        return null;
-    };
 
-    const getUsers = () => {
-        axios.get('https://127.0.0.1:8000/users', {
-            headers: {
-                Authorization: `Bearer ${getToken()}`
-            }
-        }).then(response => {
+    const getUsers = () => {    
+        userService.getUsers().then((response) => { 
             items.splice(0, items.length);
             const usersResponse = response.data;
             usersResponse.forEach(user => {
@@ -71,12 +58,12 @@
                 user.participated = user.participated == true ? "Oui" : "Non";
             });         
             users.value.push(... usersResponse);
-            itemsSelected.value = [];                                         
-        }); 
+            itemsSelected.value = [];  
+        });
     };
 
-    const getUserById = (userId) => {        
-        axios.get('https://127.0.0.1:8000/users/' + userId).then(response => {  
+    const getUserById = (userId) => {  
+        userService.getUserById(userId).then((response) => { 
             userEdit = true;     
             id.value = userId;
             email.value = response.data.email;
@@ -90,13 +77,13 @@
             link.value = response.data.link;
             note.value = response.data.note;
             isParticipated.value = response.data.participated;
-            isPublic.value = response.data.publicProfil;                                       
+            isPublic.value = response.data.publicProfil; 
         });
     };
 
     const createUser = () => {        
         isLoading.value = true; 
-        axios.post('https://127.0.0.1:8000/users/register',{
+        userService.createUser({
             email: email.value,
             lastName: lastName.value,
             firstName: firstName.value,
@@ -109,17 +96,16 @@
             isPublicProfil: isPublic.value == true ? isPublic.value : false,
             activeYears: [activeYears.value, activeYears2.value],
             function: _function.value,
-            link: link.value,
-            isVerified: false
-        }).then(async response => {
+            link: link.value
+        }).then(async (response) => { 
             await getUsers();  
-            isLoading.value = false;                           
-        }); 
+            isLoading.value = false; 
+        });
     };
 
     const editUser = () => {        
         isLoading.value = true; 
-        axios.patch('https://127.0.0.1:8000/users/' + id.value,{
+        userService.editUser(id.value, {
             email: email.value,
             lastName: lastName.value,
             firstName: firstName.value,
@@ -131,19 +117,17 @@
             activeYears: [activeYears.value, activeYears2.value],
             function: _function.value,
             link: link.value
-        }).then(async response => {
+        }).then(async (response) => { 
             await getUsers();  
-            isLoading.value = false;                           
+            isLoading.value = false; 
         }); 
     };
 
     const deleteUser = () => {        
-        isLoading.value = true; 
-        console.log(itemsSelected);
-        
-        axios.delete('https://127.0.0.1:8000/users/' + itemsSelected.value[0].id).then(async response => {               
+        isLoading.value = true;         
+        userService.deleteUser(itemsSelected.value[0].id).then(async (response) => { 
             await getUsers();
-            isLoading.value = false;  
+            isLoading.value = false;     
         });
     };
 
@@ -152,31 +136,27 @@
         let ids = [];
         itemsSelected.value.forEach((user) => {
             ids.push(user.id);
-        });     
-        axios.delete('https://127.0.0.1:8000/users/many', {
-            data: {
-                id: ids
-            }          
-        }).then(async response => {               
+        });    
+        userService.deleteUsers(ids).then(async (response) => { 
             await getUsers();
-            isLoading.value = false;  
+            isLoading.value = false;     
         });
     };
 
     const clearUserTable = () => {
         isLoading.value = true; 
-        axios.delete('https://127.0.0.1:8000/users/clear').then(async response => {               
+        userService.clearUserTable().then(async (response) => { 
             await getUsers();
-            isLoading.value = false;  
+            isLoading.value = false;     
         }).catch(err => {
-            console.log("Error : impossible de vider la table utilisateur");
-        }) 
+            console.log("Error : Impossible de vider la table utilisateur");
+        });
     };    
 
     const exportData = () => {
-        axios.get('https://127.0.0.1:8000/users/export').then(response => {
-            // upload le pdf reçu                                    
-        }); 
+        userService.exportUserData().then(async (response) => { 
+            // upload le pdf reçu     
+        })
     };
 
     const range = (start, end) => {
