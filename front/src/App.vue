@@ -87,6 +87,6 @@ main {
 }
 
 h1 {
-  padding-top: 100px !important;
+  margin-top: 100px !important;
 }
 </style>
