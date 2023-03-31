@@ -300,14 +300,13 @@ class UserController extends AbstractController
                     'error' => $errors
                 ], 400);
             }
-
             $userRepository->save($user, true);
             return $this->json($user, 201, [], ['groups' => ['user-return']]);
 
         } catch (\Exception $e) {
 
             return $this->json([
-                'error' => 'Server error'
+                'error' => $e->getMessage()
             ], 500);
 
         }
