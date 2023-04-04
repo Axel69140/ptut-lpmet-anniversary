@@ -20,7 +20,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class GuestController extends AbstractController
 {
     // Get guests
-    #[Route('/', name: 'app_api_guest_get', methods: ['GET'])]
+    #[Route('/', name: 'app_api_guests_get_all', methods: ['GET'])]
     public function getGuests(GuestRepository $guestRepository): JsonResponse
     {
         try {
@@ -45,7 +45,7 @@ class GuestController extends AbstractController
     }
 
     // Get one guest
-    #[Route('/{id}', name: 'app_api_guest_get_one', methods: ['GET'])]
+    #[Route('/{id}', name: 'app_api_guests_get', methods: ['GET'])]
     public function getGuestById(int $id, GuestRepository $guestRepository): JsonResponse
     {
         try {
@@ -70,7 +70,7 @@ class GuestController extends AbstractController
     }
 
     // Create guest
-    #[Route('/create', name: 'app_api_guest_post', methods: ['POST'])]
+    #[Route('/create', name: 'app_api_guests_create', methods: ['POST'])]
     public function createGuest(Request $request, EntryDataService $entryDataService, GuestRepository $guestRepository, ValidatorInterface $validator, EntityManagerInterface $em, UserRepository $userRepository, SettingsRepository $settingsRepository): JsonResponse
     {
         try {
@@ -139,8 +139,8 @@ class GuestController extends AbstractController
     }
 
     // Update guest
-    #[Route('/{id}', name: 'app_api_guest_update', methods: ['PATCH'])]
-    public function updateGuest(int $id, Request $request, UserRepository $userRepository, GuestRepository $guestRepository, EntryDataService $entryDataService, ValidatorInterface $validator): JsonResponse
+    #[Route('/{id}', name: 'app_api_guests_update', methods: ['PATCH'])]
+    public function updateGuest(int $id, Request $request, UserRepository $userRepository, GuestRepository $guestRepository, EntryDataService $entryDataService, ValidatorInterface $validator, EntityManagerInterface $em): JsonResponse
     {
         try {
 
@@ -152,7 +152,7 @@ class GuestController extends AbstractController
                 ], 404);
             }
 
-            $guestToUpdate = $entryDataService->defineKeysInEntity($content, $guestToUpdate);
+            $guestToUpdate = $entryDataService->defineKeysInEntity($content, $guestToUpdate, $em);
             if ($guestToUpdate === null) {
                 return $this->json([
                     'error' => 'A problem has been encounter during entity modification'
@@ -208,7 +208,7 @@ class GuestController extends AbstractController
     }
 
     // Delete guests
-    #[Route('/many', name: 'app_api_guest_delete_many', methods: ['DELETE'])]
+    #[Route('/many', name: 'app_api_guests_delete_many', methods: ['DELETE'])]
     #[IsGranted('ROLE_ADMIN', statusCode: 403, message: 'Vous n\'avez pas les droits suffisants')]
     public function deleteGuests(Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -216,7 +216,7 @@ class GuestController extends AbstractController
 
             $data = json_decode($request->getContent(), true);
             $ids = $data['id'] ?? [];
-    
+
             if (empty($ids)) {
                 return $this->json([
                     'error' => 'No IDs provided'
@@ -226,13 +226,13 @@ class GuestController extends AbstractController
             $guestsToDelete = $entityManager->getRepository(Guest::class)->findBy([
                 'id' => $ids
             ]);
-    
+
             if (empty($guestsToDelete)) {
                 return $this->json([
                     'error' => 'Guests not found'
                 ], 404);
             }
-    
+
             foreach ($guestsToDelete as $guest) {
                 $entityManager->remove($guest);
             }
@@ -247,10 +247,10 @@ class GuestController extends AbstractController
             ], 500);
 
         }
-    }  
+    }
 
     // Clear guests
-    #[Route('/clear', name: 'app_api_guest_delete_all', methods: ['DELETE'])]
+    #[Route('/clear', name: 'app_api_guests_delete_all', methods: ['DELETE'])]
     #[IsGranted('ROLE_ADMIN', statusCode: 403, message: 'Vous n\'avez pas les droits suffisants')]
     public function clearGuests(EntityManagerInterface $entityManager): Response
     {
@@ -283,7 +283,7 @@ class GuestController extends AbstractController
     }
 
     // Delete guest
-    #[Route('/{id}', name: 'app_api_guest_delete', methods: ['DELETE'])]
+    #[Route('/{id}', name: 'app_api_guests_delete', methods: ['DELETE'])]
     public function deleteGuest(int $id, GuestRepository $guestRepository): Response
     {
         try {
@@ -307,5 +307,5 @@ class GuestController extends AbstractController
             ], 500);
 
         }
-    } 
+    }
 }

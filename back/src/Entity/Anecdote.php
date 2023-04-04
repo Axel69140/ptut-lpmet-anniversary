@@ -10,21 +10,21 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\Entity(repositoryClass: AnecdoteRepository::class)]
 class Anecdote
 {
-    #[Groups(['user-return'])]
+    #[Groups(['user-return', 'anecdote-return'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['user-return'])]
+    #[Groups(['user-return', 'anecdote-return'])]
     #[ORM\Column(type: Types::TEXT)]
     private ?string $content = null;
 
-    #[Groups(['user-return'])]
+    #[Groups(['user-return', 'anecdote-return'])]
     #[ORM\Column]
     private ?bool $isValidate = null;
 
-    #[Groups(['user'])]
+    #[Groups(['anecdote-return'])]
     #[ORM\ManyToOne(inversedBy: 'anecdotes')]
     private ?User $User = null;
 

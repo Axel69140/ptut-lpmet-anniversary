@@ -16,7 +16,7 @@ export default {
 
   },
   methods: {
-    async parameterGame() {
+    async parameterAnecdote() {
       if (this.content !== undefined && this.content !== '') {
         console.log(this.idUser);
         await anecdoteService.createAnecdote({
@@ -56,7 +56,7 @@ export default {
                 <textarea class="textZone" rows="10" cols="100" v-model="content"></textarea>
             </div>
             <div class="sendButton">
-                <button @click="parameterGame()" class="btn-custom">Envoyer l'anecdote</button>
+                <button @click="parameterAnecdote()" class="btn-custom">Envoyer l'anecdote</button>
             </div>
         </div>
     </main>
@@ -88,18 +88,4 @@ export default {
         outline: var(--primary);
     }
 
-    .validButton{
-        border: 3px solid #fff;
-        color: #fff;
-        background-color: var(--secondary);
-        border-radius: 15px;
-        padding: 0.5%;
-        transition: all .2s ease-in-out; 
-    }
-
-    .validButton:hover{
-        transform: scale(1.1);
-        background-color: var(--primary);
-        border: var(--primary);
-    }
 </style>

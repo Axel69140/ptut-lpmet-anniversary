@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\ArticleRepository;
@@ -54,7 +55,7 @@ class ArticleController extends AbstractController
 
     // Create article
     #[Route('/create', name: 'app_api_article_post', methods: ['POST'])]
-    public function createArticle(Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
+    public function createArticle(Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager, UserRepository $userRepository): JsonResponse
     {
         try {
             $content = json_decode($request->getContent(), true);
@@ -83,15 +84,23 @@ class ArticleController extends AbstractController
                 ], 400);
             }
 
-            $article = $serializer->deserialize($request->getContent(), Article::class, 'json');
+            $user = $userRepository->find($content['id_user']);
+            if (!$user) {
+                return $this->json([
+                    'error' => 'User not found'
+                ], 404);
+            }
 
+            $article = $serializer->deserialize($request->getContent(), Article::class, 'json');
+            $article->setIsValidate(false);
+            $article->setCreator($user);
             $entityManager->persist($article);
             $entityManager->flush();
 
-            return $this->json($article, 201);
+            return $this->json($article, 201, [], ['groups' => ['article-return']]);
         } catch (\Exception $e) {
             return $this->json([
-                'error' => 'Server error'
+                'error' => $e->getMessage()
             ], 500);
         }
     }

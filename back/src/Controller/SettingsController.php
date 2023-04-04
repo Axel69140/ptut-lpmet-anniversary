@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Settings;
 use App\Repository\SettingsRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use App\Service\EntryDataService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -72,7 +73,7 @@ class SettingsController extends AbstractController
 
     // Update user
     #[Route('/update', name: 'app_api_settings_update', methods: ['PATCH'])]
-    public function updateSettings(Request $request, SettingsRepository $settingsRepository, EntryDataService $entryDataService, ValidatorInterface $validator): JsonResponse
+    public function updateSettings(Request $request, SettingsRepository $settingsRepository, EntryDataService $entryDataService, ValidatorInterface $validator, EntityManagerInterface $em): JsonResponse
     {
         try {
 
@@ -84,7 +85,7 @@ class SettingsController extends AbstractController
                 $settingsToUpdate = $settingsRepository->findAll();
             }
 
-            $settingsToUpdate = $entryDataService->defineKeysInEntity($content, $settingsToUpdate[0]);
+            $settingsToUpdate = $entryDataService->defineKeysInEntity($content, $settingsToUpdate[0], $em);
             if ($settingsToUpdate === null) {
                 return $this->json([
                     'error' => 'A problem has been encounter during entity modification'

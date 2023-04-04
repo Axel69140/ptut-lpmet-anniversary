@@ -140,7 +140,7 @@ class ParticipantController extends AbstractController
 
     // Update guest
     #[Route('/{id}', name: 'app_api_guest_update', methods: ['PATCH'])]
-    public function updateGuest(int $id, Request $request, UserRepository $userRepository, GuestRepository $guestRepository, EntryDataService $entryDataService, ValidatorInterface $validator): JsonResponse
+    public function updateGuest(int $id, Request $request, UserRepository $userRepository, GuestRepository $guestRepository, EntryDataService $entryDataService, ValidatorInterface $validator, EntityManagerInterface $em): JsonResponse
     {
         try {
 
@@ -152,7 +152,7 @@ class ParticipantController extends AbstractController
                 ], 404);
             }
 
-            $guestToUpdate = $entryDataService->defineKeysInEntity($content, $guestToUpdate);
+            $guestToUpdate = $entryDataService->defineKeysInEntity($content, $guestToUpdate, $em);
             if ($guestToUpdate === null) {
                 return $this->json([
                     'error' => 'A problem has been encounter during entity modification'
