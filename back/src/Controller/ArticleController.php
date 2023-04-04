@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Service\EntryDataService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -14,6 +15,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/articles')]
 class ArticleController extends AbstractController
@@ -23,12 +25,23 @@ class ArticleController extends AbstractController
     public function getArticles(ArticleRepository $articleRepository): JsonResponse
     {
         try {
+
             $articles = $articleRepository->findAll();
+
+            if (!$articles) {
+                return $this->json([
+                    'error' => 'Articles not found'
+                ], 404);
+            }
+
             return $this->json($articles, 200, [], ['groups' => ['article-return']]);
+
         } catch (\Exception $e) {
+
             return $this->json([
                 'error' => 'Server error'
             ], 500);
+
         }
     }
 
@@ -37,7 +50,8 @@ class ArticleController extends AbstractController
     public function getArticleById(ArticleRepository $articleRepository, int $id): JsonResponse
     {
         try {
-            $article = $articleRepository->find($id);
+
+            $article = $articleRepository->findOneBy(['id' => $id]);
 
             if (!$article) {
                 return $this->json([
@@ -45,63 +59,49 @@ class ArticleController extends AbstractController
                 ], 404);
             }
 
-            return $this->json($article, 200);
+            return $this->json($article, 200, [], ['groups' => ['article-return']]);
+
         } catch (\Exception $e) {
+
             return $this->json([
                 'error' => 'Server error'
             ], 500);
+
         }
     }
 
     // Create article
     #[Route('/create', name: 'app_api_article_post', methods: ['POST'])]
-    public function createArticle(Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager, UserRepository $userRepository): JsonResponse
+    public function createArticle(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, UserRepository $userRepository, EntryDataService $entryDataService, ValidatorInterface $validator): JsonResponse
     {
         try {
+
             $content = json_decode($request->getContent(), true);
-
-            if (empty($content)) {
+            $article = new Article();
+            $article = $entryDataService->defineKeysInEntity($content, $article, $em);
+            if ($article === null) {
                 return $this->json([
-                    'error' => 'No data provided'
+                    'error' => 'A problem has been encounter during entity creation'
                 ], 400);
             }
 
-            $requiredFields = ['title', 'content', 'id_user'];
-
-            // Vérification de la présence de tous les champs requis
-            foreach ($requiredFields as $field) {
-                if (!isset($content[$field])) {
-                    return $this->json([
-                        'error' => "Missing field '$field'"
-                    ], 400);
-                }
-            }
-
-            // Vérification des types des champs requis
-            if (!is_string($content['title']) || !is_string($content['content']) || !is_numeric($content['id_user'])) {
+            //Symfony validation
+            $errors = $validator->validate($article);
+            if (count($errors) > 0) {
                 return $this->json([
-                    'error' => 'One or more filled-in field(s) has/have a wrong type'
+                    'error' => $errors
                 ], 400);
             }
 
-            $user = $userRepository->find($content['id_user']);
-            if (!$user) {
-                return $this->json([
-                    'error' => 'User not found'
-                ], 404);
-            }
-
-            $article = $serializer->deserialize($request->getContent(), Article::class, 'json');
-            $article->setIsValidate(false);
-            $article->setCreator($user);
-            $entityManager->persist($article);
-            $entityManager->flush();
-
+            $userRepository->save($article, true);
             return $this->json($article, 201, [], ['groups' => ['article-return']]);
+
         } catch (\Exception $e) {
+
             return $this->json([
                 'error' => $e->getMessage()
             ], 500);
+
         }
     }
 

@@ -248,7 +248,7 @@ class TimelineStepController extends AbstractController
         }
     }
 
-    // Clear users
+    // Clear timeline steps
     #[Route('/clear', name: 'app_api_timeline_delete_all', methods: ['DELETE'])]
     #[IsGranted('ROLE_ADMIN', statusCode: 403, message: 'Vous n\'avez pas les droits suffisants')]
     public function clearTimelineSteps(TimelineStepRepository $timelineStepRepository): JsonResponse
@@ -272,7 +272,7 @@ class TimelineStepController extends AbstractController
         }
     }
 
-    // Delete user
+    // Delete timeline step
     #[Route('/{id}', name: 'app_api_timeline_delete', methods: ['DELETE'])]
     public function delete(int $id, TimelineStepRepository $timelineStepRepository): JsonResponse
     {
