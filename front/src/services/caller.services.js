@@ -22,6 +22,7 @@ Axios.interceptors.request.use(request => {
 Axios.interceptors.response.use(response => {
     return response
 }, error => {   
+    console.log(error.response.status);
     if (error.response.status === 401) {
         store.commit('logout');
         router.push('/login');

@@ -1,9 +1,8 @@
-<script>
-    import axios from 'axios';   
-    
-import Footer from '../../components/Footer.vue';
-import { anecdoteService } from '../../services/anecdote.services';
-import { accountService } from '../../services/account.services';
+<script>     
+    import Footer from '../../components/Footer.vue';
+    import { anecdoteService } from '../../services/anecdote.services';
+    import { accountService } from '../../services/account.services';
+    import Loader from '../../components/Loader.vue';
 
 export default {
   name: 'anecdoteForm',
@@ -11,6 +10,7 @@ export default {
     users: [],
     content: '',
     idUser: 1,
+    isLoading: true
   }),
   computed: {
 
@@ -31,16 +31,19 @@ export default {
   },
   async mounted() {
     this.idUser = await accountService.getId();
+    this.isLoading = false;
   },
   components: {
-    Footer
+    Footer,
+    Loader
   }
 }
 </script>
 
 
 <template>
-    <main>
+    <Loader :isLoading="isLoading" class="loader-basique" />
+    <main v-if="!isLoading">
         <h1>Proposer une anecdote</h1> 
         <div class="formulaire">
             <div class="information"><!--Récupérer via la version admin les p a mettre ici-->

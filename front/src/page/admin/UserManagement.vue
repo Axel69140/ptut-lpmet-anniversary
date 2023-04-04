@@ -43,10 +43,8 @@
 
     const items: Item[] = users.value;
 
-    onMounted(async () => {
-        // set datatable
-        getUsers();
-        isLoading.value = false;  
+    onMounted(() => {
+        getUsers(); 
     });    
 
     const getUsers = () => {    
@@ -59,6 +57,7 @@
             });         
             users.value.push(... usersResponse);
             itemsSelected.value = [];  
+            isLoading.value = false;
         });
     };
 
@@ -237,7 +236,7 @@
                 rows-per-page-message="Ligne par page"           
             >
                 <template #loading>
-                    <Loader/>
+                    <Loader :is-loading="isLoading"/>
                 </template>
 
                 <template #empty-message>
@@ -286,15 +285,15 @@
                         <div class="form-row">
                             <label for="activeYears">Année d'activité à l'IUT*</label>
                             <select v-model="activeYears" name="activeYears" id="activeYears">
-                            <option value="">-</option>
-                            <option v-for="year in range(1993, 2023)" v-bind:key="year" v-bind:value="year">{{ year }}</option>
+                                <option value="">-</option>
+                                <option v-for="year in range(1993, 2023)" v-bind:key="year" v-bind:value="year">{{ year }}</option>
                             </select>
 
                             <span>/</span>
 
                             <select v-model="activeYears2" name="activeYears2" id="activeYears2">
-                            <option value="">-</option>
-                            <option v-for="year in range(1993, 2023)" v-bind:key="year" v-bind:value="year">{{ year }}</option>
+                                <option value="">-</option>
+                                <option v-for="year in range(1993, 2023)" v-bind:key="year" v-bind:value="year">{{ year }}</option>
                             </select>
                         </div>
 

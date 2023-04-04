@@ -3,6 +3,8 @@
     import _ from 'lodash';
     import { chunk } from 'lodash';
     import Footer from '../../components/Footer.vue';
+    import Loader from '../../components/Loader.vue';
+    import { userService } from '../../services/user.services';
 
     export default {
         name: 'home',
@@ -11,7 +13,8 @@
             eventOption: false,
             minNumber: 1993,
             maxNumber: 2023,
-            users: []
+            users: [],
+            isLoading: true
          }),       
         computed: {  
             filteredUsers: function() {
@@ -50,13 +53,14 @@
             }
         },
         mounted() {    
-            axios.get('https://127.0.0.1:8000/users').then(response => {
-                console.log(response.data);
+            userService.getUsers().then(response => {
                 this.users = response.data;
-            });        
+                this.isLoading = false;
+            });     
         },
         components: {
-            Footer
+            Footer,
+            Loader
         }
     }
     
@@ -64,7 +68,8 @@
 
 
 <template>
-    <main>
+    <Loader :isLoading="isLoading" class="loader-basique" />
+    <main v-if="!isLoading">
         <h1>Participants</h1>
         <div class="fullPage">
             <div class="filters">

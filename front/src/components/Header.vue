@@ -41,7 +41,7 @@
 
     <nav class="navbar navbar-expand-xxl">       
       <div class="nav-img">
-        <a href="/"><img src="../../public/img/logoIUTBlanc.png" alt="Logo de l'IUT Lyon 1" class="img-nav"></a>
+        <a href="/"><img src="/img/logoIUTBlanc.png" alt="Logo de l'IUT Lyon 1" class="img-nav"></a>
       </div>  
 
       <div class="navbar-mobile">
@@ -52,7 +52,7 @@
             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown3">
               <a class="dropdown-item" href="" @click="logout()">Déconnexion</a>
               <div v-if="isAdmin">
-                <a class="dropdown-item" href="/admin/user">Gestion administrateur</a>
+                <a class="dropdown-item" href="/admin">Gestion administrateur</a>
                 <a class="dropdown-item" href="/admin/user">Gestion des utilisateurs</a>
                 <a class="dropdown-item" href="/admin/participant">Gestion des participants</a>
                 <a class="dropdown-item" href="/admin/timeline">Gestion des la timeline</a>
@@ -102,7 +102,7 @@
             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown3">
               <a class="dropdown-item" href="" @click="logout()">Déconnexion</a>
               <div v-if="isAdmin">
-                <a class="dropdown-item" href="/admin/user">Gestion administrateur</a>
+                <a class="dropdown-item" href="/admin">Gestion administrateur</a>
                 <a class="dropdown-item" href="/admin/user">Gestion des utilisateurs</a>
                 <a class="dropdown-item" href="/admin/participant">Gestion des participants</a>
                 <a class="dropdown-item" href="/admin/timeline">Gestion des la timeline</a>

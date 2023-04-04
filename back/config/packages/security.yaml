@@ -15,7 +15,7 @@ security:
             security: false
             
         api:
-            pattern: ^/users
+            pattern: ^/
             stateless: true
             jwt: ~
 
@@ -32,7 +32,7 @@ security:
         # - { path: ^/profile, roles: ROLE_USER }
         - { path: ^/users/login, roles: PUBLIC_ACCESS }
         - { path: ^/users/register, roles: PUBLIC_ACCESS }
-        - { path: ^/users, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
 
 when@test:
     security:
