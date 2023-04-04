@@ -253,7 +253,7 @@ class UserController extends AbstractController
 
         }
     }
-//Ttttttttttttttt
+
     // Create user
     #[Route('/register', name: 'app_api_user_post', methods: ['POST'])]
     public function register(Request $request, UserRepository $userRepository, UserPasswordHasherInterface $userPasswordHasher, ValidatorInterface $validator, EntryDataService $entryDataService, GuestRepository $guestRepository, EntityManagerInterface $em): JsonResponse
