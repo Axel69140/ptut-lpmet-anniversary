@@ -13,9 +13,9 @@
     let timelineEdit = false;
     const id = ref('');
     const title = ref('');
-    const day = ref('');
-    const month = ref('');
-    const year = ref('');
+    const selectedDay = ref('');
+    const selectedMonth = ref('');
+    const selectedYear = ref('');
     const content = ref('');
     const media = ref('');
 
@@ -37,10 +37,15 @@
         timelineService.getTimelineSteps().then((response) => { 
             items.splice(0, items.length);
             const timelinesResponse = response.data;
-            /*timelinesResponse.forEach(timelineStep => {
-                timelineStep.publicProfil = timelineStep.publicProfil == true ? "Oui" : "Non";
-                timelineStep.participated = timelineStep.participated == true ? "Oui" : "Non";
-            }); */        
+            timelinesResponse.forEach(timelineStep => {
+                let date = new Date(timelineStep.date); 
+                let day = date.getDate().toString().padStart(2, '0'); 
+                let month = (date.getMonth() + 1).toString().padStart(2, '0'); 
+                let year = date.getFullYear().toString();
+
+                let formattedDate = `${day}/${month}/${year}`;
+                timelineStep.date = formattedDate;
+            });      
             timelineSteps.value.push(... timelinesResponse);
             itemsSelected.value = [];  
             isLoading.value = false;
@@ -51,10 +56,11 @@
         timelineService.getTimelineStepById(timelineStepId).then((response) => { 
             timelineEdit = true;     
             id.value = timelineStepId;
-            title.value = response.data.title;
-            //day.value = response.data.date;
-            //month.value = response.data.date;
-            //year.value = response.data.date;
+            title.value = response.data.title;      
+            let date = new Date(response.data.date);               
+            selectedDay.value = date.getDate().toString();
+            selectedMonth.value = date.getMonth().toString();
+            selectedYear.value = date.getFullYear().toString();
             content.value = response.data.content;
             media.value = response.data.media; 
         });
@@ -62,10 +68,11 @@
 
     const createTimelineStep = () => {        
         isLoading.value = true; 
+        let createDate = `${selectedYear.value}-${selectedMonth.value}-${selectedDay.value}`;        
         timelineService.createTimelineStep({
             title: title.value,
-            //date: date.value,
-            media: media.value,
+            date: createDate,
+            //media: media.value,
             content: content.value
         }).then(async (response) => { 
             await getTimelineSteps();  
@@ -75,10 +82,11 @@
 
     const editTimelineStep = () => {
         isLoading.value = true; 
+        let createDate = `${selectedYear.value}-${selectedMonth.value}-${selectedDay.value}`;    
         timelineService.editTimelineStep(id.value, {
             title: title.value,
-            //date: date.value,
-            media: media.value,
+            date: createDate,
+            //media: media.value,
             content: content.value
         }).then(async (response) => { 
             await getTimelineSteps();  
@@ -126,11 +134,20 @@
         return Array(end - start + 1).fill().map((_, index) => start + index);
     }  
 
+    const days = () => {
+        const maxDays = new Date(parseInt(selectedYear.value), parseInt(selectedMonth.value), 0).getDate();
+        return range(1, maxDays);
+    };
+
+    const years = () => {
+        return range(1950, new Date().getFullYear());
+    };
+
     const resetForm = () => {
         title.value = '';
-        day.value = '';
-        month.value = '';
-        year.value = '';
+        selectedDay.value = '';
+        selectedMonth.value = '';
+        selectedYear.value = '';
         media.value = '';
         content.value = '';
         timelineEdit = false;
@@ -225,26 +242,27 @@
 
                         <div class="form-row">
                             <label for="day">Date de l'étape</label>
-                            <select v-model="day" name="day" id="day">
-                                <option value="">-</option>
-                                <option v-for="year in range(1993, 2023)" v-bind:key="year" v-bind:value="year">{{ year }}</option>
+
+                            <select v-model="selectedDay" name="day" id="day">
+                                <option value="">-</option>   
+                                <template v-if="selectedMonth && selectedYear">                            
+                                    <option v-for="day in days()" :key="day" :value="day">{{ day }}</option>
+                                </template> 
                             </select>
 
                             <span>/</span>
 
-                            <select v-model="month" name="month" id="month">
+                            <select v-model="selectedMonth" name="month" id="month">
                                 <option value="">-</option>
-                                <option v-for="year in range(1993, 2023)" v-bind:key="year" v-bind:value="year">{{ year }}</option>
+                                <option v-for="month in range(1,12)" :key="month" :value="month">{{ month }}</option>
                             </select>
 
                             <span>/</span>
 
-                            <select v-model="year" name="year" id="year">
+                            <select v-model="selectedYear" name="year" id="year">
                                 <option value="">-</option>
-                                <option v-for="year in range(1993, 2023)" v-bind:key="year" v-bind:value="year">{{ year }}</option>
+                                <option v-for="year in years()" :key="year" :value="year">{{ year }}</option>
                             </select>
-
-                            <span>/</span>
                         </div>
                     </div>
                     <div class="modal-footer">
