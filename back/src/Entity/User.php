@@ -15,15 +15,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\Table(name: '`user`')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    private array $allowedFunctions = ["", "Enseignant", "Élève", "Autre"];
-
-    /**
-     * @return array
-     */
-    public function getAllowedFunctions(): array
-    {
-        return $this->allowedFunctions;
-    }
 
     #[Groups(['guest-return', 'user-return', 'article-return'])]
     #[ORM\Id]
@@ -68,11 +59,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[Groups(['guest-return', 'user-return', 'article-return'])]
     #[ORM\Column]
-    private ?bool $isParticipated = null;
+    private ?bool $isParticipated = false;
 
     #[Groups(['guest-return', 'user-return', 'article-return'])]
     #[ORM\Column]
-    private ?bool $isPublicProfil = null;
+    private ?bool $isPublicProfil = false;
 
     #[Groups(['guest-return', 'user-return', 'article-return'])]
     #[ORM\Column(type: Types::ARRAY)]

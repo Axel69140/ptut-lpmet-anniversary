@@ -24,7 +24,7 @@ class TimelineStep
     private ?string $content = null;
 
     #[ORM\Column]
-    private ?bool $isValidate = null;
+    private ?bool $isValidate = false;
 
     #[ORM\OneToOne(inversedBy: 'timelineStep', cascade: ['persist', 'remove'])]
     private ?Media $media = null;

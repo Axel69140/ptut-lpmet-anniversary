@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Settings;
 use App\Repository\GuestRepository;
+use App\Repository\SettingsRepository;
 use App\Repository\UserRepository;
 use App\Service\EntryDataService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -127,12 +129,12 @@ class UserController extends AbstractController
 
     // Get all functions
     #[Route('/functions', name: 'app_api_get_functions', methods: ['GET'])]
-    public function getFunctions(): JsonResponse
+    public function getFunctions(SettingsRepository $settingsRepository): JsonResponse
     {
         try {
 
-            $user = new User();
-            return $this->json($user->getAllowedFunctions(), 200, [], ['groups' => ['user-return']]);
+            $settings = $settingsRepository->findAll()[0];
+            return $this->json($settings->getAllowedFunctions(), 200);
 
         } catch (\Exception $e) {
 
@@ -384,7 +386,7 @@ class UserController extends AbstractController
     // Delete users
     #[Route('/many', name: 'app_api_user_delete_many', methods: ['DELETE'])]
     #[IsGranted('ROLE_ADMIN', statusCode: 403, message: 'Vous n\'avez pas les droits suffisants')]
-    public function deleteUsers(Request $request, UserRepository $userRepository, EntityManagerInterface $entityManager): Response
+    public function deleteUsers(Request $request, UserRepository $userRepository, EntityManagerInterface $entityManager): JsonResponse
     {
         try {
 
@@ -425,7 +427,7 @@ class UserController extends AbstractController
     // Clear users
     #[Route('/clear', name: 'app_api_user_delete_all', methods: ['DELETE'])]
     #[IsGranted('ROLE_ADMIN', statusCode: 403, message: 'Vous n\'avez pas les droits suffisants')]
-    public function clearUsers(UserRepository $userRepository): Response
+    public function clearUsers(UserRepository $userRepository): JsonResponse
     {
         try {
 
@@ -448,11 +450,12 @@ class UserController extends AbstractController
 
     // Delete user
     #[Route('/{id}', name: 'app_api_user_delete', methods: ['DELETE'])]
-    public function deleteUser(int $id, UserRepository $userRepository): Response
+    public function deleteUser(int $id, UserRepository $userRepository): JsonResponse
     {
         try {
 
             $userToDelete = $userRepository->findOneBy(['id' => $id]);
+
             if (!$userToDelete) {
                 return $this->json([
                     'error' => 'User not found'
