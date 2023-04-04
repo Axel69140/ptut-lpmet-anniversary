@@ -22,7 +22,7 @@ class Anecdote
 
     #[Groups(['user-return', 'anecdote-return'])]
     #[ORM\Column]
-    private ?bool $isValidate = null;
+    private ?bool $isValidate = false;
 
     #[Groups(['anecdote-return'])]
     #[ORM\ManyToOne(inversedBy: 'anecdotes')]

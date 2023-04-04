@@ -61,7 +61,7 @@ class EntryDataService
 
         foreach ($keys as $key => $value) {
 
-            // Vérification de l'existence de la propriété dans l'objet User
+            // Vérification de l'existence de la propriété dans l'objet
             if (!property_exists($entity::class, $key)) {
                 return null;
             }
