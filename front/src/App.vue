@@ -146,45 +146,49 @@ h1 {
   border-radius: 5px;
 }
 
-.btn-modal-neutre {
+.btn-neutre, .btn-alert, .btn-valid {
+  border-radius: 0px !important;
+}
+
+.btn-modal-neutre, .btn-neutre {
   border: 3px solid rgba(46, 46, 46, 0.75);
 }
 
-.btn-modal-neutre:hover {
+.btn-modal-neutre:hover, .btn-neutre:hover {
   border: 3px solid transparent;
   background: linear-gradient(var(--bg-navbar), var(--bg-navbar)) padding-box,
       linear-gradient(to right, rgba(46, 46, 46, 0.75), rgba(112, 112, 112, 0.75)) border-box;
 }
 
-.btn-modal-neutre::before {
+.btn-modal-neutre::before, .btn-neutre::before {
   background: linear-gradient(to right, rgba(46, 46, 46, 0.75), rgba(112, 112, 112, 0.75));
 }
 
-.btn-modal-alert {
+.btn-modal-alert, .btn-alert {
   border: 3px solid rgba(204, 0, 0, 0.75);
 }
 
-.btn-modal-alert:hover {
+.btn-modal-alert:hover, .btn-alert:hover {
   border: 3px solid transparent;
   background: linear-gradient(var(--bg-navbar), var(--bg-navbar)) padding-box,
       linear-gradient(to right, rgba(204, 0, 0, 0.75), rgba(236, 43, 43, 0.75)) border-box;
 }
 
-.btn-modal-alert::before {
+.btn-modal-alert::before, .btn-alert:before {
   background: linear-gradient(to right, rgba(204, 0, 0, 0.75), rgba(236, 43, 43, 0.75));
 }
 
-.btn-modal-valid {
+.btn-modal-valid, .btn-valid {
   border: 3px solid rgba(4, 146, 28, 0.75);
 }
 
-.btn-modal-valid:hover {
+.btn-modal-valid:hover, .btn-valid:hover {
   border: 3px solid transparent;
   background: linear-gradient(var(--bg-navbar), var(--bg-navbar)) padding-box,
       linear-gradient(to right, rgba(4, 146, 28, 0.75), rgba(91, 172, 68, 0.75)) border-box;
 }
 
-.btn-modal-valid::before {
+.btn-modal-valid::before, .btn-valid::before {
   background: linear-gradient(to right, rgba(4, 146, 28, 0.75), rgba(91, 172, 68, 0.75));
 }
 

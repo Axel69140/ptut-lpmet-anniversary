@@ -22,10 +22,9 @@
 
     const items: Item[] = anecdotes.value;
 
-    onMounted(async () => {
+    onMounted(() => {
         // set datatable
-        getAnecdotes();
-        isLoading.value = false;  
+        getAnecdotes();         
     });    
 
     const getAnecdotes = () => {    
@@ -38,6 +37,7 @@
             }); */        
             anecdotes.value.push(... anecdotesResponse);
             itemsSelected.value = [];  
+            isLoading.value = false; 
         });
     };
 
@@ -169,7 +169,7 @@
                 rows-per-page-message="Ligne par page"           
             >
                 <template #loading>
-                    <Loader/>
+                    <Loader :is-loading="isLoading"/>
                 </template>
 
                 <template #empty-message>

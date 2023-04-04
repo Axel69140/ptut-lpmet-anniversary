@@ -28,10 +28,9 @@
 
     const items: Item[] = timelineSteps.value;
 
-    onMounted(async () => {
+    onMounted(() => {
         // set datatable
         getTimelineSteps();
-        isLoading.value = false;  
     });    
 
     const getTimelineSteps = () => {    
@@ -44,6 +43,7 @@
             }); */        
             timelineSteps.value.push(... timelinesResponse);
             itemsSelected.value = [];  
+            isLoading.value = false;
         });
     };
 
@@ -191,7 +191,7 @@
                 rows-per-page-message="Ligne par page"           
             >
                 <template #loading>
-                    <Loader/>
+                    <Loader :is-loading="isLoading"/>
                 </template>
 
                 <template #empty-message>
