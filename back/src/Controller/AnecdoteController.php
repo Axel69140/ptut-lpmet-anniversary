@@ -107,8 +107,8 @@ class AnecdoteController extends AbstractController
 
             $entityManager->persist($anecdote);
             $entityManager->flush();
-        
-            return $this->json($anecdote, 201);
+            
+            return $this->json($anecdote, 201, [], ['groups' => ['anecdote-return']]);
         } catch (\Exception $e) {
             return $this->json([
                 'error' => $e->getMessage()
