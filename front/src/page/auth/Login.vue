@@ -193,7 +193,7 @@ main {
   align-items: center;
   justify-content: center;  
   padding-top: 80px;
-  background-image: url("../../../public/img/bg-login.webp");
+  background-image: url("/img/bg-login.webp");
 }
 
 .create-footer {

@@ -24,10 +24,9 @@
 
     const items: Item[] = participants.value;
 
-    onMounted(async () => {
+    onMounted(() => {
         // set datatable
-        getParticipants();
-        isLoading.value = false;  
+        getParticipants();        
     });    
 
     const getParticipants = () => {    
@@ -36,6 +35,7 @@
             const participantsResponse = response.data;  
             participants.value.push(... participantsResponse);
             itemsSelected.value = [];  
+            isLoading.value = false;  
         });
     };
 
@@ -158,7 +158,7 @@
                 rows-per-page-message="Ligne par page"           
             >
                 <template #loading>
-                    <Loader/>
+                    <Loader :is-loading="isLoading"/>
                 </template>
 
                 <template #empty-message>

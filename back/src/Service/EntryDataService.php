@@ -10,23 +10,24 @@ class EntryDataService
 
     public function isDifferentType($value, $parameterType): bool
     {
-        if(gettype($value) !== $parameterType->getName())
-        {
+        if (gettype($value) !== $parameterType->getName()) {
             // Check if type correspond (boolean and bool are same), then continue
-            if(is_bool($value) && ($parameterType->getName() === 'bool'))
+            if (is_bool($value) && ($parameterType->getName() === 'bool')) {
+                return true;
+            }
+
+            if (is_string($value) && ($parameterType->getName() === 'DateTimeInterface'))
             {
                 return true;
             }
 
             // Check if allowed to be null and if entry is null, then continue
-            if(($parameterType->allowsNull() === true) && (gettype($value) === 'NULL'))
-            {
+            if (($parameterType->allowsNull() === true) && (gettype($value) === 'NULL')) {
                 return true;
             }
 
             // Check if int given for entity attempt
-            if((str_contains($parameterType->getName(), 'App\Entity') && is_int($value)))
-            {
+            if ((str_contains($parameterType->getName(), 'App\Entity') && is_int($value))) {
                 return true;
             }
 
@@ -37,17 +38,14 @@ class EntryDataService
 
     public function getEntityUsingMail($email, $entityRepos)
     {
-        if(empty($entityRepos))
-        {
+        if (empty($entityRepos)) {
             return null;
         }
 
         $entities = [];
-        foreach ($entityRepos as $entityRepo)
-        {
+        foreach ($entityRepos as $entityRepo) {
             $existingEntity = $entityRepo->findOneBy(['email' => $email]);
-            if($existingEntity)
-            {
+            if ($existingEntity) {
                 array_push($entities, $existingEntity);
             }
         }
@@ -56,16 +54,15 @@ class EntryDataService
 
     public function defineKeysInEntity($keys, $entity, $em)
     {
-        if($em === null)
-        {
+
+        if ($em === null) {
             return null;
         }
 
         foreach ($keys as $key => $value) {
 
-            // Vérification de l'existence de la propriété dans l'objet User
+            // Vérification de l'existence de la propriété dans l'objet
             if (!property_exists($entity::class, $key)) {
-                var_dump('property doesn\'t exists ' . $key);
                 return null;
             }
 
@@ -95,17 +92,15 @@ class EntryDataService
 //            }
 
             // Check if type are different
-            if(!$this->isDifferentType($value, $parameterType))
-            {
+            if (!$this->isDifferentType($value, $parameterType)) {
                 return null;
             }
 
             //Check if function is correct
-            if($entity::class === User::class){
+            if ($entity::class === User::class) {
 
                 $settingsRepository = $em->getRepository('App\Entity\Settings');
-                if($key === 'function' && !in_array($value, $settingsRepository->findAll()[0]->getAllowedFunctions()))
-                {
+                if ($key === 'function' && !in_array($value, $settingsRepository->findAll()[0]->getAllowedFunctions())) {
                     return null;
                 }
 
@@ -113,8 +108,7 @@ class EntryDataService
 
             // Appel de la méthode setter pour modifier la propriété
             try {
-                if(str_contains($parameterTypeName, 'App\Entity'))
-                {
+                if (str_contains($parameterTypeName, 'App\Entity')) {
 
 //                    if (!$metadata->hasAssociation($key)) {
 //                        throw new \InvalidArgumentException(sprintf('The entity %s does not have an association named %s', $parameterTypeName, $key));
@@ -122,17 +116,21 @@ class EntryDataService
 
 //                    $targetEntity = $metadata->getAssociationTargetClass($key);
 
-                    $entityRepository =  $em->getRepository($parameterTypeName);
+                    $entityRepository = $em->getRepository($parameterTypeName);
                     $entityToAffiliate = $entityRepository->findOneBy(['id' => $value]);
 
-                    if(!$entityToAffiliate)
-                    {
+                    if (!$entityToAffiliate) {
                         return null;
                     }
 
                     $entity->$setter($entityToAffiliate);
 
                 } else {
+
+                    if($parameterTypeName === 'DateTimeInterface')
+                    {
+                        $value = new \DateTime($value);
+                    }
 
                     $entity->$setter($value);
 

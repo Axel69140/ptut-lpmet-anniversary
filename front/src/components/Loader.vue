@@ -1,6 +1,12 @@
 <script>
     export default {
         name: 'loader',
+        props: {
+          isLoading: {
+            type: Boolean,
+            required: true
+          }
+        },
         data: () => ({}),       
         computed: {            
         },
@@ -13,7 +19,7 @@
 
 
 <template>
-    <div class="load-row">
+    <div v-if="isLoading" class="load-row">
         <span></span>
         <span></span>
         <span></span>
@@ -62,4 +68,13 @@
     transform: translateY(10px);
   }
 }
+
+.loader-basique {
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 75vh;
+}
+
 </style>

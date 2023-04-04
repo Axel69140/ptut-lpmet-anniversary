@@ -4,6 +4,7 @@
   import { activityService } from '../../services/activity.services';
   import { accountService } from '../../services/account.services';
   import { userService } from '../../services/user.services';
+  import Loader from '../../components/Loader.vue';
 
   export default {
     name: 'event',
@@ -11,6 +12,7 @@
       return {
         activities: [],
         user: {},
+        isLoading: true
       };
     },
     computed: {},
@@ -20,15 +22,13 @@
       },
     },
     
-    async mounted() {
-      activityService.getActivities().then((response) => {
-        console.log(response.data);
+    async mounted() {      
+      await activityService.getActivities().then((response) => {
         this.activities = response.data;
-      });
+      });      
 
       const idUser = await accountService.getId();
       this.user = await userService.getUserById(idUser);
-      console.log(this.user);
 
       const second = 1000;
       const minute = second * 60;
@@ -45,52 +45,56 @@
       const dayMonth = '05/05/';
       let birthday = dayMonth + yyyy;
 
-        if (today > birthday) {
-            birthday = dayMonth + nextYear;
-        }
-        //end
+      if (today > birthday) {
+          birthday = dayMonth + nextYear;
+      }
+      //end
 
-        const countDown = new Date(birthday).getTime(),
-        x = setInterval(function() {
+      const countDown = new Date(birthday).getTime(),
+      x = setInterval(function() {
 
-            const now = new Date().getTime(),
-            distance = countDown - now;
+          const now = new Date().getTime(),
+          distance = countDown - now;
 
-            const daysElement = document.getElementById("days");
-            if (daysElement) {
-              daysElement.innerText = Math.floor(distance / (day));
-            }
-            const hoursElement = document.getElementById("hours");
-            if (hoursElement) {
-              hoursElement.innerText = Math.floor((distance % (day)) / (hour));
-            }
-            const minutesElement = document.getElementById("minutes");
-            if (minutesElement) {
-              minutesElement.innerText = Math.floor((distance % (hour)) / (minute));
-            }
-            const secondsElement = document.getElementById("seconds");
-            if (secondsElement) {
-              secondsElement.innerText = Math.floor((distance % (minute)) / second);
-            }
+          const daysElement = document.getElementById("days");
+          if (daysElement) {
+            daysElement.innerText = Math.floor(distance / (day));
+          }
+          const hoursElement = document.getElementById("hours");
+          if (hoursElement) {
+            hoursElement.innerText = Math.floor((distance % (day)) / (hour));
+          }
+          const minutesElement = document.getElementById("minutes");
+          if (minutesElement) {
+            minutesElement.innerText = Math.floor((distance % (hour)) / (minute));
+          }
+          const secondsElement = document.getElementById("seconds");
+          if (secondsElement) {
+            secondsElement.innerText = Math.floor((distance % (minute)) / second);
+          }
 
-            //do something later when date is reached
-            if (distance < 0) {
-            document.getElementById("headline").innerText = "It's my birthday!";
-            document.getElementById("countdown").style.display = "none";
-            document.getElementById("content").style.display = "block";
-            clearInterval(x);
-            }
-            //seconds
-        }, 0)
+          //do something later when date is reached
+          if (distance < 0) {
+          document.getElementById("headline").innerText = "It's my birthday!";
+          document.getElementById("countdown").style.display = "none";
+          document.getElementById("content").style.display = "block";
+          clearInterval(x);
+          }
+          //seconds
+      }, 0)   
+
+      this.isLoading = false;            
     },
     components: {
-        Footer
+        Footer,
+        Loader
     }
 }
 </script>
 
 <template>
-  <main>
+  <Loader :isLoading="isLoading" class="loader-basique" />
+  <main v-if="!isLoading">   
     <div class="countdown">
         <h1 id="headline">Décompte de l'anniversaire du département informatique</h1>
         <div id="countdown">
@@ -113,7 +117,6 @@
       </div>
     </div>
   </main>
-
   <Footer/>
 </template>
 

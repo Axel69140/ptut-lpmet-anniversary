@@ -5,12 +5,14 @@ import Footer from '../../components/Footer.vue';
 import { userService } from '../../services/user.services';
 import { accountService } from '../../services/account.services';
 import { participantService } from '../../services/participant.services';
+import Loader from '../../components/Loader.vue';
 
 export default {
   name: 'eventForm',
   data: () => ({ 
     guests: {},
-    isInputChecked: false
+    isInputChecked: false,
+    isLoading: true
   }),       
   computed: {            
   },
@@ -78,16 +80,20 @@ export default {
       }
       //seconds
     }, 0)
+
+    this.isLoading = false;
   },
   components: {
-    Footer
+    Footer,
+    Loader
   }
 }
 </script>
 
 
 <template>
-  <main>
+  <Loader :isLoading="isLoading" class="loader-basique" />
+  <main v-if="!isLoading">
     <div class="countdown">
         <h1 id="headline">Décompte de l'anniversaire du département informatique</h1>
         <div id="countdown">
@@ -136,9 +142,10 @@ export default {
       <div>
           <button class="btn-custom" type="submit">Enregistrer</button>
       </div>
-    </form>
-    <Footer class="footer" />
+    </form>    
   </main>
+
+  <Footer class="footer" />
 </template>
 
 <style scoped>

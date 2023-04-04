@@ -28,7 +28,7 @@ class Article
 
     #[Groups(['user-return', 'article-return'])]
     #[ORM\Column]
-    private ?bool $isValidate = null;
+    private ?bool $isValidate = false;
 
     #[Groups(['article-return'])]
     #[ORM\ManyToOne(inversedBy: 'articles')]
@@ -38,6 +38,9 @@ class Article
     #[Groups(['user-return', 'article-return'])]
     #[ORM\OneToMany(mappedBy: 'article', targetEntity: Media::class, orphanRemoval: true)]
     private Collection $medias;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $date = null;
 
     public function __construct()
     {
@@ -123,6 +126,18 @@ class Article
                 $media->setArticle(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getDate(): ?\DateTimeInterface
+    {
+        return $this->date;
+    }
+
+    public function setDate(?\DateTimeInterface $date): self
+    {
+        $this->date = $date;
 
         return $this;
     }
