@@ -4,10 +4,10 @@ namespace App\Service;
 
 use App\Entity\User;
 use ReflectionClass;
-use App\Repository\SettingsRepository;
 
 class EntryDataService
 {
+
     public function isDifferentType($value, $parameterType): bool
     {
         if(gettype($value) !== $parameterType->getName())
@@ -54,8 +54,13 @@ class EntryDataService
         return $entities;
     }
 
-    public function defineKeysInEntity($keys, $entity, $em = null)
+    public function defineKeysInEntity($keys, $entity, $em)
     {
+        if($em === null)
+        {
+            return null;
+        }
+
         foreach ($keys as $key => $value) {
 
             // Vérification de l'existence de la propriété dans l'objet User
@@ -97,29 +102,19 @@ class EntryDataService
 
             //Check if function is correct
             if($entity::class === User::class){
-                // Check if $em null
-                if($em === null)
-                {
-                    return null;
-                }
 
                 $settingsRepository = $em->getRepository('App\Entity\Settings');
                 if($key === 'function' && !in_array($value, $settingsRepository->findAll()[0]->getAllowedFunctions()))
                 {
                     return null;
                 }
+
             }
 
             // Appel de la méthode setter pour modifier la propriété
             try {
                 if(str_contains($parameterTypeName, 'App\Entity'))
                 {
-
-                    // Check if $em null
-                    if($em === null)
-                    {
-                        return null;
-                    }
 
 //                    if (!$metadata->hasAssociation($key)) {
 //                        throw new \InvalidArgumentException(sprintf('The entity %s does not have an association named %s', $parameterTypeName, $key));

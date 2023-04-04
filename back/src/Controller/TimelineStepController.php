@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Service\EntryDataService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
@@ -19,23 +20,34 @@ class TimelineStepController extends AbstractController
 {
     // Get timelineSteps
     #[Route('/', name: 'app_api_timeline_get', methods: ['GET'])]
-    public function getTimelineSteps(TimelineStepRepository $timelineStepRepository, Request $request): JsonResponse
+    public function getTimelineSteps(TimelineStepRepository $timelineStepRepository): JsonResponse
     {
         try {
+
             $timelineSteps = $timelineStepRepository->findAll();
+
+            if (!$timelineSteps) {
+                return $this->json([
+                    'error' => 'Timeline not found'
+                ], 404);
+            }
             return $this->json($timelineSteps, 200);
+
         } catch (\Exception $e) {
+
             return $this->json([
                 'error' => 'Server error'
             ], 500);
+
         }
     }
 
     // Get one timelineStep
     #[Route('/{id}', name: 'app_api_timeline_get_one', methods: ['GET'])]
-    public function getTimelineStepById(TimelineStepRepository $timelineStepRepository, int $id): JsonResponse
+    public function getTimelineStepById(int $id, TimelineStepRepository $timelineStepRepository): JsonResponse
     {
         try {
+
             $timelineStep = $timelineStepRepository->find($id);
 
             if (!$timelineStep) {
@@ -45,28 +57,25 @@ class TimelineStepController extends AbstractController
             }
 
             return $this->json($timelineStep, 200);
+
         } catch (\Exception $e) {
+
             return $this->json([
                 'error' => 'Server error'
             ], 500);
+
         }
     }
 
     // Create timelineStep
     #[Route('/create', name: 'app_api_timeline_post', methods: ['POST'])]
-    public function create(Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager, ValidatorInterface $validator): JsonResponse
+    public function create(Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager, ValidatorInterface $validator, EntryDataService $entryDataService, EntityManagerInterface $em): JsonResponse
     {
         try {
+
             $content = json_decode($request->getContent(), true);
-
-            if (empty($content)) {
-                return $this->json([
-                    'error' => 'No data provided'
-                ], 400);
-            }
-
-            $requiredFields = ['title', 'content', 'date'];
-
+            $timelineStep = new TimelineStep();
+            $timelineStep = $entryDataService->defineKeysInEntity($content, $timelineStep, $em);
             // Vérification de la présence de tous les champs requis
             foreach ($requiredFields as $field) {
                 if (!isset($content[$field])) {
