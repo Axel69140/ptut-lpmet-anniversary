@@ -215,7 +215,7 @@ class ArticleController extends AbstractController
 
     // Delete article
     #[Route('/{id}', name: 'app_api_article_delete', methods: ['DELETE'])]
-    public function deleteArticle(int $id, EntityManagerInterface $entityManager, ArticleRepository $articleRepository): Response
+    public function deleteArticle(int $id, ArticleRepository $articleRepository): Response
     {
         try {
 
@@ -223,11 +223,11 @@ class ArticleController extends AbstractController
 
             if (!$articleToDelete) {
                 return $this->json([
-                    'error' => 'User not found'
+                    'error' => 'Article not found'
                 ], 404);
             }
 
-            $userRepository->remove($userToDelete, true);
+            $articleRepository->remove($articleToDelete, true);
             return $this->json([], 204);
 
         } catch (\Exception $e) {

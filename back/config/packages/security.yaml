@@ -30,9 +30,9 @@ security:
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
-        - { path: ^/users/login, roles: PUBLIC_ACCESS }
-        - { path: ^/users/register, roles: PUBLIC_ACCESS }
-        - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
+#        - { path: ^/users/login, roles: PUBLIC_ACCESS }
+#        - { path: ^/users/register, roles: PUBLIC_ACCESS }
+#        - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
 
 when@test:
     security:
