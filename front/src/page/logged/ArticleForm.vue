@@ -11,6 +11,7 @@
             idUser: 1,
             content: '',
             title: '', 
+            imageUrl: null,
         }),       
         computed: {            
         },
@@ -24,8 +25,20 @@
                     });
 
                     this.content = '';
+                    this.title = '';
+                    alert("Merci de votre contribution. Votre article à bien été pris en compte, après sa validation il apparaitra sur le site.");
+                    this.$router.push('../event');
                 }
-            } 
+            },
+            previewImage(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    this.imageUrl = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
         },
         async mounted() {
             this.idUser = await accountService.getId();
@@ -41,7 +54,7 @@
     <main>
         <h1>Proposer un article</h1>
         <p class="informations"></p>
-        <form class="formulaireArticle">
+        <div class="formulaireArticle">
             <div class="divTitleTZ">
                 <label class="labelTitle">Titre de l'article</label>
                 <input type="text" class="titleTextZone" v-model="title">
@@ -51,20 +64,70 @@
                 <textarea class="contentTextZone" rows="10" cols="100" v-model="content"></textarea>
             </div>
             <div class="divImage">
-                <label class="labelImage">Image de l'article</label>
-                <input class="inputImage" type="image">
+                <label for="imageFile" class="labelImage">Ajouter une image à l'article</label>
+                <input class="upload" id="imageFile" name="imageFile" type="file" accept=".png, .jpeg, .jpg, .webp" @change="previewImage">
+            </div>
+            <div class="image-preview">
+                <div v-if="imageUrl" class="yesImage">
+                    <img class="imagePreview" :src="imageUrl" v-if="imageUrl"/>
+                </div>
+                
+                <div v-if="!imageUrl" class="noImage"></div>
             </div>
             <div class="sendButton">
                 <button @click="parameterArticle()" class="btn-custom">Envoyer l'anecdote</button>
             </div>
-        </form>
+        </div>
     </main>
     
     <Footer class="footer" />
 </template>
 
 <style scoped>
-
+.uploadImage{
+    border: solid 3px black;
+}
+label.labelImage{
+    cursor: pointer;
+    border: dashed 3px var(--primary);
+    background-color: #fff;
+    border-radius: 20px;
+    padding: 0.5%;
+    width: 50%;
+    height: 200px;
+}
+input.upload {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+    cursor: pointer;
+    opacity: 0;
+    filter: alpha(opacity=0);
+}
+.image-preview{
+    margin: 15px;
+    display: flex;
+    justify-content: center;
+}
+.imagePreview{
+    max-width: 50%;
+    max-height: 80%;
+    margin: 2%;
+    background-color: red;
+}
+.yesImage{
+    width: 50%;
+    height: auto;
+    background-color: #fff;
+}
+.noImage{
+    
+    
+    background-color: #fff;
+}
     .labelContent{
         margin:  20px 15px 0 0;
     }
@@ -73,9 +136,6 @@
         margin-right: 48px;
     }
 
-    .labelImage{
-        margin-right: 5%;
-    }
 
     .formulaireArticle{
         display: flex;
