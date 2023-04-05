@@ -11,6 +11,7 @@ export default {
   name: 'eventForm',
   data: () => ({ 
     guests: {},
+    user:[],
     isInputChecked: false,
     isLoading: true
   }),       
@@ -19,13 +20,25 @@ export default {
   methods: { 
     addGuest(){
       console.log("test");
+    },
+    async save(){
+      const idUser = await accountService.getId();
+      userService.editUser(
+        idUser,
+        {
+          isParticipated: this.isInputChecked,
+        }
+      );
+      console.log("test");
     }
   },
   async mounted() {
     const idUser = await accountService.getId();
+    console.log(idUser);
+    this.user = await userService.getUserById(idUser);
     const guests = await userService.getGuestsByUser(idUser);
     this.guests = guests;
-    console.log(guests);
+    console.log(this.user);
     
     const second = 1000,
       minute = second * 60,
@@ -107,7 +120,7 @@ export default {
     </div>
     <form @submit.prevent="submitForm">
       <div class="isParticipate">
-          <label for="inputEvent">Je participe à l'évènement</label>
+          <label class="participate" for="inputEvent">Je participe à l'évènement</label>
           <div class="cntr">
               <input type="checkbox" id="inputEvent" class="hidden-xs-up" v-model="isInputChecked" @change="onInputChange">
               <label for="inputEvent" class="cbx"></label>
@@ -128,8 +141,6 @@ export default {
               <p>Email : </p>
               <p>{{ guest.email }}</p>
             </div>
-            
-            
           </div>
           
         </div>
@@ -140,7 +151,7 @@ export default {
       </div>
       
       <div>
-          <button class="btn-custom" type="submit">Enregistrer</button>
+          <button class="btn-custom" @click="save()">Enregistrer</button>
       </div>
     </form>    
   </main>
@@ -172,6 +183,7 @@ export default {
   width: 20%;
   border: solid 2px var(--primary);
   border-radius: 15px;
+  background-color: #fff;
 }
 
 .footer{
@@ -290,5 +302,9 @@ li span {
     justify-content: center;
     align-items: center;
     margin-top: 40px;
+}
+.participate{
+  text-transform: uppercase;
+  margin-right: 1rem;
 }
 </style>

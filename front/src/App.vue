@@ -259,7 +259,7 @@ label {
   top: 1px;
   width: 20px;
   height: 20px;
-  border: 1px solid #c8ccd4;
+  border: 1px solid var(--primary);
   border-radius: 3px;
   vertical-align: middle;
   transition: background 0.1s ease;
