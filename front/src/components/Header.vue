@@ -55,7 +55,7 @@
                 <a class="dropdown-item" href="/admin">Gestion administrateur</a>
                 <a class="dropdown-item" href="/admin/user">Gestion des utilisateurs</a>
                 <a class="dropdown-item" href="/admin/participant">Gestion des participants</a>
-                <a class="dropdown-item" href="/admin/timeline">Gestion des la timeline</a>
+                <a class="dropdown-item" href="/admin/timeline">Gestion de la timeline</a>
                 <a class="dropdown-item" href="/admin/article">Gestion des articles</a>
                 <a class="dropdown-item" href="/admin/activity">Gestion des activités</a>
                 <a class="dropdown-item" href="/admin/anecdote">Gestion des anecdotes</a>
@@ -105,7 +105,7 @@
                 <a class="dropdown-item" href="/admin">Gestion administrateur</a>
                 <a class="dropdown-item" href="/admin/user">Gestion des utilisateurs</a>
                 <a class="dropdown-item" href="/admin/participant">Gestion des participants</a>
-                <a class="dropdown-item" href="/admin/timeline">Gestion des la timeline</a>
+                <a class="dropdown-item" href="/admin/timeline">Gestion de la timeline</a>
                 <a class="dropdown-item" href="/admin/article">Gestion des articles</a>
                 <a class="dropdown-item" href="/admin/activity">Gestion des activités</a>
                 <a class="dropdown-item" href="/admin/anecdote">Gestion des anecdotes</a>
