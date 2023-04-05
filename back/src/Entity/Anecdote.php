@@ -26,7 +26,7 @@ class Anecdote
 
     #[Groups(['anecdote-return'])]
     #[ORM\ManyToOne(inversedBy: 'anecdotes')]
-    private ?User $User = null;
+    private ?User $creator = null;
 
     public function getId(): ?int
     {
@@ -57,14 +57,14 @@ class Anecdote
         return $this;
     }
 
-    public function getUser(): ?User
+    public function getCreator(): ?User
     {
-        return $this->User;
+        return $this->creator;
     }
 
-    public function setUser(?User $User): self
+    public function setCreator(?User $User): self
     {
-        $this->User = $User;
+        $this->creator = $User;
 
         return $this;
     }

@@ -52,30 +52,26 @@
 
 <template>
     <main>
-        <h1>Proposer un article</h1>
+        <h1>Proposer une news</h1>
         <p class="informations"></p>
         <div class="formulaireArticle">
             <div class="divTitleTZ">
-                <label class="labelTitle">Titre de l'article</label>
+                <label class="labelTitle">Titre de la news</label>
                 <input type="text" class="titleTextZone" v-model="title">
             </div>
             <div class="divContentTZ">
-                <label class="labelContent">Contenu de l'article</label>
+                <label class="labelContent">Contenu de la news</label>
                 <textarea class="contentTextZone" rows="10" cols="100" v-model="content"></textarea>
             </div>
             <div class="divImage">
-                <label for="imageFile" class="labelImage">Ajouter une image à l'article</label>
+                <label v-if="!imageUrl" for="imageFile" class="labelImage">Ajouter une image à la news</label>
+                <label  v-if="imageUrl" for="imageFile" class="labelImage">Changer d'image
+                    <img :src="imageUrl" v-if="imageUrl" class="imagePreview">
+                </label>
                 <input class="upload" id="imageFile" name="imageFile" type="file" accept=".png, .jpeg, .jpg, .webp" @change="previewImage">
             </div>
-            <div class="image-preview">
-                <div v-if="imageUrl" class="yesImage">
-                    <img class="imagePreview" :src="imageUrl" v-if="imageUrl"/>
-                </div>
-                
-                <div v-if="!imageUrl" class="noImage"></div>
-            </div>
             <div class="sendButton">
-                <button @click="parameterArticle()" class="btn-custom">Envoyer l'anecdote</button>
+                <button @click="parameterArticle()" class="btn-custom">Envoyer la news</button>
             </div>
         </div>
     </main>
@@ -95,6 +91,9 @@ label.labelImage{
     padding: 0.5%;
     width: 50%;
     height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 input.upload {
     position: absolute;
