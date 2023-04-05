@@ -5,7 +5,7 @@ const getSettings = () => {
 }
 
 const resetSettings = () => {    
-    return Axios.post('https://127.0.0.1:8000/settings/reset');
+    return Axios.patch('https://127.0.0.1:8000/settings/reset');
 }
 
 const editSettings = (setting) => {    

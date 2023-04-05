@@ -27,12 +27,6 @@ class ParticipantController extends AbstractController
 
             $participants = $userRepository->findBy(['isParticipated' => true]) + $guestRepository->findAll();
 
-            if (!$participants) {
-                return $this->json([
-                    'error' => 'Participants not found'
-                ], 404);
-            }
-
             return $this->json($participants, 200, [], ['groups' => ['user-return', 'guest-return']]);
 
         } catch (\Exception $e) {

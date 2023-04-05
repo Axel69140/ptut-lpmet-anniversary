@@ -26,12 +26,7 @@ class TimelineStepController extends AbstractController
         try {
 
             $timelineSteps = $timelineStepRepository->findAll();
-
-            if (!$timelineSteps) {
-                return $this->json([
-                    'error' => 'Timeline not found'
-                ], 404);
-            }
+            
             return $this->json($timelineSteps, 200);
 
         } catch (\Exception $e) {

@@ -26,12 +26,6 @@ class ArticleController extends AbstractController
 
             $articles = $articleRepository->findAll();
 
-            if (!$articles) {
-                return $this->json([
-                    'error' => 'Articles not found'
-                ], 404);
-            }
-
             return $this->json($articles, 200, [], ['groups' => ['article-return']]);
 
         } catch (\Exception $e) {

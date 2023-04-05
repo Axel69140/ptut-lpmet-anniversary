@@ -39,6 +39,11 @@
                 }).then(() => {
                     this.getSettings();
                 });
+            },
+            reset() {
+                settingService.resetSettings().then(() => {
+                    this.getSettings();
+                })
             }
         },
         mounted() {  
@@ -81,9 +86,9 @@
 
             <div class="d-flex justify-content-end">
                 <div class="d-flex justify-content-between w-50">
-                    <button class="btn-custom btn-alert" v-bind:disabled="!edit" @click="resetForm()">Annuler les changements</button>
-                    <button @click="submit()" class="btn-custom btn-valid">Enregistrer</button>   
-                    <button class="btn-custom btn-neutre">Reset les paramètres généraux</button>               
+                    <button type="button" class="btn-custom btn-alert" v-bind:disabled="!edit" @click="resetForm()">Annuler les changements</button>
+                    <button type="button" class="btn-custom btn-valid" @click="submit()">Enregistrer</button>   
+                    <button type="button" class="btn-custom btn-neutre" @click="reset()">Reset les paramètres généraux</button>               
                 </div>
             </div>
         </form>

@@ -28,8 +28,11 @@ class AnecdoteController extends AbstractController
     public function getAnecdotes(AnecdoteRepository $anecdoteRepository): JsonResponse
     {
         try {
+
             $anecdotes = $anecdoteRepository->findAll();
+            
             return $this->json($anecdotes, 200);
+
         } catch (\Exception $e) {
             return $this->json([
                 'error' => 'Server error'

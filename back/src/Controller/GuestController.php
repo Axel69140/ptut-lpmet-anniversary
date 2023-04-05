@@ -27,12 +27,6 @@ class GuestController extends AbstractController
 
             $guests = $guestRepository->findAll();
 
-            if (!$guests) {
-                return $this->json([
-                    'error' => 'Guests not found'
-                ], 404);
-            }
-
             return $this->json($guests, 200, [], ['groups' => ['guest-return']]);
 
         } catch (\Exception $e) {
