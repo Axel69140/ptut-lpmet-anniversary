@@ -364,7 +364,7 @@ class UserController extends AbstractController
             }
 
             // Password check
-            if(!$passwordHasher->isPasswordValid($userToUpdate, $content['password']))
+            if(array_key_exists('password', $content) && !$passwordHasher->isPasswordValid($userToUpdate, $content['password']))
             {
                 $userToUpdate->setPassword(
                     $passwordHasher->hashPassword(
