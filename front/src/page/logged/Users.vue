@@ -30,14 +30,14 @@
 
                 if (this.minNumber && this.maxNumber) {
                     if(this.minNumber < this.maxNumber){
-                        filtered = filtered.filter(user => (user.activeYears[0] >= this.minNumber && user.activeYears[0] <= this.maxNumber)||(user.activeYears[1] >= this.minNumber && user.activeYears[1] <= this.maxNumber)||(user.activeYears[0] < this.minNumber && user.activeYears[1] > this.maxNumber));
+                        filtered = filtered.filter(user => (user.activeYears[0] >= this.minNumber && user.activeYears[0] <= this.maxNumber)||(user.activeYears[1] >= this.minNumber && user.activeYears[1] <= this.maxNumber)||(user.activeYears[0] < this.minNumber && user.activeYears[1] > this.maxNumber)||(user.activeYears[0] == this.minNumber));
                     }else if(this.minNumber > this.maxNumber){
                         this.minNumber = 1993;
                         this.maxNumber = 2023;
                     }else{
-                        filtered = filtered.filter(user => (user.activeYears[0] <= this.minNumber && user.activeYears[1] >= this.minNumber));
+                        filtered = filtered.filter(user => (user.activeYears[0] <= this.minNumber && user.activeYears[1] >= this.minNumber)||(user.activeYears[0] == this.minNumber));
                     }
-                }
+                }                
 
                 return filtered;
             }
@@ -105,7 +105,8 @@
                             <div v-if="user.isPublic" class="lastName">{{ user.lastName }}</div>
                             <div v-else class="lastName">{{ obfuscateName(user.lastName) }}</div>
                         </div>
-                        <div class="activeYears">Année à l'IUT <strong>{{ user.activeYears[0] }} - {{ user.activeYears[1] }}</strong></div>
+                        <div v-if="user.activeYears[1]" class="activeYears">Année à l'IUT <strong>{{ user.activeYears[0] }} - {{ user.activeYears[1] }}</strong></div>
+                        <div v-else class="activeYears">Année à l'IUT <strong>{{ user.activeYears[0] }}</strong></div>
                         <div v-if="user.isPublic && user.function != 'autre'" class="function">En tant qu'{{ user.function }}</div>
                         <div v-if="user.isParticipated" class="isParticipated" >participe</div>
                         <div v-else class="isNotParticipated">participe pas</div>

@@ -37,6 +37,9 @@ export default {
     console.log(idUser);
     this.user = await userService.getUserById(idUser);
     const guests = await userService.getGuestsByUser(idUser);
+    if(this.user.data.isParticipated){
+      this.isInputChecked = true;
+    }
     this.guests = guests;
     console.log(this.user);
     
