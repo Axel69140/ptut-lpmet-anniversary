@@ -11,6 +11,12 @@ class EntryDataService
     public function isDifferentType($value, $parameterType): bool
     {
         if (gettype($value) !== $parameterType->getName()) {
+
+            // Check if type correspond (integer and int are same), then continue
+            if (is_int($value) && ($parameterType->getName() === 'int')) {
+                return true;
+            }
+
             // Check if type correspond (boolean and bool are same), then continue
             if (is_bool($value) && ($parameterType->getName() === 'bool')) {
                 return true;
@@ -34,6 +40,7 @@ class EntryDataService
             return false;
         }
         return true;
+
     }
 
     public function getEntityUsingMail($email, $entityRepos)
