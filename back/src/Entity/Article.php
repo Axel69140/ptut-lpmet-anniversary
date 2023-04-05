@@ -39,6 +39,7 @@ class Article
     #[ORM\OneToMany(mappedBy: 'article', targetEntity: Media::class, orphanRemoval: true)]
     private Collection $medias;
 
+    #[Groups(['user-return'])]
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $date = null;
 
