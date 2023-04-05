@@ -93,7 +93,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?Media $profilPicture = null;
 
-    #[Groups(['user-return'])]
+//    #[Groups(['user-return'])]
     #[ORM\OneToMany(mappedBy: 'User', targetEntity: Anecdote::class)]
     private Collection $anecdotes;
 

@@ -31,12 +31,18 @@ class UserController extends AbstractController
 
             $users = $userRepository->findAll();
 
+            if (!$users) {
+                return $this->json([
+                    'error' => 'Users not found'
+                ], 404);
+            }
+
             return $this->json($users, 200, [], ['groups' => ['user-return']]);
 
         } catch (\Exception $e) {
 
             return $this->json([
-                'error' => $e->getMessage()
+                'error' => 'Server error'
             ], 500);
 
         }
@@ -264,7 +270,6 @@ class UserController extends AbstractController
                     'error' => 'A problem has been encounter during entity creation'
                 ], 400);
             }
-            
 
             // Check if mail is available
             $existingEntities = $entryDataService->getEntityUsingMail($user->getEmail(), [$userRepository, $guestRepository]);
@@ -311,7 +316,7 @@ class UserController extends AbstractController
 
     // Update user
     #[Route('/{id}', name: 'app_api_user_update', methods: ['PATCH'])]
-    public function updateUser(int $id, Request $request, UserRepository $userRepository, EntryDataService $entryDataService, ValidatorInterface $validator, GuestRepository $guestRepository, EntityManagerInterface $em): JsonResponse
+    public function updateUser(int $id, Request $request, UserRepository $userRepository, EntryDataService $entryDataService, ValidatorInterface $validator, GuestRepository $guestRepository, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher): JsonResponse
     {
         try {
 
@@ -356,6 +361,17 @@ class UserController extends AbstractController
                     'error' => 'Email already used'
                 ], 403);
 
+            }
+
+            // Password check
+            if(!$passwordHasher->isPasswordValid($userToUpdate, $content['password']))
+            {
+                $userToUpdate->setPassword(
+                    $passwordHasher->hashPassword(
+                        $userToUpdate,
+                        $content['password']
+                    )
+                );
             }
 
             //Symfony validation
