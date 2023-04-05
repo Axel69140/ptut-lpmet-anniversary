@@ -364,7 +364,7 @@ class UserController extends AbstractController
             }
 
             // Password check
-            if(!$passwordHasher->isPasswordValid($userToUpdate, $content['password']))
+            if(array_key_exists('password', $content) && !$passwordHasher->isPasswordValid($userToUpdate, $content['password']))
             {
                 $userToUpdate->setPassword(
                     $passwordHasher->hashPassword(
@@ -388,7 +388,7 @@ class UserController extends AbstractController
         } catch (\Exception $e) {
 
             return $this->json([
-                'error' => 'Server error'
+                'error' => 'Server error' . $e
             ], 500);
 
         }
