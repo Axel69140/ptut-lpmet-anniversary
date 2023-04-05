@@ -42,7 +42,7 @@ class UserController extends AbstractController
         } catch (\Exception $e) {
 
             return $this->json([
-                'error' => 'Server error'
+                'error' => 'Server error' . $e
             ], 500);
 
         }
@@ -316,7 +316,7 @@ class UserController extends AbstractController
 
     // Update user
     #[Route('/{id}', name: 'app_api_user_update', methods: ['PATCH'])]
-    public function updateUser(int $id, Request $request, UserRepository $userRepository, EntryDataService $entryDataService, ValidatorInterface $validator, GuestRepository $guestRepository, EntityManagerInterface $em): JsonResponse
+    public function updateUser(int $id, Request $request, UserRepository $userRepository, EntryDataService $entryDataService, ValidatorInterface $validator, GuestRepository $guestRepository, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher): JsonResponse
     {
         try {
 
@@ -361,6 +361,17 @@ class UserController extends AbstractController
                     'error' => 'Email already used'
                 ], 403);
 
+            }
+
+            // Password check
+            if(!$passwordHasher->isPasswordValid($userToUpdate, $content['password']))
+            {
+                $userToUpdate->setPassword(
+                    $passwordHasher->hashPassword(
+                        $userToUpdate,
+                        $content['password']
+                    )
+                );
             }
 
             //Symfony validation
