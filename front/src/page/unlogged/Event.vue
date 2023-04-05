@@ -25,6 +25,7 @@
     async mounted() {      
       await activityService.getActivities().then((response) => {
         this.activities = response.data;
+        console.log(this.activities);
       });      
 
       const idUser = await accountService.getId();
@@ -116,8 +117,19 @@
           <a class="btn-custom" @click="parameterGame()">Voir ses invités</a>
       </div>
     </div>
+    <div class="planning" v-if="activities">
+      <h3 class="titleActivity">Les activités présentent à l'évènement</h3>
+      <ul class="listeActivities">
+        <li v-for="activity in activities">
+          <div v-if="!activity.isValidate">
+            <h3>{{ activity.name }}</h3>
+            <p class="descriptionActivity">{{ activity.description }}</p>
+          </div>
+        </li>
+      </ul>
+    </div>
   </main>
-  <Footer/>
+  <Footer class="footer" />
 </template>
 
   
@@ -153,6 +165,20 @@ body {
     sans-serif;
 }
 
+.listeActivities{
+  display: flex;
+  flex-direction: column;
+}
+.footer{
+  position: inherit;
+}
+
+.participate{
+  margin-top: 40px;
+}
+.titleActivity{
+  margin: 40px 0;
+}
 .countdown{
   background-color: var(--secondary);
   padding-bottom: 20px ;
@@ -160,30 +186,16 @@ body {
 
 .invitation a{
   text-decoration: none;
-  margin: 0 20px;
+  margin: 0 5rem;
+  font-size: large;
+  padding: 1rem;
 }
-
-
-.isParticipate{
-  color: #ffffff;
-  border: solid 3px #ffffff;
-  background-color: var(--secondary);
-  padding: 0.5%;
-  border-radius: 15px;
-  transition: all .2s ease-in-out; 
-  cursor: pointer;
+.listeActivities li{
+  text-transform: none;
 }
-
 h1 {
   margin: 0!important;
   padding-top: 100px;
-}
-
-.isParticipate:hover{
-  color: #ffffff;
-  border-color: var(--primary);
-  background-color: var(--primary);
-  transform: scale(1.1);
 }
 
 .invitation{
@@ -223,15 +235,6 @@ li span {
   font-size: 4.5rem;
 }
 
-.emoji {
-  display: none;
-  padding: 1rem;
-}
-
-.emoji span {
-  font-size: 4rem;
-  padding: 0 .5rem;
-}
 
 @media all and (max-width: 768px) {
   h1 {
