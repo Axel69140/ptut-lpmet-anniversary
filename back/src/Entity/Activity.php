@@ -36,7 +36,7 @@ class Activity
 
     #[Groups(['user-return', 'activity-return'])]
     #[ORM\Column]
-    private ?bool $isValidate = null;
+    private ?bool $isValidate = false;
 
     #[ORM\ManyToOne(inversedBy: 'activities')]
     #[ORM\JoinColumn(nullable: false)]
