@@ -34,7 +34,7 @@
     });    
 
     const getTimelineSteps = () => {    
-        timelineService.getTimelineSteps().then((response) => { 
+        timelineService.getTimelineSteps().then((response) => {                                  
             items.splice(0, items.length);
             const timelinesResponse = response.data;
             timelinesResponse.forEach(timelineStep => {
@@ -47,8 +47,8 @@
                 timelineStep.date = formattedDate;
             });      
             timelineSteps.value.push(... timelinesResponse);
-            itemsSelected.value = [];  
-            isLoading.value = false;
+            itemsSelected.value = [];           
+            isLoading.value = false;            
         });
     };
 

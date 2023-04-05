@@ -33,12 +33,6 @@ class AnecdoteController extends AbstractController
 
             $anecdotes = $anecdoteRepository->findAll();
 
-            if (!$anecdotes) {
-                return $this->json([
-                    'error' => 'Anecdotes not found'
-                ], 404);
-            }
-
             return $this->json($anecdotes, 200, [], ['groups' => ['anecdote-return']]);
 
         } catch (\Exception $e) {

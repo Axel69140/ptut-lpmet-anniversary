@@ -76,6 +76,7 @@ class EntryDataService
             $setter = 'set' . ucfirst($key);
             $getter = 'get' . ucfirst($key);
 
+            
             // Vérification de l'existence de la méthode setter pour la propriété
             if (!method_exists($entity::class, $setter) || !method_exists($entity::class, $getter)) {
                 var_dump($key);
@@ -115,7 +116,7 @@ class EntryDataService
 
             // Appel de la méthode setter pour modifier la propriété
             try {
-                if (str_contains($parameterTypeName, 'App\Entity')) {
+                if (str_contains($parameterTypeName, 'App\Entity')) {                    
 
 //                    if (!$metadata->hasAssociation($key)) {
 //                        throw new \InvalidArgumentException(sprintf('The entity %s does not have an association named %s', $parameterTypeName, $key));
@@ -149,7 +150,8 @@ class EntryDataService
 
             }
 
-        }
+        }               
+        
         return $entity;
     }
 }

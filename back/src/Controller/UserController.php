@@ -31,18 +31,12 @@ class UserController extends AbstractController
 
             $users = $userRepository->findAll();
 
-            if (!$users) {
-                return $this->json([
-                    'error' => 'Users not found'
-                ], 404);
-            }
-
             return $this->json($users, 200, [], ['groups' => ['user-return']]);
 
         } catch (\Exception $e) {
 
             return $this->json([
-                'error' => 'Server error'
+                'error' => $e->getMessage()
             ], 500);
 
         }
@@ -270,6 +264,7 @@ class UserController extends AbstractController
                     'error' => 'A problem has been encounter during entity creation'
                 ], 400);
             }
+            
 
             // Check if mail is available
             $existingEntities = $entryDataService->getEntityUsingMail($user->getEmail(), [$userRepository, $guestRepository]);
