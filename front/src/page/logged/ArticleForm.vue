@@ -52,19 +52,19 @@
 
 <template>
     <main>
-        <h1>Proposer un article</h1>
+        <h1>Proposer un news</h1>
         <p class="informations"></p>
         <div class="formulaireArticle">
             <div class="divTitleTZ">
-                <label class="labelTitle">Titre de l'article</label>
+                <label class="labelTitle">Titre de la news</label>
                 <input type="text" class="titleTextZone" v-model="title">
             </div>
             <div class="divContentTZ">
-                <label class="labelContent">Contenu de l'article</label>
+                <label class="labelContent">Contenu de la news</label>
                 <textarea class="contentTextZone" rows="10" cols="100" v-model="content"></textarea>
             </div>
             <div class="divImage">
-                <label for="imageFile" class="labelImage">Ajouter une image à l'article</label>
+                <label for="imageFile" class="labelImage">Ajouter une image à la news</label>
                 <input class="upload" id="imageFile" name="imageFile" type="file" accept=".png, .jpeg, .jpg, .webp" @change="previewImage">
             </div>
             <div class="image-preview">
@@ -75,7 +75,7 @@
                 <div v-if="!imageUrl" class="noImage"></div>
             </div>
             <div class="sendButton">
-                <button @click="parameterArticle()" class="btn-custom">Envoyer l'anecdote</button>
+                <button @click="parameterArticle()" class="btn-custom">Envoyer la news</button>
             </div>
         </div>
     </main>
