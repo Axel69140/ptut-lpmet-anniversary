@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Repository\AnecdoteRepository;
 use App\Repository\UserRepository;
+use App\Service\EntryDataService;
 use App\Service\RequestService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -19,21 +20,33 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\Serializer\Context\Normalizer\ObjectNormalizerContextBuilder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/anecdotes')]
 class AnecdoteController extends AbstractController
 {
     // Get anecdotes
-    #[Route('/', name: 'app_api_anecdote_get', methods: ['GET'])]
+    #[Route('/', name: 'app_api_anecdotes_get', methods: ['GET'])]
     public function getAnecdotes(AnecdoteRepository $anecdoteRepository): JsonResponse
     {
         try {
+
             $anecdotes = $anecdoteRepository->findAll();
-            return $this->json($anecdotes, 200);
+
+            if (!$anecdotes) {
+                return $this->json([
+                    'error' => 'Anecdotes not found'
+                ], 404);
+            }
+
+            return $this->json($anecdotes, 200, [], ['groups' => ['anecdote-return']]);
+
         } catch (\Exception $e) {
+
             return $this->json([
                 'error' => 'Server error'
             ], 500);
+
         }
     }
 
@@ -42,77 +55,58 @@ class AnecdoteController extends AbstractController
     public function getAnecdoteById(AnecdoteRepository $anecdoteRepository, int $id): JsonResponse
     {
         try {
-            $anecdote = $anecdoteRepository->find($id);
 
-            if (!$anecdote) {
+            $anecdotes = $anecdoteRepository->findOneBy(['id' => $id]);
+
+            if (!$anecdotes) {
                 return $this->json([
-                    'error' => 'Anecdote not found'
+                    'error' => 'Article not found'
                 ], 404);
             }
 
-            return $this->json($anecdote, 200);
+            return $this->json($anecdotes, 200, [], ['groups' => ['anecdote-return']]);
+
         } catch (\Exception $e) {
+
             return $this->json([
                 'error' => 'Server error'
             ], 500);
+
         }
     }    
 
     // Create anecdote
     #[Route('/create', name: 'app_api_anecdote_post', methods: ['POST'])]
-    public function createAnecdote(Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager, UserRepository $userRepository): JsonResponse
+    public function createAnecdote(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, UserRepository $userRepository, EntryDataService $entryDataService, ValidatorInterface $validator, AnecdoteRepository $anecdoteRepository): JsonResponse
     {
         try {
-            $content = json_decode($request->getContent(), true);
-        
-            if (empty($content)) {
-                return $this->json([
-                    'error' => 'No data provided'
-                ], 400);
-            }
-        
-            $requiredFields = ['content','id_user'];
-        
-            // Vérification de la présence de tous les champs requis
-            foreach ($requiredFields as $field) {
-                if (!isset($content[$field])) {
-                    return $this->json([
-                        'error' => "Missing field '$field'"
-                    ], 400);
-                }
-            }
-        
-            // Vérification des types des champs requis
-            if (!is_string($content['content']) || !is_numeric($content['id_user'])) {
-                return $this->json([
-                    'error' => 'One or more filled-in field(s) has/have a wrong type'
-                ], 400);
-            }
-        
-            $user = $userRepository->find($content['id_user']);
-            if (!$user) {
-                return $this->json([
-                    'error' => 'User not found'
-                ], 404);
-            }
-            
-            $context = (new ObjectNormalizerContextBuilder())
-            ->withGroups('user')
-            ->toArray();
-            
-            $anecdote = $serializer->deserialize($request->getContent(), Anecdote::class, 'json', $content);
-            
-            $anecdote->setUser($user);
-            $anecdote->setIsValidate(false);
 
-            $entityManager->persist($anecdote);
-            $entityManager->flush();
-            
+            $content = json_decode($request->getContent(), true);
+            $anecdote = new Anecdote();
+            $anecdote = $entryDataService->defineKeysInEntity($content, $anecdote, $em);
+            if ($anecdote === null) {
+                return $this->json([
+                    'error' => 'A problem has been encounter during entity creation'
+                ], 400);
+            }
+
+            //Symfony validation
+            $errors = $validator->validate($anecdote);
+            if (count($errors) > 0) {
+                return $this->json([
+                    'error' => $errors
+                ], 400);
+            }
+
+            $anecdoteRepository->save($anecdote, true);
             return $this->json($anecdote, 201, [], ['groups' => ['anecdote-return']]);
+
         } catch (\Exception $e) {
+
             return $this->json([
                 'error' => $e->getMessage()
             ], 500);
+
         }
     }
 
