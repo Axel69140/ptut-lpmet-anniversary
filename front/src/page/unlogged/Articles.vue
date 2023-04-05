@@ -1,15 +1,26 @@
 <script>
     import axios from 'axios';   
     import Footer from '../../components/Footer.vue';     
+    import { articleService } from '../../services/article.services';
 
     export default {
         name: 'articles',
-        data: () => ({ users: [] }),       
+        data: () => ({ 
+            articles: [],
+        }),       
         computed: {            
         },
         methods: {      
         },
-        mounted() {                      
+        mounted() { 
+            articleService.getArticles().then((articles) => { 
+                articles.data.forEach(article => {
+                    if(!article.isValidate){
+                        this.articles.push(article);
+                    }
+                });
+                console.log(this.articles);  
+            });                 
         },
         components: {
             Footer
@@ -21,11 +32,60 @@
 <template>
     <main>
         <h1>Articles</h1>
+        <div class="allArticles">
+            <div v-for="article in this.articles" class="article">
+                
+                <div class="divTitle">
+                    <h3>{{ article.title }}</h3>
+                </div>
+                <div class="divContentAndImage">
+                    <div class="divContent">
+                        <p>{{ article.content }}</p>
+                    </div>
+                    <div v-if="article.media">
+                        <img src={{ article.media }}>
+                    </div>
+                </div>
+                <div class="divDate"><!-- v-if="article.date" -->
+                    <p>Date</p>
+                </div>
+                
+                
+            </div>
+        </div>
     </main>
     
-    <Footer/>   
+    <Footer class="footer"/>   
 </template>
 
 <style scoped>
+p{
+    margin: 0;
+    padding: 0;
+}
+.footer{
+    position: inherit;
+}
+
+.divDate{
+    display: flex;
+    flex-direction: row-reverse;
+    margin: 0 10px 10px 0;
+}
+.article{
+    display: flex;
+    flex-direction: column;
+    border: solid 1px black;
+    margin: 20px 0;
+}
+
+.divTitle{
+    display: flex;
+}
+
+.divTitle h3{
+    margin: 10px 0 0 10px;
+    font-weight: bold;
+}
 
 </style>

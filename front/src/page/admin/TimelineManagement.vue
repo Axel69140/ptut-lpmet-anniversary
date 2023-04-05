@@ -57,9 +57,9 @@
             timelineEdit = true;     
             id.value = timelineStepId;
             title.value = response.data.title;      
-            let date = new Date(response.data.date);               
+            let date = new Date(response.data.date);                  
             selectedDay.value = date.getDate().toString();
-            selectedMonth.value = date.getMonth().toString();
+            selectedMonth.value = (date.getMonth()+1).toString();   
             selectedYear.value = date.getFullYear().toString();
             content.value = response.data.content;
             media.value = response.data.media; 
@@ -76,6 +76,7 @@
             content: content.value
         }).then(async (response) => { 
             await getTimelineSteps();  
+            resetForm();
             isLoading.value = false; 
         });
     };
@@ -89,7 +90,8 @@
             //media: media.value,
             content: content.value
         }).then(async (response) => { 
-            await getTimelineSteps();  
+            await getTimelineSteps(); 
+            resetForm(); 
             isLoading.value = false; 
         }); 
     };
