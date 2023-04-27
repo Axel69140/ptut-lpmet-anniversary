@@ -39,11 +39,6 @@
                         }else{
                             this.totalDuration = this.durationHour + ":" + this.durationMinute + ":00Z";
                         }
-                        if(this.startHour<10){
-                            this.totalStartHour = "0" + this.startHour + ":00";
-                        }else{
-                            this.totalStartHour = this.startHour + ":00";
-                        }
                         this.validInput = true;
                     }
                     else{
@@ -53,7 +48,6 @@
                         await activityService.createActivity({
                             description: this.description,
                             name: this.name,
-                            startHour: this.totalStartHour,
                             duration: this.totalDuration,
                             id_user: this.idUser,
                         });
@@ -83,15 +77,15 @@
         <p class="informations"></p>
         <div class="formulaireActivite">
             <div class="divTitleTZ">
-                <label class="labelTitle">Titre de l'activité</label>
+                <label class="labelTitle">Titre de l'activité *</label>
                 <input type="text" class="titleTextZone" v-model="name">
             </div>
             <div class="divContentTZ">
-                <label class="labelContent">Description de l'activité</label>
+                <label class="labelContent">Description de l'activité *</label>
                 <textarea class="contentTextZone" rows="10" cols="100" v-model="description"></textarea>
             </div>
             <div class="divDurée">
-                <p>Durée de l'activité</p>
+                <h2>Durée de l'activité</h2>
                 <div class="allDay">
                     <label>Toute la journée</label>
                     <input type="checkbox" v-model="isAllDay">
@@ -105,10 +99,6 @@
                         <label>Minutes</label>
                         <input type="number" name="monInput" min="0" max="24" class="form-row__input" v-model="durationMinute">
                     </div>
-                </div>
-                <div v-if="!isAllDay" class="hour">
-                    <label>Heure du début de l'activité</label>
-                    <input type="number" name="monInput" min="0" max="24" class="form-row__input" v-model="startHour">
                 </div>
                 
             </div>
@@ -135,7 +125,7 @@
     }
 
     .labelTitle{
-        margin-right: 48px;
+        margin-right: 68px;
     }
 
     .labelImage{
@@ -175,6 +165,39 @@
 
     .contentTextZone:focus-visible, .titleTextZone:focus-visible{
         outline: var(--primary);
+    }
+
+    .sendButton{
+        margin-top: 20px;
+    }
+
+    .duration{
+        display: flex;
+        justify-content: center;
+        margin: 20px 0;
+    }
+
+    .hour{
+        margin-right: 5%;
+    }
+
+    @media (max-width: 560px){
+        .divTitleTZ, .divContentTZ{
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .labelTitle{
+            margin: 0;
+        }
+
+        .duration{
+            flex-direction: column;
+        }
+
+        .hour{
+            margin: 20px 0;
+        }
     }
 
 </style>

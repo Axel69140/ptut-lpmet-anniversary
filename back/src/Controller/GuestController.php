@@ -278,6 +278,7 @@ class GuestController extends AbstractController
 
     // Delete guest
     #[Route('/{id}', name: 'app_api_guests_delete', methods: ['DELETE'])]
+    #[IsGranted('ROLE_ADMIN', statusCode: 403, message: 'Vous n\'avez pas les droits suffisants')]
     public function deleteGuest(int $id, GuestRepository $guestRepository): Response
     {
         try {

@@ -31,7 +31,7 @@
 
 <template>
     <main>
-        <h1>Articles</h1>
+        <h1>News</h1>
         <div class="allArticles">
             <div v-for="article in this.articles" class="article">
                 
@@ -76,7 +76,16 @@ p{
     display: flex;
     flex-direction: column;
     border: solid 1px black;
+    border-radius: 10px;
     margin: 20px 0;
+}
+
+.article:nth-child(even){
+    background-color: #f6f6f6;
+}
+
+.article:nth-child(odd){
+    background-color: #ececec;
 }
 
 .divTitle{

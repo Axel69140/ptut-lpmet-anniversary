@@ -455,6 +455,7 @@ class UserController extends AbstractController
 
     // Delete user
     #[Route('/{id}', name: 'app_api_user_delete', methods: ['DELETE'])]
+    #[IsGranted('ROLE_ADMIN', statusCode: 403, message: 'Vous n\'avez pas les droits suffisants')]
     public function deleteUser(int $id, UserRepository $userRepository): JsonResponse
     {
         try {

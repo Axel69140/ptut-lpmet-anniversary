@@ -56,7 +56,7 @@
                 <a class="dropdown-item" href="/admin/user">Gestion des utilisateurs</a>
                 <a class="dropdown-item" href="/admin/participant">Gestion des participants</a>
                 <a class="dropdown-item" href="/admin/timeline">Gestion de la timeline</a>
-                <a class="dropdown-item" href="/admin/article">Gestion des articles</a>
+                <a class="dropdown-item" href="/admin/article">Gestion des news</a>
                 <a class="dropdown-item" href="/admin/activity">Gestion des activités</a>
                 <a class="dropdown-item" href="/admin/anecdote">Gestion des anecdotes</a>
               </div>
@@ -81,10 +81,10 @@
             </div>
           </li>
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="/articles" id="dropdown1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Articles</a>
+            <a class="nav-link dropdown-toggle" href="/articles" id="dropdown1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">News</a>
             <div class="dropdown-menu" aria-labelledby="dropdown1">
               <a class="dropdown-item" href="/articles">Voir</a>
-              <a class="dropdown-item" href="/articles/form">Proposer un article</a>
+              <a class="dropdown-item" href="/articles/form">Proposer une news</a>
             </div>
           </li>
           <li class="nav-item dropdown">
@@ -106,7 +106,7 @@
                 <a class="dropdown-item" href="/admin/user">Gestion des utilisateurs</a>
                 <a class="dropdown-item" href="/admin/participant">Gestion des participants</a>
                 <a class="dropdown-item" href="/admin/timeline">Gestion de la timeline</a>
-                <a class="dropdown-item" href="/admin/article">Gestion des articles</a>
+                <a class="dropdown-item" href="/admin/article">Gestion des news</a>
                 <a class="dropdown-item" href="/admin/activity">Gestion des activités</a>
                 <a class="dropdown-item" href="/admin/anecdote">Gestion des anecdotes</a>
               </div>

@@ -206,6 +206,7 @@ class ArticleController extends AbstractController
 
     // Delete article
     #[Route('/{id}', name: 'app_api_article_delete', methods: ['DELETE'])]
+    #[IsGranted('ROLE_ADMIN', statusCode: 403, message: 'Vous n\'avez pas les droits suffisants')]
     public function deleteArticle(int $id, ArticleRepository $articleRepository): Response
     {
         try {

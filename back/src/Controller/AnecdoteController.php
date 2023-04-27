@@ -68,7 +68,7 @@ class AnecdoteController extends AbstractController
     public function createAnecdote(Request $request, EntityManagerInterface $em, UserRepository $userRepository, EntryDataService $entryDataService, ValidatorInterface $validator, AnecdoteRepository $anecdoteRepository): JsonResponse
     {
         try {
-
+            
             $content = json_decode($request->getContent(), true);
             $anecdote = new Anecdote();
             $anecdote = $entryDataService->defineKeysInEntity($content, $anecdote, $em);
@@ -206,6 +206,7 @@ class AnecdoteController extends AbstractController
 
     // Delete anecdote
     #[Route('/{id}', name: 'app_api_anecdote_delete', methods: ['DELETE'])]
+    #[IsGranted('ROLE_ADMIN', statusCode: 403, message: 'Vous n\'avez pas les droits suffisants')]
     public function deleteAnecdote(int $id, AnecdoteRepository $anecdoteRepository): JsonResponse
     {
         try {

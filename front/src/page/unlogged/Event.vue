@@ -248,5 +248,9 @@ li span {
   li span {
     font-size: calc(3.375rem * var(--smaller));
   }
+
+  .invitation{
+    display: block;
+  }
 }
 </style>

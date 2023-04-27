@@ -126,48 +126,64 @@ input.upload {
     
     background-color: #fff;
 }
-    .labelContent{
-        margin:  20px 15px 0 0;
+.labelContent{
+    margin:  20px 15px 0 0;
+}
+
+.labelTitle{
+    margin-right: 48px;
+}
+
+
+.formulaireArticle{
+    display: flex;
+    flex-direction: column;
+}
+
+.divImage{
+    display: flex;
+    justify-content: center;
+}
+.divTitleTZ{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.divContentTZ{
+    display: flex;
+    justify-content: center;
+}
+.footer{
+    position: inherit;
+}
+.divContentTZ{
+    margin: 20px 0;
+}
+.contentTextZone, .titleTextZone{
+    width: 60%;
+    border-radius: 20px;
+    padding: 1%;
+    border: solid 4px var(--primary);
+}
+
+.contentTextZone:focus-visible, .titleTextZone:focus-visible{
+    outline: var(--primary);
+}
+
+@media (max-width: 560px) {
+    .divTitleTZ, .divContentTZ{
+        flex-direction: column;
+        align-items: center;
     }
 
     .labelTitle{
-        margin-right: 48px;
+        margin: 0;
     }
 
-
-    .formulaireArticle{
-        display: flex;
-        flex-direction: column;
-    }
-
-    .divImage{
-        display: flex;
-        justify-content: center;
-    }
-    .divTitleTZ{
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    .divContentTZ{
-        display: flex;
-        justify-content: center;
-    }
-    .footer{
-        position: inherit;
-    }
-    .divContentTZ{
-        margin: 20px 0;
-    }
     .contentTextZone, .titleTextZone{
-        width: 60%;
-        border-radius: 20px;
-        padding: 1%;
-        border: solid 4px var(--primary);
+        width: 80%;
     }
 
-    .contentTextZone:focus-visible, .titleTextZone:focus-visible{
-        outline: var(--primary);
-    }
+}
 
 </style>
