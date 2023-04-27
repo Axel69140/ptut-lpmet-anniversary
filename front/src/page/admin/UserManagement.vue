@@ -81,7 +81,7 @@
     };
 
     const createUser = () => {        
-        isLoading.value = true; 
+        isLoading.value = true;         
         userService.createUser({
             email: email.value,
             lastName: lastName.value,
