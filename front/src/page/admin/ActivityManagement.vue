@@ -15,12 +15,11 @@
     const id = ref('');
     const name = ref('');
     const description = ref('');
-    const startHour = ref('');
     const duration = ref('');
 
     const headers: Header[] = [
         { text: "Nom de l'activité", value: "name", sortable: true },
-        { text: "Utilisateur", value: "creator", sortable: true },
+        { text: "Utilisateur", value: "name", sortable: true },
         { text: "Description", value: "description", sortable: true },
         { text: "Heure du début de l'activité", value: "startHour", sortable: true },
         { text: "Durée", value: "duration", sortable: true }
@@ -49,7 +48,6 @@
             id.value = activityId;
             name.value = response.data.name;
             description.value = response.data.description;
-            startHour.value = response.data.startHour;
             duration.value = response.data.duration;
         });
     };
@@ -60,7 +58,6 @@
         activityService.createActivity({
             name: name.value,
             description: description.value,
-            startHour: startHour.value,
             duration: duration.value
         }).then(async (response) => { 
             await getActivities();  
@@ -73,7 +70,6 @@
         activityService.editActivity(id.value, {
             name: name.value,
             description: description.value,
-            startHour: startHour.value,
             duration: duration.value
         }).then(async (response) => { 
             await getActivities();  
@@ -120,7 +116,6 @@
     const resetForm = () => {
         name.value = '';
         description.value = '';
-        startHour.value = '';
         duration.value = '';
         activityEdit = false;
     };
@@ -210,11 +205,7 @@
 
                         <div class="form-row">
                             <textarea v-model="description" class="form-row__input" placeholder="Description*"/>
-                        </div>
-
-                        <div class="form-row">
-                            <input v-model="startHour" class="form-row__input" type="text" placeholder="Heure du début de l'activité"/>
-                        </div>
+                        </div>                    
 
                         <div class="form-row">
                             <input v-model="duration" class="form-row__input" type="text" placeholder="Durée de l'activité"/>
