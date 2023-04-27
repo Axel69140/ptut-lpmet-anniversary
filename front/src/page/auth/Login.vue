@@ -65,14 +65,13 @@
           password: this.password,
           roles: ["ROLE_USER"],
           maidenName: this.maidenName,
-          phone: this.phone,
+          phoneNumber: this.phone,
           note: this.note,
           isParticipated: this.isParticipated === true ? this.isParticipated : false,
-          isPublic: this.isPublic === true ? this.isPublic : false,
+          isPublicProfil: this.isPublic === true ? this.isPublic : false,
           activeYears: [this.activeYears, this.activeYears2],
           function: this._function,
-          link: this.link,
-          isVerified: false
+          link: this.link
         }).then(function () {
           self.login();
         }, function (error) {
@@ -124,14 +123,14 @@
 
       <div class="form-row" v-if="mode == 'create'">
         <label for="activeYears">Année d'activité à l'IUT*</label>
-        <select v-model="activeYears" name="activeYears" id="activeYears">
+        <select v-model="activeYears" name="activeYears" id="activeYears" class="form-row__input">
           <option value="">-</option>
           <option v-for="year in range(1993, 2023)" v-bind:key="year" v-bind:value="year">{{ year }}</option>
         </select>
 
         <span>/</span>
 
-        <select v-model="activeYears2" name="activeYears2" id="activeYears2">
+        <select v-model="activeYears2" name="activeYears2" id="activeYears2" class="form-row__input">
           <option value="">-</option>
           <option v-for="year in range(1993, 2023)" v-bind:key="year" v-bind:value="year">{{ year }}</option>
         </select>
@@ -270,5 +269,9 @@ h1 {
 #isParticipated:checked ~ .cbx:after, #isPublic:checked ~ .cbx:after {
   opacity: 1;
   transform: rotate(45deg) scale(1);
+}
+
+span {
+    font-size: 20px;
 }
 </style>

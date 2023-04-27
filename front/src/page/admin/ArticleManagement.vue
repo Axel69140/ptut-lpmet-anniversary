@@ -20,7 +20,7 @@
     let allUsers = [];
 
     const headers: Header[] = [
-        { text: "Utilisateur", value: "user", sortable: true },
+        { text: "Utilisateur", value: "creator", sortable: true },
         { text: "Titre", value: "title", sortable: true },
         { text: "Contenu", value: "content", sortable: true }
     ];
@@ -29,8 +29,8 @@
 
     onMounted(() => {
         // set datatable
-        getArticles();     
-        getUsers();    
+        getUsers();  
+        getArticles();                    
     });    
 
     const getArticles = () => {    
@@ -54,8 +54,8 @@
             articleEdit = true;
             id.value = articleId;
             title.value = response.data.title;
-            content.value = response.data.content;
-            user.value = response.data.user;
+            content.value = response.data.content;            
+            selectedUser.value = response.data.creator.id;
         });
     };
 
@@ -64,9 +64,10 @@
         articleService.createArticle({
             title: title.value,
             content: content.value,
-            user: user.value
+            creator: selectedUser.value
         }).then(async (response) => { 
             await getArticles();  
+            resetForm();
             isLoading.value = false; 
         });
     };
@@ -79,6 +80,7 @@
             user: user.value
         }).then(async (response) => { 
             await getArticles();  
+            resetForm();
             isLoading.value = false; 
         }); 
     };
@@ -126,7 +128,7 @@
     const resetForm = () => {
         title.value = '';
         content.value = '';
-        user.value = '';
+        selectedUser.value = '';
         articleEdit = false;
     };
     
@@ -162,7 +164,7 @@
                 <input class="searchBar" type="text" placeholder="Rechercher..." v-model="searchValue">
                 <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#clearModal">Vider la table news</a>
                 <a class="btn-custom btn-datatable" @click="exportData()">Exporter la liste des news</a>
-                <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#formModal">Créer une news</a>
+                <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#formModal" @click="getUsers()">Créer une news</a>
 
                 <div v-if="itemsSelected.length === 1">
                     <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#formModal" @click="getArticleById(itemsSelected[0].id)">Modifier la news</a>
@@ -192,6 +194,10 @@
                 <template #empty-message>
                     <p>Aucun résultat</p>
                 </template>
+
+                <template #item-creator="item">
+                    {{ item.creator.firstName }} {{ item.creator.lastName }}                   
+                </template>
             </EasyDataTable>
         </div>
 
@@ -211,12 +217,8 @@
                         </div>
 
                         <div class="form-row">
-                            <input v-model="user" class="form-row__input" type="text" placeholder="Utilisateur*"/>
-                        </div>
-
-                        <div class="form-row">
-                            <select class="form-row__input" v-model="selectedUser" name="month" id="month">
-                                <option value="" disabled selected>Utilisateur*</option>
+                            <select class="form-row__input" v-model="selectedUser" name="selectedUser" id="selectedUser">
+                                <option value="" disabled selected hidden>Utilisateur*</option>
                                 <option v-for="user in allUsers" :key="user" :value="user.id">{{ user.firstName }} {{ user.lastName }}</option>
                             </select>
                         </div>
@@ -304,7 +306,7 @@ select {
     height: 40px;
 }
 
-option:disabled {
-    
+.placeholder {
+    color: #afafaf;
 }
 </style>

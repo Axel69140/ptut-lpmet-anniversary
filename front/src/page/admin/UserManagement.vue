@@ -81,7 +81,7 @@
     };
 
     const createUser = () => {        
-        isLoading.value = true; 
+        isLoading.value = true;         
         userService.createUser({
             email: email.value,
             lastName: lastName.value,
@@ -284,14 +284,14 @@
 
                         <div class="form-row">
                             <label for="activeYears">Année d'activité à l'IUT*</label>
-                            <select v-model="activeYears" name="activeYears" id="activeYears">
+                            <select v-model="activeYears" name="activeYears" id="activeYears" class="form-row__input">
                                 <option value="">-</option>
                                 <option v-for="year in range(1993, 2023)" v-bind:key="year" v-bind:value="year">{{ year }}</option>
                             </select>
 
                             <span>/</span>
 
-                            <select v-model="activeYears2" name="activeYears2" id="activeYears2">
+                            <select v-model="activeYears2" name="activeYears2" id="activeYears2" class="form-row__input">
                                 <option value="">-</option>
                                 <option v-for="year in range(1993, 2023)" v-bind:key="year" v-bind:value="year">{{ year }}</option>
                             </select>
@@ -406,5 +406,9 @@ h1 {
 #isParticipated:checked ~ .cbx:after, #isPublic:checked ~ .cbx:after {
   opacity: 1;
   transform: rotate(45deg) scale(1);
+}
+
+span {
+    font-size: 20px;
 }
 </style>

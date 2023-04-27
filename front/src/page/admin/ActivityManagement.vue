@@ -49,16 +49,22 @@
             activityEdit = true;     
             id.value = activityId;
             name.value = response.data.name;
-            description.value = response.data.description;
+            description.value = response.data.description;   
+            if (getHour(response.data.duration) === '23' && getMinute(response.data.duration) == '59') {
+                isAllDay.value = true;
+            } else {
+                durationHour.value = getHour(response.data.duration);  
+                durationMinute.value = getMinute(response.data.duration);
+            }            
         });
     };
 
     const createActivity = async () => {        
         isLoading.value = true; 
         const idUser = await accountService.getId();
-
-        if(isAllDay){
-            totalDuration = "24:00:00";
+             
+        if(isAllDay.value) {
+            totalDuration = "23:59:00";
         }
         else if(!durationHour.value == 0 || !durationMinute.value == 0){
             if(durationHour.value < 10 && durationMinute.value < 10){
@@ -90,7 +96,8 @@
             name: name.value,
             description: description.value,
         }).then(async (response) => { 
-            await getActivities();  
+            await getActivities(); 
+            resetForm(); 
             isLoading.value = false; 
         }); 
     };
@@ -139,6 +146,25 @@
         isAllDay.value = false;
         activityEdit = false;
     };
+
+    const displayHour = (dateString) => {
+        const [date, time] = dateString.split("T");
+        const [hour, minute] = time.split(":");
+        const formattedTime = `${hour}h${minute}`;
+        return formattedTime;
+    };
+
+    const getHour = (dateString) => {
+        const [date, time] = dateString.split("T");
+        const [hour, minute] = time.split(":");
+        return hour;
+    }
+
+    const getMinute = (dateString) => {
+        const [date, time] = dateString.split("T");
+        const [hour, minute] = time.split(":");
+        return minute;
+    }
     
     defineComponent({
         name: 'activityManagement',
@@ -204,6 +230,10 @@
 
                 <template #item-creator="item">
                     {{ item.creator.firstName }} {{ item.creator.lastName }}                 
+                </template>
+
+                <template #item-duration="item">
+                    {{ displayHour(item.duration) }}                 
                 </template>
             </EasyDataTable>
         </div>

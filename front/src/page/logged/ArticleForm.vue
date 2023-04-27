@@ -29,15 +29,27 @@
                     this.$router.push('../event');
                 }
             },
-            previewImage(event) {
-                const file = event.target.files[0];
+            previewImage(event, isDrop) {
+                let file = null;
+                if(isDrop){
+                    file = event.dataTransfer.files[0];
+                }else{
+                    file = event.target.files[0];
+                }
+                console.log(file);
                 if (!file) return;
                 const reader = new FileReader();
                 reader.onload = (event) => {
                     this.imageUrl = event.target.result;
                 };
                 reader.readAsDataURL(file);
-            }
+            },
+            dropHandler(event) {
+                event.preventDefault();
+                const file = event.dataTransfer.files[0];
+                console.log(file);
+                this.previewImage(event,true);
+            },
         },
         async mounted() {
             this.idUser = await accountService.getId();
@@ -63,11 +75,11 @@
                 <textarea class="contentTextZone" rows="10" cols="100" v-model="content"></textarea>
             </div>
             <div class="divImage">
-                <label v-if="!imageUrl" for="imageFile" class="labelImage">Ajouter une image à la news</label>
-                <label  v-if="imageUrl" for="imageFile" class="labelImage">Changer d'image
+                <label v-if="!imageUrl" for="imageFile" class="labelImage dropzone" @drop="dropHandler" @dragover.prevent>Ajouter une image à la news</label>
+                <label  v-if="imageUrl" for="imageFile" class="labelImage dropzone" @drop="dropHandler" @dragover.prevent>Changer d'image
                     <img :src="imageUrl" v-if="imageUrl" class="imagePreview">
                 </label>
-                <input class="upload" id="imageFile" name="imageFile" type="file" accept=".png, .jpeg, .jpg, .webp" @change="previewImage">
+                <input class="upload" id="imageFile" name="imageFile" type="file" accept=".png, .jpeg, .jpg, .webp" @change="this.previewImage($event,false)">
             </div>
             <div class="sendButton">
                 <button @click="parameterArticle()" class="btn-custom">Envoyer la news</button>
