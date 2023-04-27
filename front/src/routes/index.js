@@ -9,6 +9,7 @@ import Event from '../page/unlogged/Event.vue';
 import Users from '../page/logged/Users.vue';
 import User from '../page/logged/User.vue';
 import EventForm from '../page/logged/EventForm.vue';
+import GuestForm from '../page/logged/GuestForm.vue';
 import ArticleForm from '../page/logged/ArticleForm.vue';
 import AnecdoteForm from '../page/logged/AnecdoteForm.vue';
 import ActivityForm from '../page/logged/ActivityForm.vue';
@@ -64,6 +65,7 @@ const routes = [
       children: [
         { path: '', name: 'Evènement', component: Event },
         { path: 'registration', name: 'Formulaire d\'inscription à l\'évènement', component: EventForm, beforeEnter: isUserConnected },
+        { path: 'invitation', name: 'Formulaire d\'ajout d\'un invité', component: GuestForm, beforeEnter: isUserConnected },
         { path: 'users', name: 'Utilisateurs qui participe à l\'évènement', component: Users, beforeEnter: isUserConnected,
           children : [ 
             { path: ':id', component: User, beforeEnter: isUserConnected } 

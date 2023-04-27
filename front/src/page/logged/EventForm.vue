@@ -19,7 +19,8 @@ export default {
   },
   methods: { 
     addGuest(){
-      console.log("test");
+      this.save();
+      this.$router.push('../event/invitation');
     },
     async save(){
       const idUser = await accountService.getId();
@@ -29,7 +30,6 @@ export default {
           isParticipated: this.isInputChecked,
         }
       );
-      console.log("test");
     }
   },
   async mounted() {
