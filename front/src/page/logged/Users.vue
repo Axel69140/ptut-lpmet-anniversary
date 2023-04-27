@@ -116,39 +116,44 @@
         </div>
     </main>
 
-    <Footer/>    
+    <Footer class="footer" />    
 </template>
 
 <style scoped>
-    li{
-        list-style: none;
-        margin: 5px;
-    }
 
-    ul.users{
-        display: flex;
-    }
+.footer{
+    position: inherit;
+}
 
-    .user{
-        border: solid black 1px;
-    }
+li{
+    list-style: none;
+    margin: 5px;
+}
 
-    .isParticipated{
-        color: green;
-    }
+ul.users{
+    display: flex;
+}
 
-    .isNotParticipated{
-        color: red;
-    }
+.user{
+    border: solid black 1px;
+}
 
-    .fullName {
-        display: flex;
-        margin: 20px 5px 0 5px;
-    }
+.isParticipated{
+    color: green;
+}
 
-    .firstName{
-        margin-right:7px;
-    }
+.isNotParticipated{
+    color: red;
+}
+
+.fullName {
+    display: flex;
+    margin: 20px 5px 0 5px;
+}
+
+.firstName{
+    margin-right:7px;
+}
 
 .fullPage{
     margin: 0 5%;
@@ -327,5 +332,31 @@ label{
 }
 
 /* END custom checkbox */
+
+@media (max-width: 1400px) {
+    .filterYear{
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 560px) {
+    main{
+        padding: 0;
+    }
+
+    .filters{
+        flex-direction: column;
+    }
+
+    .filterFunction{
+        margin: 10px 0;
+    }
+
+    .usersPart{
+        flex-direction: column;
+        align-items: center;
+        padding: 0;
+    }
+}
 
 </style>

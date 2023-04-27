@@ -286,6 +286,17 @@ li span {
   padding: 0 .5rem;
 }
 
+.isParticipate{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 40px;
+}
+.participate{
+  text-transform: uppercase;
+  margin-right: 1rem;
+}
+
 @media all and (max-width: 768px) {
   h1 {
     font-size: calc(1.5rem * var(--smaller));
@@ -300,14 +311,11 @@ li span {
   }
 }
 
-.isParticipate{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 40px;
+@media (max-width: 690px){
+  #addGuest{
+    width: 50%;
+  }
 }
-.participate{
-  text-transform: uppercase;
-  margin-right: 1rem;
-}
+
+
 </style>
