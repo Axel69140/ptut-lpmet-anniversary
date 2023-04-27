@@ -65,7 +65,7 @@ class AnecdoteController extends AbstractController
 
     // Create anecdote
     #[Route('/create', name: 'app_api_anecdote_post', methods: ['POST'])]
-    public function createAnecdote(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, UserRepository $userRepository, EntryDataService $entryDataService, ValidatorInterface $validator, AnecdoteRepository $anecdoteRepository): JsonResponse
+    public function createAnecdote(Request $request, EntityManagerInterface $em, UserRepository $userRepository, EntryDataService $entryDataService, ValidatorInterface $validator, AnecdoteRepository $anecdoteRepository): JsonResponse
     {
         try {
 

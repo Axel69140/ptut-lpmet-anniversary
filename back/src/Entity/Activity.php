@@ -28,10 +28,6 @@ class Activity
 
     #[Groups(['user-return', 'activity-return'])]
     #[ORM\Column(type: Types::TIME_MUTABLE)]
-    private ?\DateTimeInterface $startHour = null;
-
-    #[Groups(['user-return', 'activity-return'])]
-    #[ORM\Column(type: Types::TIME_MUTABLE)]
     private ?\DateTimeInterface $duration = null;
 
     #[Groups(['user-return', 'activity-return'])]
@@ -76,18 +72,6 @@ class Activity
     public function setDescription(string $description): self
     {
         $this->description = $description;
-
-        return $this;
-    }
-
-    public function getStartHour(): ?\DateTimeInterface
-    {
-        return $this->startHour;
-    }
-
-    public function setStartHour(\DateTimeInterface $startHour): self
-    {
-        $this->startHour = $startHour;
 
         return $this;
     }
