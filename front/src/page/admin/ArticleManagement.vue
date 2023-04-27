@@ -5,6 +5,7 @@
     import Footer from '../../components/Footer.vue';    
     import Loader from '../../components/Loader.vue';
     import { articleService } from '../../services/article.services';
+    import { userService } from '../../services/user.services';
 
     const searchValue = ref('');
     let articles = ref([]);
@@ -15,6 +16,8 @@
     const title = ref('');
     const content = ref('');
     const user = ref('');
+    const selectedUser = ref('');
+    let allUsers = [];
 
     const headers: Header[] = [
         { text: "Utilisateur", value: "user", sortable: true },
@@ -26,7 +29,8 @@
 
     onMounted(() => {
         // set datatable
-        getArticles();         
+        getArticles();     
+        getUsers();    
     });    
 
     const getArticles = () => {    
@@ -36,6 +40,12 @@
             articles.value.push(... articlesResponse);
             itemsSelected.value = [];  
             isLoading.value = false; 
+        });
+    };
+
+    const getUsers = () => {    
+        userService.getUsers().then((response) => {             
+            allUsers.push(... response.data);   
         });
     };
 
@@ -135,7 +145,8 @@
                 resetForm,
                 editArticle,
                 deleteArticle,
-                deleteArticles
+                deleteArticles,
+                getUsers
             }
         }
     });
@@ -201,6 +212,13 @@
 
                         <div class="form-row">
                             <input v-model="user" class="form-row__input" type="text" placeholder="Utilisateur*"/>
+                        </div>
+
+                        <div class="form-row">
+                            <select class="form-row__input" v-model="selectedUser" name="month" id="month">
+                                <option value="" disabled selected>Utilisateur*</option>
+                                <option v-for="user in allUsers" :key="user" :value="user.id">{{ user.firstName }} {{ user.lastName }}</option>
+                            </select>
                         </div>
 
                         <div class="form-row">
@@ -280,5 +298,13 @@ h1 {
 #function-datatable {
     display: flex;
     flex-wrap: wrap;
+}
+
+select {
+    height: 40px;
+}
+
+option:disabled {
+    
 }
 </style>

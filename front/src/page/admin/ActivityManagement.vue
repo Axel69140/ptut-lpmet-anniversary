@@ -5,6 +5,7 @@
     import Footer from '../../components/Footer.vue';    
     import Loader from '../../components/Loader.vue';
     import { activityService } from '../../services/activity.services';
+    import { accountService } from '../../services/account.services';
 
     const searchValue = ref('');
     let activities = ref([]);
@@ -14,15 +15,15 @@
     const id = ref('');
     const name = ref('');
     const description = ref('');
-    const startHour = ref('');
-    const duration = ref('');
-    const user = ref('');
+    const isAllDay = ref(false);
+    const durationHour = ref(0);
+    const durationMinute = ref(0);
+    let totalDuration = '';
 
     const headers: Header[] = [
         { text: "Nom de l'activité", value: "name", sortable: true },
-        { text: "Utilisateur", value: "user", sortable: true },
+        { text: "Utilisateur", value: "creator", sortable: true },
         { text: "Description", value: "description", sortable: true },
-        { text: "Heure du début de l'activité", value: "startHour", sortable: true },
         { text: "Durée", value: "duration", sortable: true }
     ];
 
@@ -49,22 +50,36 @@
             id.value = activityId;
             name.value = response.data.name;
             description.value = response.data.description;
-            startHour.value = response.data.startHour;
-            duration.value = response.data.duration;
-            user.value = response.data.user;
         });
     };
 
-    const createActivity = () => {        
+    const createActivity = async () => {        
         isLoading.value = true; 
+        const idUser = await accountService.getId();
+
+        if(isAllDay){
+            totalDuration = "24:00:00";
+        }
+        else if(!durationHour.value == 0 || !durationMinute.value == 0){
+            if(durationHour.value < 10 && durationMinute.value < 10){
+                totalDuration = "0" + durationHour.value + ":0" + durationMinute.value + ":00";
+            }else if(durationHour.value < 10){
+                totalDuration = "0" + durationHour.value + ":" + durationMinute.value + ":00";
+            }else if(durationMinute.value < 10){
+                totalDuration = durationHour.value + ":0" + durationMinute.value + ":00";
+            }else{
+                totalDuration = durationHour.value + ":" + durationMinute.value + ":00";
+            }
+        }
+
         activityService.createActivity({
             name: name.value,
             description: description.value,
-            startHour: startHour.value,
-            duration: duration.value,
-            user: user.value
+            duration: totalDuration,
+            creator: idUser
         }).then(async (response) => { 
             await getActivities();  
+            resetForm();
             isLoading.value = false; 
         });
     };
@@ -74,9 +89,6 @@
         activityService.editActivity(id.value, {
             name: name.value,
             description: description.value,
-            startHour: startHour.value,
-            duration: duration.value,
-            user: user.value
         }).then(async (response) => { 
             await getActivities();  
             isLoading.value = false; 
@@ -122,9 +134,9 @@
     const resetForm = () => {
         name.value = '';
         description.value = '';
-        startHour.value = '';
-        duration.value = '';
-        user.value = '';
+        durationHour.value = 0;
+        durationMinute.value = 0;
+        isAllDay.value = false;
         activityEdit = false;
     };
     
@@ -190,8 +202,8 @@
                     <p>Aucun résultat</p>
                 </template>
 
-                <template #item-activeYears="item">
-                    {{ item.activeYears.length > 0 ? item.activeYears[0] + "/" + item.activeYears[1] : "" }}                    
+                <template #item-creator="item">
+                    {{ item.creator.firstName }} {{ item.creator.lastName }}                 
                 </template>
             </EasyDataTable>
         </div>
@@ -213,19 +225,30 @@
 
                         <div class="form-row">
                             <textarea v-model="description" class="form-row__input" placeholder="Description*"/>
-                        </div>
+                        </div>                    
 
-                        <div class="form-row">
-                            <input v-model="startHour" class="form-row__input" type="text" placeholder="Heure du début de l'activité"/>
-                        </div>
+                        <div class="divDurée">
+                            <h2>Durée de l'activité</h2>    
 
-                        <div class="form-row">
-                            <input v-model="duration" class="form-row__input" type="text" placeholder="Durée de l'activité"/>
-                        </div>
+                            <div class="form-row">
+                                <label for="isAllDay">Toute la journée</label>
+                                <div class="cntr">
+                                    <input v-model="isAllDay" type="checkbox" id="isAllDay" class="hidden-xs-up">
+                                    <label for="isAllDay" class="cbx"></label>
+                                </div>
+                            </div>
 
-                        <div class="form-row">
-                            <input v-model="user" class="form-row__input" type="text" placeholder="Utilisateur*"/>
-                        </div>   
+                            <div v-if="!isAllDay" class="duration">
+                                <div class="hour form-row">
+                                    <label>Heures</label>
+                                    <input type="number" name="monInput" min="0" max="60" class="form-row__input" v-model="durationHour">
+                                </div>
+                                <div class="minute form-row">
+                                    <label>Minutes</label>
+                                    <input type="number" name="monInput" min="0" max="24" class="form-row__input" v-model="durationMinute">
+                                </div>
+                            </div>                
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn-modal-neutre btn-custom" data-bs-dismiss="modal" @click="resetForm()">Fermer</button>
@@ -300,5 +323,30 @@ h1 {
 #function-datatable {
     display: flex;
     flex-wrap: wrap;
+}
+
+.divDurée h2 {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: initial;
+}
+
+.divDurée {
+    text-align: initial;
+}
+
+#isAllDay:checked ~ .cbx {
+  border-color: transparent;
+  background: var(--primary);
+  animation: jelly 0.6s ease;
+}
+
+#isAllDay:checked ~ .cbx:after {
+  opacity: 1;
+  transform: rotate(45deg) scale(1);
+}
+
+.duration label {
+    width: 60px;
 }
 </style>

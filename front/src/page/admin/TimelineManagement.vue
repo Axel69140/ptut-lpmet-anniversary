@@ -31,6 +31,9 @@
     onMounted(() => {
         // set datatable
         getTimelineSteps();
+        selectedYear.value = years()[0];
+        selectedMonth.value = '1';
+        selectedDay.value = '1';
     });    
 
     const getTimelineSteps = () => {    
@@ -245,9 +248,8 @@
                         <div class="form-row">
                             <label for="day">Date de l'étape</label>
 
-                            <select v-model="selectedDay" name="day" id="day">
-                                <option value="">-</option>   
-                                <template v-if="selectedMonth && selectedYear">                            
+                            <select v-model="selectedDay" name="day" id="day">  
+                                <template v-if="selectedMonth && selectedYear">                                                     
                                     <option v-for="day in days()" :key="day" :value="day">{{ day }}</option>
                                 </template> 
                             </select>
@@ -255,14 +257,12 @@
                             <span>/</span>
 
                             <select v-model="selectedMonth" name="month" id="month">
-                                <option value="">-</option>
                                 <option v-for="month in range(1,12)" :key="month" :value="month">{{ month }}</option>
                             </select>
 
                             <span>/</span>
 
                             <select v-model="selectedYear" name="year" id="year">
-                                <option value="">-</option>
                                 <option v-for="year in years()" :key="year" :value="year">{{ year }}</option>
                             </select>
                         </div>
