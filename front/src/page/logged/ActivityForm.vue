@@ -24,8 +24,7 @@
             async parameterActivity() {
                 if (this.description !== undefined && this.description !== '' && this.name !== undefined && this.name !== '') {
                     if(this.isAllDay){
-                        this.totalDuration = "24:00:00Z";
-                        this.totalStartHour = "00:00";
+                        this.totalDuration = "23:59:00Z";
                         this.validInput = true;
                     }
                     else if(!this.durationHour == 0 || !this.durationMinute == 0){

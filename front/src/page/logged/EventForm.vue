@@ -30,6 +30,7 @@ export default {
           isParticipated: this.isInputChecked,
         }
       );
+      this.$router.push('../event');
     }
   },
   async mounted() {

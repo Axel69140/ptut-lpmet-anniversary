@@ -82,6 +82,9 @@
                 </div>
             </li>
         </ul>
+        <div class="spans endCercle">
+            <span class="cercle"></span>
+        </div>
     </main>
     
     <Footer class="footer" />
@@ -182,6 +185,10 @@
 
     .mainStep{
         margin: 25px 0 0 0;
+    }
+
+    .endCercle{
+        margin: 0 50%;
     }
 
 </style>
