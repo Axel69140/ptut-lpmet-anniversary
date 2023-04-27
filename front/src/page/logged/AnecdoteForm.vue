@@ -21,7 +21,7 @@ export default {
         console.log(this.idUser);
         await anecdoteService.createAnecdote({
           content: this.content,
-          id_user: this.idUser,
+          creator: this.idUser,
         });
 
         // reset content input
@@ -46,6 +46,7 @@ export default {
 <template>
     <Loader :isLoading="isLoading" class="loader-basique" />
     <main v-if="!isLoading">
+      <div>
         <h1>Proposer une anecdote</h1> 
         <div class="formulaire">
             <div class="information"><!--Récupérer via la version admin les p a mettre ici-->
@@ -61,33 +62,45 @@ export default {
                 <button @click="parameterAnecdote()" class="btn-custom">Envoyer l'anecdote</button>
             </div>
         </div>
+      </div>
     </main>
 
-    <Footer/>
+    <Footer class="footer" />
 </template>
 
 <style scoped>
 
-    .moreInformation{
-        margin: 0;
-        color: #777777;
-    }
-    .formulaire{
-        display: flex;
-        flex-direction: column;
-    }
 
-    .divTextZone{
-        margin: 20px 0;
-    }
-    .textZone{
-        border-radius: 20px;
-        padding: 1%;
-        border: solid 4px var(--primary);
-    }
+.footer{
+  position: inherit;
+}
+.moreInformation{
+    margin: 0;
+    color: #777777;
+}
+.formulaire{
+    display: flex;
+    flex-direction: column;
+}
 
-    .textZone:focus-visible{
-        outline: var(--primary);
-    }
+.divTextZone{
+    margin: 20px 0;
+}
+.textZone{
+    border-radius: 20px;
+    padding: 1%;
+    width: 60%;
+    border: solid 4px var(--primary);
+}
+
+.textZone:focus-visible{
+    outline: var(--primary);
+}
+
+@media (max-width: 800px) {
+  .textZone{
+      width: 80%;
+  }
+}
 
 </style>

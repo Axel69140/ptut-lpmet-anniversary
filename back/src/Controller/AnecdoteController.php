@@ -68,7 +68,7 @@ class AnecdoteController extends AbstractController
     public function createAnecdote(Request $request, EntityManagerInterface $em, UserRepository $userRepository, EntryDataService $entryDataService, ValidatorInterface $validator, AnecdoteRepository $anecdoteRepository): JsonResponse
     {
         try {
-
+            
             $content = json_decode($request->getContent(), true);
             $anecdote = new Anecdote();
             $anecdote = $entryDataService->defineKeysInEntity($content, $anecdote, $em);
