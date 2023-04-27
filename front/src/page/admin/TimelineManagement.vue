@@ -150,9 +150,9 @@
 
     const resetForm = () => {
         title.value = '';
-        selectedDay.value = '';
-        selectedMonth.value = '';
-        selectedYear.value = '';
+        selectedYear.value = years()[0];
+        selectedMonth.value = '1';
+        selectedDay.value = '1';
         media.value = '';
         content.value = '';
         timelineEdit = false;
@@ -248,7 +248,7 @@
                         <div class="form-row">
                             <label for="day">Date de l'étape</label>
 
-                            <select v-model="selectedDay" name="day" id="day">  
+                            <select class="form-row__input select-form" v-model="selectedDay" name="day" id="day">  
                                 <template v-if="selectedMonth && selectedYear">                                                     
                                     <option v-for="day in days()" :key="day" :value="day">{{ day }}</option>
                                 </template> 
@@ -256,13 +256,13 @@
 
                             <span>/</span>
 
-                            <select v-model="selectedMonth" name="month" id="month">
+                            <select class="form-row__input select-form" v-model="selectedMonth" name="month" id="month">
                                 <option v-for="month in range(1,12)" :key="month" :value="month">{{ month }}</option>
                             </select>
 
                             <span>/</span>
 
-                            <select v-model="selectedYear" name="year" id="year">
+                            <select class="form-row__input select-form" v-model="selectedYear" name="year" id="year">
                                 <option v-for="year in years()" :key="year" :value="year">{{ year }}</option>
                             </select>
                         </div>
@@ -340,5 +340,14 @@ h1 {
 #function-datatable {
     display: flex;
     flex-wrap: wrap;
+}
+
+.select-form {
+    min-width: 50px !important;
+    max-width: 70px;
+}
+
+span {
+    font-size: 20px;
 }
 </style>
