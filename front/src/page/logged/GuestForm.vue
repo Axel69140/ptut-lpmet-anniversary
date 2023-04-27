@@ -1,7 +1,7 @@
 <script>
     import Footer from '../../components/Footer.vue';     
     import { accountService } from '../../services/account.services';
-    //import { guestService } from '../../services/guest.services';
+    import { guestService } from '../../services/guest.service';
 
     export default {
         name: 'guestForm',
@@ -16,11 +16,11 @@
         methods: {     
             async saveGuest() {
                 if (this.name !== undefined && this.name !== '' && this.email !== undefined && this.email !== '') {
-                   /* await guestService.createGuest({
+                    await guestService.createGuest({
                         name: this.name,
                         email: this.email,
                         invitedBy: this.idUser,
-                    });*/
+                    });
 
                     this.name = '';
                     this.email = '';
