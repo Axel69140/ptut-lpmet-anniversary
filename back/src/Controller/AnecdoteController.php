@@ -206,6 +206,7 @@ class AnecdoteController extends AbstractController
 
     // Delete anecdote
     #[Route('/{id}', name: 'app_api_anecdote_delete', methods: ['DELETE'])]
+    #[IsGranted('ROLE_ADMIN', statusCode: 403, message: 'Vous n\'avez pas les droits suffisants')]
     public function deleteAnecdote(int $id, AnecdoteRepository $anecdoteRepository): JsonResponse
     {
         try {

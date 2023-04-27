@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Settings;
 use App\Repository\SettingsRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use App\Service\EntryDataService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -43,6 +44,7 @@ class SettingsController extends AbstractController
 
     // Reset settings
     #[Route('/reset', name: 'app_reset_settings', methods: ['PATCH'])]
+    #[IsGranted('ROLE_ADMIN', statusCode: 403, message: 'Vous n\'avez pas les droits suffisants')]
     public function resetSettings(SettingsRepository $settingsRepository): JsonResponse
     {
         try {
@@ -73,6 +75,7 @@ class SettingsController extends AbstractController
 
     // Update user
     #[Route('/update', name: 'app_api_settings_update', methods: ['PATCH'])]
+    #[IsGranted('ROLE_ADMIN', statusCode: 403, message: 'Vous n\'avez pas les droits suffisants')]
     public function updateSettings(Request $request, SettingsRepository $settingsRepository, EntryDataService $entryDataService, ValidatorInterface $validator, EntityManagerInterface $em): JsonResponse
     {
         try {
