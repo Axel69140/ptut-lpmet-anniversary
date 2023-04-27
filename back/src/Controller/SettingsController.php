@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Settings;
+use App\Repository\AnecdoteRepository;
 use App\Repository\SettingsRepository;
+use App\Service\ExportDataService;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
@@ -105,6 +107,24 @@ class SettingsController extends AbstractController
 
             $settingsRepository->save($settingsToUpdate, true);
             return $this->json($settingsToUpdate, 200);
+
+        } catch (\Exception $e) {
+
+            return $this->json([
+                'error' => 'Server error'
+            ], 500);
+
+        }
+    }
+
+    // Export all datas
+    #[Route('/export-csv', name: 'app_settings_export_csv', methods: ['GET'])]
+    public function exportCSV(AnecdoteRepository $anecdoteRepository, ExportDataService $exportDataService): JsonResponse
+    {
+        try {
+
+            $exportDataService->exportAllCSV($anecdoteRepository);
+            return $this->json('Done', 200);
 
         } catch (\Exception $e) {
 
