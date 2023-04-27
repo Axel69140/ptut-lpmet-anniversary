@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Repository\UserRepository;
+use App\Service\EntryDataService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
@@ -14,6 +15,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/activities')]
 class ActivityController extends AbstractController
@@ -22,214 +24,208 @@ class ActivityController extends AbstractController
     #[Route('/', name: 'app_api_activity_get', methods: ['GET'])]
     public function getActivities(ActivityRepository $activityRepository): JsonResponse
     {
-            $activities = $activityRepository->findAll();
-            return $this->json($activities, 200, [], ['groups' => ['activity-return']]);
-        
+        try {
+
+            $anecdotes = $activityRepository->findAll();
+
+            return $this->json($anecdotes, 200, [], ['groups' => ['activity-return']]);
+
+        } catch (\Exception $e) {
+
+            return $this->json([
+                'error' => 'Server error'
+            ], 500);
+
+        }
     }
 
-    // Get one activities
+    // Get one activity
     #[Route('/{id}', name: 'app_api_activity_get_one', methods: ['GET'])]
     public function getActivityById(ActivityRepository $activityRepository, int $id): JsonResponse
     {
         try {
-            $activity = $activityRepository->find($id);
+
+            $activity = $activityRepository->findOneBy(['id' => $id]);
 
             if (!$activity) {
                 return $this->json([
-                    'error' => 'Activity not found'
+                    'error' => 'Anecdote not found'
                 ], 404);
             }
 
-            return $this->json($activity, 200);
+            return $this->json($activity, 200, [], ['groups' => ['activity-return']]);
+
         } catch (\Exception $e) {
+
             return $this->json([
                 'error' => 'Server error'
             ], 500);
+
         }
     }
 
     // Create activity
     #[Route('/create', name: 'app_api_activity_post', methods: ['POST'])]
-    public function createActivity(Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager, UserRepository $userRepository): JsonResponse
+    public function createActivity(Request $request, EntityManagerInterface $em, ActivityRepository $activityRepository, EntryDataService $entryDataService, ValidatorInterface $validator): JsonResponse
     {
+        try {
+
             $content = json_decode($request->getContent(), true);
-
-            if (empty($content)) {
+            $activity = new Activity();
+            $activity = $entryDataService->defineKeysInEntity($content, $activity, $em);
+            if ($activity === null) {
                 return $this->json([
-                    'error' => 'No data provided'
+                    'error' => 'A problem has been encounter during entity creation'
                 ], 400);
             }
 
-            $requiredFields = ['name', 'description', 'startHour', 'duration', 'id_user'];
-
-            // Vérification de la présence de tous les champs requis
-            foreach ($requiredFields as $field) {
-                if (!isset($content[$field])) {
-                    return $this->json([
-                        'error' => "Missing field '$field'"
-                    ], 400);
-                }
-            }
-
-            // Vérification des types des champs requis
-            if (!is_string($content['name']) || !is_string($content['description']) || !is_string($content['startHour']) || !is_string($content['duration']) || !is_numeric($content['id_user'])) {
+            //Symfony validation
+            $errors = $validator->validate($activity);
+            if (count($errors) > 0) {
                 return $this->json([
-                    'error' => 'One or more filled-in field(s) has/have a wrong type'
+                    'error' => $errors
                 ], 400);
             }
 
-            $user = $userRepository->find($content['id_user']);
-
-            if (!$user) {
-                return $this->json([
-                    'error' => 'User not found'
-                ], 404);
-            }
-
-            
-
-            $activity = $serializer->deserialize($request->getContent(), Activity::class, 'json');
-            $activity->setIsValidate(false);
-            $activity->setCreator($user);          
-
-            $entityManager->persist($activity);
-            $entityManager->flush();
-
+            $activityRepository->save($activity, true);
             return $this->json($activity, 201, [], ['groups' => ['activity-return']]);
+
+        } catch (\Exception $e) {
+
+            return $this->json([
+                'error' => $e->getMessage()
+            ], 500);
+
+        }
     }
 
     // Update activity
     #[Route('/{id}', name: 'app_api_activity_update', methods: ['PATCH'])]
-    public function updateActivity(Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager, int $id): JsonResponse
+    public function updateActivity(Request $request, ActivityRepository $activityRepository, EntityManagerInterface $em, EntryDataService $entryDataService, int $id, ValidatorInterface $validator): JsonResponse
     {
         try {
-            $activity = $entityManager->getRepository(Activity::class)->find($id);
 
-            // Vérification de l'existence de l'activity
-            if ($activity === null) {
+            $content = json_decode($request->getContent(), true);
+            $activityToUpdate = $activityRepository->findOneBy(['id' => $id]);
+            if (!$activityToUpdate) {
                 return $this->json([
                     'error' => 'Activity not found'
                 ], 404);
             }
 
-            $content = json_decode($request->getContent(), true);
-
-            if (empty($content)) {
+            $activityToUpdate = $entryDataService->defineKeysInEntity($content, $activityToUpdate, $em);
+            if ($activityToUpdate === null) {
                 return $this->json([
-                    'error' => 'No data provided'
+                    'error' => 'A problem has been encounter during entity modification'
                 ], 400);
             }
 
-            foreach ($content as $key => $value) {
-                // Vérification de l'existence de la propriété dans l'objet Activity
-                if (!property_exists(Activity::class, $key)) {
-                    return $this->json([
-                        'error' => "Unknown property '$key'"
-                    ], 400);
-                }
-
-                $setter = 'set' . ucfirst($key);
-
-                // Vérification de l'existence de la méthode setter pour la propriété
-                if (!method_exists(Activity::class, $setter)) {
-                    return $this->json([
-                        'error' => "No setter found for property '$key'"
-                    ], 500);
-                }
-
-                // Appel de la méthode setter pour modifier la propriété
-                $activity->$setter($value);
+            //Symfony validation
+            $errors = $validator->validate($activityToUpdate);
+            if (count($errors) > 0) {
+                return $this->json([
+                    'error' => $errors
+                ], 400);
             }
 
-            $entityManager->flush();
+            $activityRepository->save($activityToUpdate, true);
+            return $this->json($activityToUpdate, 200, [], ['groups' => ['activity-return']]);
 
-            return $this->json($activity, 200);
         } catch (\Exception $e) {
+
             return $this->json([
                 'error' => 'Server error'
             ], 500);
+
         }
     }
 
     // Delete activities
     #[Route('/many', name: 'app_api_activity_delete_many', methods: ['DELETE'])]
-    public function deleteActivities(Request $request, EntityManagerInterface $entityManager): Response
+    public function deleteActivities(Request $request, EntityManagerInterface $entityManager, ActivityRepository $activityRepository): Response
     {
         try {
+
             $data = json_decode($request->getContent(), true);
             $ids = $data['id'] ?? [];
-    
+
             if (empty($ids)) {
                 return $this->json([
                     'error' => 'No IDs provided'
                 ], 400);
             }
-    
-            $activities = $entityManager->getRepository(Activity::class)->findBy([
-                'id' => $ids
-            ]);
-    
-            if (empty($activities)) {
+
+            $anecdotes = $activityRepository->findBy(['id' => $ids]);
+
+            if (empty($anecdotes) || count($ids) !== count($anecdotes)) {
                 return $this->json([
-                    'error' => 'Users not found'
+                    'error' => 'One or more anecdote(s) are not found'
                 ], 404);
             }
-    
-            foreach ($activities as $activity) {
-                $entityManager->remove($activity);
+
+            foreach ($anecdotes as $anecdote) {
+                $entityManager->remove($anecdote);
             }
-    
+
             $entityManager->flush();
-    
+
             return $this->json([], 204);
+
         } catch (\Exception $e) {
+
             return $this->json([
                 'error' => 'Server error'
             ], 500);
+
         }
     }  
 
     // Clear activities
     #[Route('/clear', name: 'app_api_activity_delete_all', methods: ['DELETE'])]
-    public function clearActivities(EntityManagerInterface $entityManager): Response
+    public function clearActivities(ActivityRepository $activityRepository): Response
     {
         try {
-            $activityRepository = $entityManager->getRepository(Activity::class);
-            $activities = $activityRepository->findAll();
 
-            foreach ($activities as $activity) {
-                $entityManager->remove($activity);
+            $anecdotes = $activityRepository->findAll();
+
+            foreach ($anecdotes as $anecdote) {
+                $activityRepository->remove($anecdote, true);
             }
 
-            $entityManager->flush();
-
             return $this->json([], 204);
+
         } catch (\Exception $e) {
+
             return $this->json([
                 'error' => 'Server error'
             ], 500);
+
         }
     }
 
     // Delete activity
     #[Route('/{id}', name: 'app_api_activity_delete', methods: ['DELETE'])]
-    public function deleteActivity(Activity $activity = null, EntityManagerInterface $entityManager): Response
+    public function deleteActivity(int $id, ActivityRepository $activityRepository): Response
     {
         try {
-            if (!$activity) {
+
+            $anecdoteToDelete = $activityRepository->findOneBy(['id' => $id]);
+
+            if (!$anecdoteToDelete) {
                 return $this->json([
-                    'error' => 'User not found'
+                    'error' => 'Anecdote not found'
                 ], 404);
             }
 
-            $entityManager->remove($activity);
-            $entityManager->flush();
-
+            $activityRepository->remove($anecdoteToDelete, true);
             return $this->json([], 204);
+
         } catch (\Exception $e) {
+
             return $this->json([
                 'error' => 'Server error'
             ], 500);
+
         }
     }
 }
