@@ -12,7 +12,6 @@
             isAllDay: false,
             durationHour: 0,
             durationMinute: 0,
-            startHour: 0,
             totalDuration:'',
             totalStartHour: '',
             idUser: 1,
@@ -99,8 +98,7 @@
                         <label>Minutes</label>
                         <input type="number" name="monInput" min="0" max="24" class="form-row__input" v-model="durationMinute">
                     </div>
-                </div>
-                
+                </div>                
             </div>
             
             <div class="sendButton">
