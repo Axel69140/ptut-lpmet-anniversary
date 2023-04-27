@@ -14,7 +14,7 @@
         computed: {            
         },
         methods: {     
-            async parameterArticle() {
+            async saveGuest() {
                 if (this.name !== undefined && this.name !== '' && this.email !== undefined && this.email !== '') {
                     await articleService.createArticle({
                         name: this.name,
@@ -26,6 +26,9 @@
                     this.email = '';
                     alert("Merci de votre contribution. Votre invité(e) à bien été pris en compte.");
                     this.$router.push('../event');
+                }
+                else{
+                    alert('Il manque des informations');
                 }
             }
         },
@@ -53,7 +56,7 @@
                 <input type="text" class="emailTextZone"  v-model="email">
             </div>
             <div class="sendButton">
-                <button @click="parameterArticle()" class="btn-custom">Envoyer la news</button>
+                <button @click="saveGuest()" class="btn-custom">Ajouter l'invité(e)</button>
             </div>
         </div>
     </main>
