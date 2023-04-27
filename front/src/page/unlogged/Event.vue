@@ -113,7 +113,7 @@
       </div>
 
       <div class="invitation" v-else>
-          <a class="btn-custom" @click="">Inviter</a>
+          <a class="btn-custom" @click="parameterGame()">Inviter</a>
           <a class="btn-custom" @click="parameterGame()">Voir ses invités</a>
       </div>
     </div>

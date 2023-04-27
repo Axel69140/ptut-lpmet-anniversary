@@ -144,22 +144,22 @@
 
 <template>
     <main>
-        <h1>Gestion des articles</h1>     
+        <h1>Gestion des news</h1>     
 
         <div class="container">      
             <div id="function-datatable">
                 <input class="searchBar" type="text" placeholder="Rechercher..." v-model="searchValue">
-                <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#clearModal">Vider la table article</a>
-                <a class="btn-custom btn-datatable" @click="exportData()">Exporter la liste des articles</a>
-                <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#formModal">Créer un article</a>
+                <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#clearModal">Vider la table news</a>
+                <a class="btn-custom btn-datatable" @click="exportData()">Exporter la liste des news</a>
+                <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#formModal">Créer une news</a>
 
                 <div v-if="itemsSelected.length === 1">
-                    <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#formModal" @click="getArticleById(itemsSelected[0].id)">Modifier l'article</a>
-                    <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#deleteModal">Supprimer l'article</a>
+                    <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#formModal" @click="getArticleById(itemsSelected[0].id)">Modifier la news</a>
+                    <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#deleteModal">Supprimer la news</a>
                 </div>
 
                 <div v-if="itemsSelected.length > 1">
-                    <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#deletesModal">Supprimer les articles</a>
+                    <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#deletesModal">Supprimer les news</a>
                 </div>
             </div>
 
