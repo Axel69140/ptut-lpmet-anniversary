@@ -5,6 +5,7 @@
     import Footer from '../../components/Footer.vue';    
     import Loader from '../../components/Loader.vue';
     import { anecdoteService } from '../../services/anecdote.services';
+    import { accountService } from '../../services/account.services';
 
     const searchValue = ref('');
     let anecdotes = ref([]);
@@ -12,11 +13,10 @@
     let isLoading = ref(true);
     let anecdoteEdit = false;
     const id = ref('');
-    const user = ref('');
     const content = ref('');
 
     const headers: Header[] = [
-        { text: "Utilisateur", value: "user", sortable: true },
+        { text: "Utilisateur", value: "creator", sortable: true },
         { text: "Contenu", value: "content", sortable: true },
     ];
 
@@ -24,18 +24,14 @@
 
     onMounted(() => {
         // set datatable
-        getAnecdotes();         
+        getAnecdotes();          
     });    
 
     const getAnecdotes = () => {    
         anecdoteService.getAnecdotes().then((response) => { 
             items.splice(0, items.length);
-            const anecdotesResponse = response.data;
-            /*anecdotesResponse.forEach(user => {
-                user.publicProfil = user.publicProfil == true ? "Oui" : "Non";
-                user.participated = user.participated == true ? "Oui" : "Non";
-            }); */        
-            anecdotes.value.push(... anecdotesResponse);
+            const anecdotesResponse = response.data;     
+            anecdotes.value.push(... anecdotesResponse);            
             itemsSelected.value = [];  
             isLoading.value = false; 
         });
@@ -45,15 +41,15 @@
         anecdoteService.getAnecdoteById(anecdoteId).then((response) => { 
             anecdoteEdit = true;     
             id.value = anecdoteId;
-            user.value = response.data.email;
-            content.value = response.data.firstName;
+            content.value = response.data.content;
         });
     };
 
-    const createAnecdote = () => {        
+    const createAnecdote = async () => {        
         isLoading.value = true; 
+        const idUser = await accountService.getId();
         anecdoteService.createAnecdote({
-            user: user.value,
+            creator: idUser,
             content: content.value
         }).then(async (response) => { 
             await getAnecdotes();  
@@ -64,7 +60,6 @@
     const editAnecdote = () => {        
         isLoading.value = true; 
         anecdoteService.editAnecdote(id.value, {
-            user: user.value,
             content: content.value
         }).then(async (response) => { 
             await getAnecdotes();  
@@ -109,7 +104,6 @@
     };
 
     const resetForm = () => {
-        user.value = '';
         content.value = '';
         anecdoteEdit = false;
     };
@@ -175,6 +169,10 @@
                 <template #empty-message>
                     <p>Aucun résultat</p>
                 </template>
+
+                <template #item-creator="item">
+                    {{ item.creator.firstName }} {{ item.creator.lastName }}                 
+                </template>
             </EasyDataTable>
         </div>
 
@@ -188,10 +186,6 @@
                     </div>
                     <div class="modal-body">
                         <input v-model="id" type="hidden"/>
-
-                        <div class="form-row">
-                            <input v-model="user" class="form-row__input" type="text" placeholder="Utilisateur*"/>
-                        </div>
 
                         <div class="form-row">
                             <textarea v-model="content" class="form-row__input" placeholder="Contenu*"/>

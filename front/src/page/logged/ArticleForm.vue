@@ -1,5 +1,4 @@
-<script>
-    import axios from 'axios';   
+<script>  
     import Footer from '../../components/Footer.vue';     
     import { accountService } from '../../services/account.services';
     import { articleService } from '../../services/article.services';

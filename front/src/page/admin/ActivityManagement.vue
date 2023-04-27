@@ -5,6 +5,7 @@
     import Footer from '../../components/Footer.vue';    
     import Loader from '../../components/Loader.vue';
     import { activityService } from '../../services/activity.services';
+    import { accountService } from '../../services/account.services';
 
     const searchValue = ref('');
     let activities = ref([]);
@@ -16,11 +17,10 @@
     const description = ref('');
     const startHour = ref('');
     const duration = ref('');
-    const user = ref('');
 
     const headers: Header[] = [
         { text: "Nom de l'activité", value: "name", sortable: true },
-        { text: "Utilisateur", value: "user", sortable: true },
+        { text: "Utilisateur", value: "creator", sortable: true },
         { text: "Description", value: "description", sortable: true },
         { text: "Heure du début de l'activité", value: "startHour", sortable: true },
         { text: "Durée", value: "duration", sortable: true }
@@ -51,18 +51,17 @@
             description.value = response.data.description;
             startHour.value = response.data.startHour;
             duration.value = response.data.duration;
-            user.value = response.data.user;
         });
     };
 
-    const createActivity = () => {        
+    const createActivity = async () => {        
         isLoading.value = true; 
+        const idUser = await accountService.getId();
         activityService.createActivity({
             name: name.value,
             description: description.value,
             startHour: startHour.value,
-            duration: duration.value,
-            user: user.value
+            duration: duration.value
         }).then(async (response) => { 
             await getActivities();  
             isLoading.value = false; 
@@ -75,8 +74,7 @@
             name: name.value,
             description: description.value,
             startHour: startHour.value,
-            duration: duration.value,
-            user: user.value
+            duration: duration.value
         }).then(async (response) => { 
             await getActivities();  
             isLoading.value = false; 
@@ -124,7 +122,6 @@
         description.value = '';
         startHour.value = '';
         duration.value = '';
-        user.value = '';
         activityEdit = false;
     };
     
@@ -190,8 +187,8 @@
                     <p>Aucun résultat</p>
                 </template>
 
-                <template #item-activeYears="item">
-                    {{ item.activeYears.length > 0 ? item.activeYears[0] + "/" + item.activeYears[1] : "" }}                    
+                <template #item-creator="item">
+                    {{ item.creator.firstName }} {{ item.creator.lastName }}                 
                 </template>
             </EasyDataTable>
         </div>
@@ -221,11 +218,7 @@
 
                         <div class="form-row">
                             <input v-model="duration" class="form-row__input" type="text" placeholder="Durée de l'activité"/>
-                        </div>
-
-                        <div class="form-row">
-                            <input v-model="user" class="form-row__input" type="text" placeholder="Utilisateur*"/>
-                        </div>   
+                        </div>  
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn-modal-neutre btn-custom" data-bs-dismiss="modal" @click="resetForm()">Fermer</button>
