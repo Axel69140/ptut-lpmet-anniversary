@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Repository\UserRepository;
 use App\Service\EntryDataService;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
@@ -142,6 +143,7 @@ class ActivityController extends AbstractController
 
     // Delete activities
     #[Route('/many', name: 'app_api_activity_delete_many', methods: ['DELETE'])]
+    #[IsGranted('ROLE_ADMIN', statusCode: 403, message: 'Vous n\'avez pas les droits suffisants')]
     public function deleteActivities(Request $request, EntityManagerInterface $entityManager, ActivityRepository $activityRepository): Response
     {
         try {
@@ -182,6 +184,7 @@ class ActivityController extends AbstractController
 
     // Clear activities
     #[Route('/clear', name: 'app_api_activity_delete_all', methods: ['DELETE'])]
+    #[IsGranted('ROLE_ADMIN', statusCode: 403, message: 'Vous n\'avez pas les droits suffisants')]
     public function clearActivities(ActivityRepository $activityRepository): Response
     {
         try {
@@ -205,6 +208,7 @@ class ActivityController extends AbstractController
 
     // Delete activity
     #[Route('/{id}', name: 'app_api_activity_delete', methods: ['DELETE'])]
+    #[IsGranted('ROLE_ADMIN', statusCode: 403, message: 'Vous n\'avez pas les droits suffisants')]
     public function deleteActivity(int $id, ActivityRepository $activityRepository): Response
     {
         try {

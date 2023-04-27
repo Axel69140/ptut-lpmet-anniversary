@@ -16,64 +16,64 @@ use Symfony\Component\Serializer\Annotation\Groups;
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
 
-    #[Groups(['guest-return', 'user-return', 'article-return', 'anecdote-return'])]
+    #[Groups(['guest-return', 'user-return', 'article-return', 'anecdote-return', 'activity-return'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['guest-return', 'user-return', 'article-return', 'anecdote-return'])]
+    #[Groups(['guest-return', 'user-return', 'article-return', 'anecdote-return', 'activity-return'])]
     #[ORM\Column(length: 180, unique: true)]
     private ?string $email = null;
 
-    #[Groups(['guest-return', 'user-return', 'article-return', 'anecdote-return'])]
+    #[Groups(['guest-return', 'user-return', 'article-return', 'anecdote-return', 'activity-return'])]
     #[ORM\Column]
     private array $roles = [];
 
     /**
      * @var string The hashed password
      */
-    #[Groups(['guest-return', 'user-return', 'article-return', 'anecdote-return'])]
+    #[Groups(['guest-return', 'user-return', 'article-return', 'anecdote-return', 'activity-return'])]
     #[ORM\Column]
     private ?string $password = null;
 
-    #[Groups(['guest-return', 'user-return', 'article-return', 'anecdote-return'])]
+    #[Groups(['guest-return', 'user-return', 'article-return', 'anecdote-return', 'activity-return'])]
     #[ORM\Column(length: 255)]
     private ?string $firstName = null;
 
-    #[Groups(['guest-return', 'user-return', 'article-return', 'anecdote-return'])]
+    #[Groups(['guest-return', 'user-return', 'article-return', 'anecdote-return', 'activity-return'])]
     #[ORM\Column(length: 255)]
     private ?string $lastName = null;
 
-    #[Groups(['guest-return', 'user-return', 'article-return', 'anecdote-return'])]
+    #[Groups(['guest-return', 'user-return', 'article-return', 'anecdote-return', 'activity-return'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $maidenName = null;
 
-    #[Groups(['guest-return', 'user-return', 'article-return', 'anecdote-return'])]
+    #[Groups(['guest-return', 'user-return', 'article-return', 'anecdote-return', 'activity-return'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $phoneNumber = null;
 
-    #[Groups(['guest-return', 'user-return', 'article-return', 'anecdote-return'])]
+    #[Groups(['guest-return', 'user-return', 'article-return', 'anecdote-return', 'activity-return'])]
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $note = null;
 
-    #[Groups(['guest-return', 'user-return', 'article-return', 'anecdote-return'])]
+    #[Groups(['guest-return', 'user-return', 'article-return', 'anecdote-return', 'activity-return'])]
     #[ORM\Column]
     private ?bool $isParticipated = false;
 
-    #[Groups(['guest-return', 'user-return', 'article-return', 'anecdote-return'])]
+    #[Groups(['guest-return', 'user-return', 'article-return', 'anecdote-return', 'activity-return'])]
     #[ORM\Column]
     private ?bool $isPublicProfil = false;
 
-    #[Groups(['guest-return', 'user-return', 'article-return', 'anecdote-return'])]
+    #[Groups(['guest-return', 'user-return', 'article-return', 'anecdote-return', 'activity-return'])]
     #[ORM\Column(type: Types::ARRAY)]
     private array $activeYears = [];
 
-    #[Groups(['guest-return', 'user-return', 'article-return', 'anecdote-return'])]
+    #[Groups(['guest-return', 'user-return', 'article-return', 'anecdote-return', 'activity-return'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $function = null;
 
-    #[Groups(['guest-return', 'user-return', 'article-return', 'anecdote-return'])]
+    #[Groups(['guest-return', 'user-return', 'article-return', 'anecdote-return', 'activity-return'])]
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $link = null;
 
