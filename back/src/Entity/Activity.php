@@ -34,6 +34,7 @@ class Activity
     #[ORM\Column]
     private ?bool $isValidate = false;
 
+    #[Groups(['activity-return'])]
     #[ORM\ManyToOne(inversedBy: 'activities')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $creator = null;
