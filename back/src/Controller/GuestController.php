@@ -105,7 +105,7 @@ class GuestController extends AbstractController
             }
 
             // Check if inviter is participating, can't invite if not
-            if($guest->getInvitedBy()->getIsParticipated() === false)
+            if(($guest->getInvitedBy()->getIsParticipated() === false) && !in_array("ROLE_ADMIN", $guest->getInvitedBy()->getRoles()))
             {
                 return $this->json([
                     'error' => 'You can\'t invite someone if you don\'t participate'

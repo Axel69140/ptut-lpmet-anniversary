@@ -24,7 +24,7 @@ class ExportDataService
         $anecdotes = $anecdoteRepository->findAll();
 
         $header_args = [];
-        dd(get_class_vars());
+        dd(get_object_vars($anecdotes[0]));
         foreach (get_object_vars($anecdotes[0]) as $key => $value) {
             array_push($header_args, $key);
         }
