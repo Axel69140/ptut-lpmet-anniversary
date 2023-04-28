@@ -17,8 +17,12 @@ class Guest
     private ?int $id = null;
 
     #[Groups(['guest-return', 'user-return', 'participant-return'])]
-    #[ORM\Column(type: Types::TEXT)]
-    private ?string $name = null;
+    #[ORM\Column(length: 255)]
+    private ?string $firstName = null;
+
+    #[Groups(['guest-return', 'user-return', 'participant-return'])]
+    #[ORM\Column(length: 255)]
+    private ?string $lastName = null;
 
     #[Groups(['guest-return', 'user-return', 'participant-return'])]
     #[ORM\Column(length: 255, unique: true)]
@@ -29,21 +33,11 @@ class Guest
     #[ORM\JoinColumn(nullable: false)]
     private ?User $invitedBy = null;
 
+
+
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
     }
 
     public function getEmail(): ?string
@@ -66,6 +60,30 @@ class Guest
     public function setInvitedBy(?User $invitedBy): self
     {
         $this->invitedBy = $invitedBy;
+
+        return $this;
+    }
+
+    public function getFirstName(): ?string
+    {
+        return $this->firstName;
+    }
+
+    public function setFirstName(string $firstName): self
+    {
+        $this->firstName = $firstName;
+
+        return $this;
+    }
+
+    public function getLastName(): ?string
+    {
+        return $this->lastName;
+    }
+
+    public function setLastName(string $lastName): self
+    {
+        $this->lastName = $lastName;
 
         return $this;
     }
