@@ -32,7 +32,6 @@
         },
         mounted() {    
             axios.get('https://127.0.0.1:8000/timelinesteps').then(response => {
-                console.log(response.data);
                 for (let i = 0; i < response.data.length -1; i++) {
                     if(response.data[i].date > response.data[i+1].date){
                         let tmp = response.data[i];
