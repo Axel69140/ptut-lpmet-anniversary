@@ -48,7 +48,7 @@ class ParticipantController extends AbstractController
 
             if(!$guest)
             {
-                return $this->json($guest, 200, [], ['groups' => ['guest-return']]);
+                return $this->json($guest, 200, [], ['groups' => ['participant-return']]);
             }
 
             $user = $userRepository->findBy(['email' => $email, 'isParticipated' => true]);
@@ -56,7 +56,7 @@ class ParticipantController extends AbstractController
             if(!$user)
             {
 
-                return $this->json($user, 200, [], ['groups' => ['user-return']]);
+                return $this->json($user, 200, [], ['groups' => ['participant-return']]);
 
             } else {
 
