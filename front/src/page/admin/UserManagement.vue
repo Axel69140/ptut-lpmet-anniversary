@@ -26,6 +26,11 @@
     const note = ref('');
     const isParticipated = ref('');
     const isPublic = ref('');
+    let invalidMail = false;
+    let invalidPassword = false;
+    let notSimilarPassword = false;
+    let alreadyUseMail = false;
+    let invalidYears = false;
 
     const headers: Header[] = [
         { text: "Prénom", value: "firstName", sortable: true },
@@ -80,26 +85,32 @@
         });
     };
 
-    const createUser = () => {        
-        isLoading.value = true;         
-        userService.createUser({
-            email: email.value,
-            lastName: lastName.value,
-            firstName: firstName.value,
-            password: password.value,
-            roles: ["ROLE_USER"],
-            maidenName: maidenName.value,
-            phoneNumber: phone.value,
-            note: note.value,
-            isParticipated: isParticipated.value == true ? isParticipated.value : false,
-            isPublicProfil: isPublic.value == true ? isPublic.value : false,
-            activeYears: [activeYears.value, activeYears2.value],
-            function: _function.value,
-            link: link.value
-        }).then(async (response) => { 
-            await getUsers();  
-            isLoading.value = false; 
-        });
+    const createUser = () => {    
+        validateEmail();
+        validatePassword();
+        validateYears();
+
+        if (!invalidMail && !invalidPassword && !notSimilarPassword && !invalidYears) {
+            isLoading.value = true;         
+            userService.createUser({
+                email: email.value,
+                lastName: lastName.value,
+                firstName: firstName.value,
+                password: password.value,
+                roles: ["ROLE_USER"],
+                maidenName: maidenName.value,
+                phoneNumber: phone.value,
+                note: note.value,
+                isParticipated: isParticipated.value == true ? isParticipated.value : false,
+                isPublicProfil: isPublic.value == true ? isPublic.value : false,
+                activeYears: [activeYears.value, activeYears2.value],
+                function: _function.value,
+                link: link.value
+            }).then(async (response) => { 
+                await getUsers();  
+                isLoading.value = false; 
+            });
+        }
     };
 
     const editUser = () => {        
@@ -162,6 +173,37 @@
     const range = (start, end) => {
         return Array(end - start + 1).fill().map((_, index) => start + index);
     }  
+
+    const validateEmail = () => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (email && !emailRegex.test(email.value)) {
+          invalidMail = true;
+        } else {
+          invalidMail = false;
+        }
+    }
+
+    const validatePassword = () => {
+        const regex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+        if (password.value === password_confirmation.value) {
+          notSimilarPassword = false;
+          if (!regex.test(password.value)) {
+            invalidPassword = true    
+          } else {
+            invalidPassword = false;
+          }          
+        } else {
+          notSimilarPassword = true;
+        }
+    }
+      
+    const validateYears = () => {
+        if (activeYears.value > activeYears2.value) {
+          invalidYears = true;
+        } else {
+          invalidYears = false;
+        }
+    }
 
     const resetForm = () => {
         email.value = '';
@@ -258,6 +300,27 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="resetForm()"></button>
                     </div>
                     <div class="modal-body">
+                        <!-- Message d'erreur -->
+                        <div class="alert alert-danger" role="alert" v-if="invalidMail">
+                            Adresse mail invalide
+                        </div>
+
+                        <div class="alert alert-danger" role="alert" v-if="alreadyUseMail">
+                            Adresse mail déjà utilisée
+                        </div>
+
+                        <div class="alert alert-danger" role="alert" v-if="invalidPassword">
+                            Le mot de passe doit contenir au moins 8 caractères, une majuscule et un caractère spécial.
+                        </div>
+
+                        <div class="alert alert-danger" role="alert" v-if="notSimilarPassword">
+                            Mots de passe différents
+                        </div>
+
+                        <div class="alert alert-danger" role="alert" v-if="invalidYears">
+                            Année d'activité à l'IUT invalide
+                        </div> 
+
                         <input v-model="id" type="hidden"/>
 
                         <div class="form-row">
@@ -324,7 +387,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn-modal-neutre btn-custom" data-bs-dismiss="modal" @click="resetForm()">Fermer</button>
-                        <button v-if="!userEdit" type="button" class="btn-modal-valid btn-custom" @click="createUser()" data-bs-dismiss="modal">Enregistrer</button>
+                        <button v-if="!userEdit" type="button" class="btn-modal-valid btn-custom" @click="createUser()" v-bind:data-bs-dismiss="!invalidMail && !invalidPassword && !notSimilarPassword && !invalidYears ? 'modal' : null">Enregistrer</button>
                         <button v-else type="button" class="btn-modal-valid btn-custom" @click="editUser()" data-bs-dismiss="modal">Enregistrer</button>
                     </div>
                 </div>

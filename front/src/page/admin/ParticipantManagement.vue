@@ -5,6 +5,7 @@
     import Footer from '../../components/Footer.vue';    
     import Loader from '../../components/Loader.vue';
     import { participantService } from '../../services/participant.services';
+    import { userService } from '../../services/user.services';
 
     const searchValue = ref('');
     let participants = ref([]);
@@ -14,7 +15,9 @@
     const id = ref('');
     const name = ref('');
     const email = ref('');
-    const user = ref('');
+    let mode = 'no_create';
+    const selectedUser = ref('');
+    let allUsers = [];
 
     const headers: Header[] = [
         { text: "Nom", value: "name", sortable: true },
@@ -26,6 +29,7 @@
 
     onMounted(() => {
         // set datatable
+        getUsers();
         getParticipants();        
     });    
 
@@ -36,6 +40,12 @@
             participants.value.push(... participantsResponse);
             itemsSelected.value = [];  
             isLoading.value = false;  
+        });
+    };
+
+    const getUsers = () => {    
+        userService.getUsers().then((response) => {             
+            allUsers.push(... response.data);   
         });
     };
 
@@ -56,6 +66,7 @@
             user: user.value
         }).then(async (response) => { 
             await getParticipants();  
+            resetForm();
             isLoading.value = false; 
         });
     };
@@ -68,6 +79,7 @@
             user: user.value
         }).then(async (response) => { 
             await getParticipants();  
+            resetForm();
             isLoading.value = false; 
         }); 
     };
@@ -101,7 +113,7 @@
     const resetForm = () => {
         name.value = '';
         email.value = '';
-        user.value = '';
+        selectedUser.value = '';
         participantEdit = false;
     };
     
@@ -179,21 +191,33 @@
                         <h5 class="modal-title" id="formModal">{{ !participantEdit ? "Créer" : "Modifier" }}  un participant</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="resetForm()"></button>
                     </div>
+
                     <div class="modal-body">
+                        <div id="nav-modal">
+                            <a href="#" :class="{active: mode === 'no_create'}" @click="mode = 'no_create'" id="nav-modal-link-1">À partir d'un utilisateur existant</a>
+                            <a href="#" :class="{active: mode === 'create'}" @click="mode = 'create'" id="nav-modal-link-2">Inviter une nouvelle personne</a>
+                        </div>
+                        
                         <input v-model="id" type="hidden"/>
 
-                        <div class="form-row">
-                            <input v-model="name" class="form-row__input" type="text" placeholder="Nom de l'participant*"/>
+                        <div v-if="mode === 'no_create'" class="form-row">
+                            <select class="form-row__input" v-model="selectedUser" name="selectedUser" id="selectedUser">
+                                <option value="" disabled selected hidden>Utilisateur*</option>
+                                <option v-for="user in allUsers" :key="user" :value="user.id">{{ user.firstName }} {{ user.lastName }}</option>
+                            </select>
                         </div>
 
-                        <div class="form-row">
-                            <textarea v-model="email" class="form-row__input" placeholder="Description*"/>
-                        </div>
+                        <div v-if="mode === 'create'">
+                            <div class="form-row">
+                                <input v-model="name" class="form-row__input" type="text" placeholder="Nom du participant*"/>
+                            </div>
 
-                        <div class="form-row">
-                            <input v-model="user" class="form-row__input" type="text" placeholder="Utilisateur*"/>
+                            <div class="form-row">
+                                <input v-model="email" class="form-row__input" type="text" placeholder="Adresse mail*"/>
+                            </div>
                         </div>   
                     </div>
+
                     <div class="modal-footer">
                         <button type="button" class="btn-modal-neutre btn-custom" data-bs-dismiss="modal" @click="resetForm()">Fermer</button>
                         <button v-if="!participantEdit" type="button" class="btn-modal-valid btn-custom" @click="createParticipant()" data-bs-dismiss="modal">Enregistrer</button>
@@ -250,5 +274,35 @@ h1 {
 #function-datatable {
     display: flex;
     flex-wrap: wrap;
+}
+
+#nav-modal {
+    display: flex;
+}
+
+#nav-modal-link-1 {
+    width: 50%;
+    text-decoration: none;    
+    color: black;
+    padding: 0 0 4px 0;
+    margin: 0 4px 0 0;
+    font-weight: bold;
+}
+
+.active {
+    border-bottom: 3px solid black;
+}
+
+#nav-modal-link-2 {
+    width: 50%;
+    text-decoration: none;
+    color: black;
+    padding: 0 0 4px 0;
+    margin: 0 0 0 4px;
+    font-weight: bold;
+}
+
+select {
+    height: 40px;
 }
 </style>
