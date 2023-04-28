@@ -180,8 +180,12 @@
                     <p>Aucun résultat</p>
                 </template>
 
-                <template #item-activeYears="item">
-                    {{ item.activeYears.length > 0 ? item.activeYears[0] + "/" + item.activeYears[1] : "" }}                    
+                <template #item-name="item">
+                    {{ item.firstName  }} {{ item.lastName  }}            
+                </template>
+
+                <template #item-invitedBy="item">
+                    {{ item.invitedBy ? item.invitedBy.firstName + ' ' + item.invitedBy.lastName : '/' }}
                 </template>
             </EasyDataTable>
         </div>
