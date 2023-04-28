@@ -9,7 +9,7 @@ const getGuestById = (guestId) => {
 }
 
 const createGuest = (guest) => {    
-    return Axios.post('https://127.0.0.1:8000/guests/register', guest);
+    return Axios.post('https://127.0.0.1:8000/guests/create', guest);
 }
 
 const editGuest = (guestId, guest) => {    
