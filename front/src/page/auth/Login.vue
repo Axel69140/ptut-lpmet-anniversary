@@ -6,7 +6,8 @@
   export default {
     name: 'login',
     data: () => ({ mode: 'login', email: '', firstName: '', lastName: '', maidenName: '', password: '', password_confirmation: '', phone: '', 
-                  activeYears: '', activeYears2: '',_function: '', link: '', note: '', isParticipated: '', isPublic: '', showMessage: false}),       
+                  activeYears: '', activeYears2: '',_function: '', link: '', note: '', isParticipated: '', isPublic: '', showMessage: false, 
+                  invalidMail: false, invalidPassword: false, notSimilarPassword: false, alreadyUseMail: false, invalidYears: false}),       
     mounted() {
       if (accountService.getToken()) {
         this.$router.push('/');
@@ -53,31 +54,67 @@
         }).then(function () {
           self.$router.push('/');
         }, function (error) {
-          console.log(error);
         })
       },
       createAccount() {
-        const self = this;
-        this.$store.dispatch('createAccount', {
-          email: this.email,
-          lastName: this.lastName,
-          firstName: this.firstName,
-          password: this.password,
-          roles: ["ROLE_USER"],
-          maidenName: this.maidenName,
-          phoneNumber: this.phone,
-          note: this.note,
-          isParticipated: this.isParticipated === true ? this.isParticipated : false,
-          isPublicProfil: this.isPublic === true ? this.isPublic : false,
-          activeYears: [this.activeYears, this.activeYears2],
-          function: this._function,
-          link: this.link
-        }).then(function () {
-          self.login();
-        }, function (error) {
-          console.log(error);
-        })
+        this.validateEmail();
+        this.validatePassword();
+        this.validateYears();
+
+        if (!this.invalidMail && !this.invalidPassword && !this.notSimilarPassword && !this.invalidYears) {
+          const self = this;
+          this.$store.dispatch('createAccount', {
+            email: this.email,
+            lastName: this.lastName,
+            firstName: this.firstName,
+            password: this.password,
+            roles: ["ROLE_USER"],
+            maidenName: this.maidenName,
+            phoneNumber: this.phone,
+            note: this.note,
+            isParticipated: this.isParticipated === true ? this.isParticipated : false,
+            isPublicProfil: this.isPublic === true ? this.isPublic : false,
+            activeYears: [this.activeYears, this.activeYears2],
+            function: this._function,
+            link: this.link
+          }).then(function () {
+            self.alreadyUseMail = false;
+            self.login();
+          }, function (error) {
+            if(error) {
+              self.alreadyUseMail = true;
+            }
+          })
+        }
       },
+      validateEmail: function() {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (this.email && !emailRegex.test(this.email)) {
+          this.invalidMail = true;
+        } else {
+          this.invalidMail = false;
+        }
+      },
+      validatePassword: function() {
+        const regex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+        if (this.password === this.password_confirmation) {
+          this.notSimilarPassword = false;
+          if (!regex.test(this.password)) {
+            this.invalidPassword = true    
+          } else {
+            this.invalidPassword = false;
+          }          
+        } else {
+          this.notSimilarPassword = true;
+        }
+      }, 
+      validateYears: function() {
+        if (this.activeYears > this.activeYears2) {
+          this.invalidYears = true;
+        } else {
+          this.invalidYears = false;
+        }
+      }
     },
     components: {
       Footer
@@ -93,10 +130,31 @@
       <p class="card__subtitle" v-if="mode == 'login'">Tu n'as pas encore de compte ? <span class="card__action" @click="switchToCreateAccount()">Créer un compte</span></p>
       <p class="card__subtitle" v-else>Tu as déjà un compte ? <span class="card__action" @click="switchToLogin()">Se connecter</span></p>
 
-      <!-- Message -->
+      <!-- Message d'alerte connexion obligatoire -->
       <div class="alert alert-secondary" role="alert" v-if="showMessage">
         Vous devez être connecté pour accédez à cette page.
       </div>
+
+      <!-- Message d'erreur -->
+      <div class="alert alert-danger" role="alert" v-if="mode == 'create' && invalidMail">
+          Adresse mail invalide
+      </div>
+
+      <div class="alert alert-danger" role="alert" v-if="mode == 'create' && alreadyUseMail">
+          Adresse mail déjà utilisée
+      </div>
+
+      <div class="alert alert-danger" role="alert" v-if="mode == 'create' && invalidPassword">
+          Le mot de passe doit contenir au moins 8 caractères, une majuscule et un caractère spécial.
+      </div>
+
+      <div class="alert alert-danger" role="alert" v-if="mode == 'create' && notSimilarPassword">
+          Mots de passe différents
+      </div>
+
+      <div class="alert alert-danger" role="alert" v-if="mode == 'create' && invalidYears">
+          Année d'activité à l'IUT invalide
+      </div>  
 
       <!-- Input form -->
       <div class="form-row" v-if="mode == 'create'">
@@ -159,15 +217,7 @@
           <input v-model="isPublic" type="checkbox" id="isPublic" class="hidden-xs-up">
           <label for="isPublic" class="cbx"></label>
         </div>
-      </div>     
-
-      <!-- Error form -->
-      <div class="form-row" v-if="mode == 'login' && status == 'error_login'">
-        Adresse mail et/ou mot de passe invalide
-      </div>    
-      <div class="form-row" v-if="mode == 'create' && status == 'error_create'">
-        Adresse mail déjà utilisée
-      </div>
+      </div>       
 
       <!-- Button form -->
       <div class="form-row">

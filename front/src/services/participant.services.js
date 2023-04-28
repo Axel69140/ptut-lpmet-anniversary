@@ -16,10 +16,6 @@ const editParticipant = (participantMail, participant) => {
     return Axios.patch('https://127.0.0.1:8000/participants/' + participantMail, participant);
 }
 
-const deleteParticipant = (participantMail) => {    
-    return Axios.delete('https://127.0.0.1:8000/participants/' + participantMail);
-}
-
 const deleteParticipants = (emails) => {    
     return Axios.delete('https://127.0.0.1:8000/participants/many', {
         data: {
@@ -38,6 +34,5 @@ export const participantService = {
     createParticipant,
     editParticipant,
     deleteParticipants,
-    deleteParticipant,
     exportParticipantData
 }
