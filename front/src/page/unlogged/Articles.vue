@@ -40,14 +40,14 @@
                 </div>
                 <div class="divContentAndImage">
                     <div class="divContent">
-                        <p>{{ article.content }}</p>
+                        <p class="content">{{ article.content }}</p>
                     </div>
                     <div v-if="article.media">
                         <img src={{ article.media }}>
                     </div>
                 </div>
                 <div class="divDate"><!-- v-if="article.date" -->
-                    <p>Date</p>
+                    <p></p>
                 </div>
                 
                 
@@ -59,9 +59,10 @@
 </template>
 
 <style scoped>
-p{
+p.content{
     margin: 0;
-    padding: 0;
+    padding: 10px;
+    text-align: justify;
 }
 .footer{
     position: inherit;

@@ -24,8 +24,7 @@
             async parameterActivity() {
                 if (this.description !== undefined && this.description !== '' && this.name !== undefined && this.name !== '') {
                     if(this.isAllDay){
-                        this.totalDuration = "24:00:00Z";
-                        this.totalStartHour = "00:00";
+                        this.totalDuration = "23:59:00Z";
                         this.validInput = true;
                     }
                     else if(!this.durationHour == 0 || !this.durationMinute == 0){
@@ -83,7 +82,7 @@
                 <label class="labelContent">Description de l'activité *</label>
                 <textarea class="contentTextZone" rows="10" cols="100" v-model="description"></textarea>
             </div>
-            <div class="divDurée">
+            <div class="divDuree">
                 <h2>Durée de l'activité</h2>
                 <div class="allDay">
                     <label>Toute la journée</label>
@@ -112,8 +111,11 @@
 
 <style scoped>
 
-    .divDurée{
+    .divDuree{
         border: solid var(--secondary) 3px;
+        border-radius: 5px;
+        width: 70%;
+        margin: 0 auto;
     }
     .formulaireActivite{
         margin: 50px 0;
@@ -195,6 +197,10 @@
 
         .hour{
             margin: 20px 0;
+        }
+
+        .contentTextZone, .titleTextZone{
+            width: 80%;
         }
     }
 

@@ -4,7 +4,7 @@ import axios from 'axios';
 import Footer from '../../components/Footer.vue';     
 import { userService } from '../../services/user.services';
 import { accountService } from '../../services/account.services';
-import { participantService } from '../../services/participant.services';
+import { guestService } from '../../services/guest.service';
 import Loader from '../../components/Loader.vue';
 
 export default {
@@ -19,10 +19,10 @@ export default {
   },
   methods: { 
     addGuest(){
-      this.save();
+      this.save(false);
       this.$router.push('../event/invitation');
     },
-    async save(){
+    async save(btnSave){
       const idUser = await accountService.getId();
       userService.editUser(
         idUser,
@@ -30,6 +30,14 @@ export default {
           isParticipated: this.isInputChecked,
         }
       );
+      if(btnSave){
+        this.$router.push('../event');
+      }
+    },
+    deleteGuest(guestId){
+      console.log(guestId);
+      guestService.deleteGuest(guestId);
+      this.$router.push('../event');
     }
   },
   async mounted() {
@@ -37,6 +45,7 @@ export default {
     console.log(idUser);
     this.user = await userService.getUserById(idUser);
     const guests = await userService.getGuestsByUser(idUser);
+    console.log(guests);
     if(this.user.data.isParticipated){
       this.isInputChecked = true;
     }
@@ -132,17 +141,16 @@ export default {
       <div class="invitations">
         <div class="invitation" v-for="guest in guests.data">
           <div class="guest">
-            <div class="info">
-              <p>Invité : </p>
-              <p class="deleteGuest">x</p>
-            </div>
             <div class="name">
               <p>Nom : </p>
               <p>{{ guest.name }}</p>
             </div>
             <div class="email">
               <p>Email : </p>
-              <p>{{ guest.email }}</p>
+              <p>{{ guest.email }}{{ guest.id }}</p>
+            </div>
+            <div class="info" >
+              <p class="deleteGuest" v-bind:class="guest.id" v-on:click="deleteGuest(guest.id)">Supprimer</p>
             </div>
           </div>
           
@@ -154,7 +162,7 @@ export default {
       </div>
       
       <div>
-          <button class="btn-custom" @click="save()">Enregistrer</button>
+          <button class="btn-custom" @click="save(true)">Enregistrer</button>
       </div>
     </form>    
   </main>
@@ -183,12 +191,21 @@ export default {
     transition: all .2s ease-in-out; 
 }
 .invitation{
-  width: 20%;
+  width: 40%;
   border: solid 2px var(--primary);
   border-radius: 15px;
   background-color: #fff;
 }
+.info, .name, .email{
+  display: flex;
+}
 
+.info{
+  cursor: pointer;
+  margin-top: 10px;
+  justify-content: center;
+  color: red;
+}
 .footer{
   position: inherit;
 }
@@ -198,7 +215,7 @@ export default {
 }
 
 .guest{
-  display: flex;
+  padding: 5%;
 }
 .infoAddGuets{
   font-size: larger;
@@ -314,6 +331,16 @@ li span {
 @media (max-width: 690px){
   #addGuest{
     width: 50%;
+  }
+
+  .invitations{
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .invitation{
+    margin: 20px 0;
+    width: 70%;
   }
 }
 

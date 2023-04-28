@@ -1,7 +1,7 @@
 <script>
     import Footer from '../../components/Footer.vue';     
     import { accountService } from '../../services/account.services';
-    import { articleService } from '../../services/article.services';
+    import { guestService } from '../../services/guest.service';
 
     export default {
         name: 'guestForm',
@@ -16,7 +16,7 @@
         methods: {     
             async saveGuest() {
                 if (this.name !== undefined && this.name !== '' && this.email !== undefined && this.email !== '') {
-                    await articleService.createArticle({
+                    await guestService.createGuest({
                         name: this.name,
                         email: this.email,
                         invitedBy: this.idUser,
@@ -116,8 +116,8 @@ input.upload {
     margin:  20px 15px 0 0;
 }
 
-.labelname{
-    margin-right: 48px;
+.labelName{
+    margin-right: 28px;
 }
 
 
