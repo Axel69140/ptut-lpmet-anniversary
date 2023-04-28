@@ -26,9 +26,8 @@ class ParticipantController extends AbstractController
     {
         try {
 
-            $participants = $userRepository->findBy(['isParticipated' => true]) + $guestRepository->findAll();
-
-            return $this->json($participants, 200, [], ['groups' => ['user-return', 'guest-return']]);
+            $participants = array_merge($userRepository->findBy(['isParticipated' => true]), $guestRepository->findAll());
+            return $this->json($participants, 200, [], ['groups' => ['participant-return']]);
 
         } catch (\Exception $e) {
 
@@ -49,7 +48,7 @@ class ParticipantController extends AbstractController
 
             if(!$guest)
             {
-                return $this->json($guest, 200, [], ['groups' => ['guest-return']]);
+                return $this->json($guest, 200, [], ['groups' => ['participant-return']]);
             }
 
             $user = $userRepository->findBy(['email' => $email, 'isParticipated' => true]);
@@ -57,7 +56,7 @@ class ParticipantController extends AbstractController
             if(!$user)
             {
 
-                return $this->json($user, 200, [], ['groups' => ['user-return']]);
+                return $this->json($user, 200, [], ['groups' => ['participant-return']]);
 
             } else {
 
