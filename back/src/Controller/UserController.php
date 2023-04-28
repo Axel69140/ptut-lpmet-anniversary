@@ -30,13 +30,12 @@ class UserController extends AbstractController
         try {
 
             $users = $userRepository->findAll();
-
             return $this->json($users, 200, [], ['groups' => ['user-return']]);
 
         } catch (\Exception $e) {
 
             return $this->json([
-                'error' => 'Server error'
+                'error' => $e->getMessage()
             ], 500);
 
         }
