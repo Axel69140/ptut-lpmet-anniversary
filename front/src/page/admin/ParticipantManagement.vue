@@ -6,6 +6,8 @@
     import Loader from '../../components/Loader.vue';
     import { participantService } from '../../services/participant.services';
     import { userService } from '../../services/user.services';
+    import { guestService } from '../../services/guest.service';
+    import { accountService } from '../../services/account.services';
 
     const searchValue = ref('');
     let participants = ref([]);
@@ -54,16 +56,26 @@
             participantEdit = true;     
             name.value = response.data.name;
             email.value = response.data.email;
-            user.value = response.data.user;
         });
     };
 
-    const createParticipant = () => {        
+    const createParticipantByUser = () => {        
+        isLoading.value = true;
+        userService.editUser(selectedUser.value , {
+            isParticipated: true,
+        }).then(async (response) => { 
+            await getParticipants();  
+            resetForm();
+            isLoading.value = false; 
+        });
+    };
+
+    const createGuest = () => {        
         isLoading.value = true; 
-        participantService.createParticipant({
+        guestService.createGuest({
             name: name.value,
             email: email.value,
-            user: user.value
+            invitedBy: accountService.getId()
         }).then(async (response) => { 
             await getParticipants();  
             resetForm();
@@ -75,21 +87,12 @@
         isLoading.value = true; 
         participantService.editParticipant(email.value, {
             name: name.value,
-            email: email.value,
-            user: user.value
+            email: email.value
         }).then(async (response) => { 
             await getParticipants();  
             resetForm();
             isLoading.value = false; 
         }); 
-    };
-
-    const deleteParticipant = () => {        
-        isLoading.value = true;         
-        participantService.deleteParticipant(itemsSelected.value[0].id).then(async (response) => { 
-            await getParticipants();
-            isLoading.value = false;     
-        });
     };
 
     const deleteParticipants = () => {        
@@ -126,11 +129,11 @@
         setup() {
             return {
                 exportData,
-                createParticipant,
+                createParticipantByUser,
+                createGuest,
                 getParticipantByEMail,
                 resetForm,
                 editParticipant,
-                deleteParticipant,
                 deleteParticipants
             }
         }
@@ -146,7 +149,7 @@
             <div id="function-datatable">
                 <input class="searchBar" type="text" placeholder="Rechercher..." v-model="searchValue">
                 <a class="btn-custom btn-datatable" @click="exportData()">Exporter la liste des participants</a>
-                <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#formModal">Créer un participant</a>
+                <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#formModal" @click="getUsers()">Créer un participant</a>
 
                 <div v-if="itemsSelected.length === 1">
                     <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#formModal" @click="getParticipantByEMail(itemsSelected[0].email)">Modifier le participant</a>
@@ -220,8 +223,9 @@
 
                     <div class="modal-footer">
                         <button type="button" class="btn-modal-neutre btn-custom" data-bs-dismiss="modal" @click="resetForm()">Fermer</button>
-                        <button v-if="!participantEdit" type="button" class="btn-modal-valid btn-custom" @click="createParticipant()" data-bs-dismiss="modal">Enregistrer</button>
-                        <button v-else type="button" class="btn-modal-valid btn-custom" @click="editParticipant()" data-bs-dismiss="modal">Enregistrer</button>
+                        <button v-if="!participantEdit && mode === 'no_create'" type="button" class="btn-modal-valid btn-custom" @click="createParticipantByUser()" data-bs-dismiss="modal">Enregistrer</button>
+                        <button v-if="!participantEdit && mode === 'create'" type="button" class="btn-modal-valid btn-custom" @click="createGuest()" data-bs-dismiss="modal">Enregistrer</button>
+                        <button v-if="participantEdit" type="button" class="btn-modal-valid btn-custom" @click="editParticipant()" data-bs-dismiss="modal">Enregistrer</button>
                     </div>
                 </div>
             </div>
@@ -239,7 +243,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn-modal-neutre btn-custom" data-bs-dismiss="modal">Fermer</button>
-                        <button type="button" class="btn-modal-alert btn-custom" @click="deleteParticipant()" data-bs-dismiss="modal">Supprimer</button>
+                        <button type="button" class="btn-modal-alert btn-custom" @click="deleteParticipants()" data-bs-dismiss="modal">Supprimer</button>
                     </div>
                 </div>
             </div>

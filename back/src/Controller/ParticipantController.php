@@ -33,7 +33,7 @@ class ParticipantController extends AbstractController
         } catch (\Exception $e) {
 
             return $this->json([
-                'error' => 'Server error'
+                'error' => $e->getMessage()
             ], 500);
 
         }
