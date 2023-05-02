@@ -12,6 +12,7 @@
     const itemsSelected = ref<Item[]>([]);
     let isLoading = ref(true);
     let articleEdit = false;
+    let imageUrl = ref('');
     const id = ref('');
     const title = ref('');
     const content = ref('');
@@ -30,7 +31,8 @@
     onMounted(() => {
         // set datatable
         getUsers();  
-        getArticles();                    
+        getArticles();
+
     });    
 
     const getArticles = () => {    
@@ -69,6 +71,7 @@
             await getArticles();  
             resetForm();
             isLoading.value = false; 
+            imageUrl.value = '';
         });
     };
 
@@ -82,6 +85,7 @@
             await getArticles();  
             resetForm();
             isLoading.value = false; 
+            imageUrl.value = '';
         }); 
     };
 
@@ -129,7 +133,32 @@
         title.value = '';
         content.value = '';
         selectedUser.value = '';
+        imageUrl.value = '';
+        document.getElementById("imageFile").value = "";
         articleEdit = false;
+    };
+
+    const previewImage = (event, isDrop) => {
+        let file = null;
+        if(isDrop){
+            file = event.dataTransfer.files[0];
+        }else{
+            file = event.target.files[0];
+        }
+        console.log(file);
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            console.log(event.target.result);
+            imageUrl.value = event.target.result;
+        };
+        reader.readAsDataURL(file);
+    };
+
+    const dropHandler = (event) => {
+        event.preventDefault();
+        const file = event.dataTransfer.files[0];
+        previewImage(event,true);
     };
     
     defineComponent({
@@ -226,7 +255,16 @@
                         <div class="form-row">
                             <textarea v-model="content" class="form-row__input" placeholder="Contenu*"/>
                         </div>
+
+                        <div class="form-row">
+                            <label v-if="!imageUrl" for="imageFile" class="labelImage dropzone" @drop="dropHandler" @dragover.prevent>Ajouter une image à la news</label>
+                            <label  v-if="imageUrl" for="imageFile" class="labelImage dropzone" @drop="dropHandler" @dragover.prevent>Changer d'image
+                                <img :src="imageUrl" v-if="imageUrl" class="imagePreview">
+                            </label>
+                            <input class="upload" id="imageFile" name="imageFile" type="file" accept=".png, .jpeg, .jpg, .webp" @change="previewImage($event,false)">
+                        </div>
                     </div>
+
                     <div class="modal-footer">
                         <button type="button" class="btn-modal-neutre btn-custom" data-bs-dismiss="modal" @click="resetForm()">Fermer</button>
                         <button v-if="!articleEdit" type="button" class="btn-modal-valid btn-custom" @click="createArticle()" data-bs-dismiss="modal">Enregistrer</button>
@@ -308,5 +346,11 @@ select {
 
 .placeholder {
     color: #afafaf;
+}
+
+.imagePreview{
+    max-width: 50%;
+    max-height: 80%;
+    margin: 2%;
 }
 </style>
