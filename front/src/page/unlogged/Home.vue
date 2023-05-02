@@ -96,6 +96,10 @@
         border: none;
     }
 
+    .footer{
+        position: inherit;
+    }
+
     .stepWithoutPicture{
         background-color: #fff;
         border: 5px solid var(--third);
@@ -188,6 +192,22 @@
 
     .endCercle{
         margin: 0 50%;
+    }
+
+    @media (max-width: 600px) {
+        h2{
+            font-size: larger;
+        }
+        .headerStep{
+            flex-direction: column;
+        }
+    }
+
+    @media (max-width: 450px){
+        h2{
+            font-weight: bold;
+            font-size: medium;
+        }
     }
 
 </style>
