@@ -28,17 +28,14 @@ class Media
     #[ORM\Column(length: 255)]
     private ?string $format = null;
 
-    #[Groups(['user-return'])]
     #[ORM\ManyToOne(inversedBy: 'medias')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Article $article = null;
 
-    #[Groups(['user-return'])]
     #[ORM\ManyToOne(inversedBy: 'medias')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Activity $activity = null;
 
-    #[Groups(['user-return'])]
     #[ORM\OneToOne(mappedBy: 'media', cascade: ['persist', 'remove'])]
     private ?TimelineStep $timelineStep = null;
 

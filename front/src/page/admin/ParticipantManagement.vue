@@ -54,7 +54,9 @@
     };
 
     const getParticipantByEMail = (participantMail) => {  
-        participantService.getActivityById(participantMail).then((response) => { 
+        participantService.getParticipantByEMail(participantMail).then((response) => { 
+            console.log(response);
+            
             participantEdit = true;     
             firstName.value = response.data.firstName;
             lastName.value = response.data.lastName;
