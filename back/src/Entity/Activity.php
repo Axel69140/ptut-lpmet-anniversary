@@ -39,7 +39,7 @@ class Activity
     #[ORM\JoinColumn(nullable: false)]
     private ?User $creator = null;
 
-    #[Groups(['user-return', 'activity-return'])]
+    #[Groups(['activity-return'])]
     #[ORM\OneToMany(mappedBy: 'activity', targetEntity: Media::class, orphanRemoval: true)]
     private Collection $medias;
 

@@ -35,7 +35,7 @@ class Article
     #[ORM\JoinColumn(nullable: false)]
     private ?User $creator = null;
 
-    #[Groups(['user-return', 'article-return'])]
+    #[Groups(['article-return'])]
     #[ORM\OneToMany(mappedBy: 'article', targetEntity: Media::class, orphanRemoval: true)]
     private Collection $medias;
 

@@ -4,7 +4,7 @@
 
     export default {
         name: 'header',
-        data: () => ({ user: null }),       
+        data: () => ({ user: null, isAdmin: false }),       
         computed: {  
           getFirstName: function() {
             return accountService.getFirstName();
@@ -13,21 +13,24 @@
             return accountService.getLastName();
           }
         },
+        mounted() {  
+            this.checkIsAdmin();                   
+        },
         methods: {  
           logout: async function () {
             accountService.logout();
           },
-          isAdmin: function () {
+          checkIsAdmin: function () {
             if (accountService.getToken()) {
               Axios.get(`https://127.0.0.1:8000/users/${accountService.getId()}/role`).then((response) => {
                 if (response.data && response.data.role[0] === 'ROLE_ADMIN') {
-                  return true;
+                  this.isAdmin = true;
                 } else {
-                  return false;
+                  this.isAdmin = false;
                 }                         
               });       
             } else {
-              return false
+              this.isAdmin = false;
             }
           }
         }

@@ -94,7 +94,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?Media $profilPicture = null;
 
     #[Groups(['user-return'])]
-    #[ORM\OneToMany(mappedBy: 'User', targetEntity: Anecdote::class)]
+    #[ORM\OneToMany(mappedBy: 'creator', targetEntity: Anecdote::class)]
     private Collection $anecdotes;
 
     public function __construct()

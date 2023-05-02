@@ -15,14 +15,16 @@
     let isLoading = ref(true);
     let participantEdit = false;
     const id = ref('');
-    const name = ref('');
+    const firstName = ref('');
+    const lastName = ref('');
     const email = ref('');
     let mode = 'no_create';
     const selectedUser = ref('');
     let allUsers = [];
 
     const headers: Header[] = [
-        { text: "Nom", value: "name", sortable: true },
+        { text: "Prénom", value: "firstName", sortable: true },
+        { text: "Nom", value: "lastName", sortable: true },
         { text: "Email", value: "email", sortable: true },
         { text: "Invité par", value: "invitedBy", sortable: true },
     ];
@@ -52,9 +54,12 @@
     };
 
     const getParticipantByEMail = (participantMail) => {  
-        participantService.getActivityById(participantMail).then((response) => { 
+        participantService.getParticipantByEMail(participantMail).then((response) => { 
+            console.log(response);
+            
             participantEdit = true;     
-            name.value = response.data.name;
+            firstName.value = response.data.firstName;
+            lastName.value = response.data.lastName;
             email.value = response.data.email;
         });
     };
@@ -73,7 +78,8 @@
     const createGuest = () => {        
         isLoading.value = true; 
         guestService.createGuest({
-            name: name.value,
+            firstName: firstName.value,
+            lastName: lastName.value,
             email: email.value,
             invitedBy: accountService.getId()
         }).then(async (response) => { 
@@ -86,7 +92,8 @@
     const editParticipant = () => {        
         isLoading.value = true; 
         participantService.editParticipant(email.value, {
-            name: name.value,
+            firstName: firstName.value,
+            lastName: lastName.value,
             email: email.value
         }).then(async (response) => { 
             await getParticipants();  
@@ -114,7 +121,8 @@
     };
 
     const resetForm = () => {
-        name.value = '';
+        firstName.value = '';
+        lastName.value = '';
         email.value = '';
         selectedUser.value = '';
         participantEdit = false;
@@ -216,7 +224,11 @@
 
                         <div v-if="mode === 'create'">
                             <div class="form-row">
-                                <input v-model="name" class="form-row__input" type="text" placeholder="Nom du participant*"/>
+                                <input v-model="firstName" class="form-row__input" type="text" placeholder="Prénom*"/>
+                            </div>
+
+                            <div class="form-row">
+                                <input v-model="lastName" class="form-row__input" type="text" placeholder="Nom*"/>
                             </div>
 
                             <div class="form-row">
