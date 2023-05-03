@@ -37,6 +37,13 @@
       ...mapState(['status'])
     },
     methods: {
+      submitForm() {
+        if (this.mode == 'login') {
+          this.login();
+        } else {
+          this.createAccount();
+        }
+      },
       range(start, end) {
         return Array(end - start + 1).fill().map((_, index) => start + index);
       },
@@ -157,27 +164,26 @@
       </div>  
 
       <!-- Input form -->
-      <form>
         <div class="form-row" v-if="mode == 'create'">
-          <input v-model="firstName" class="form-row__input" type="text" placeholder="Prénom*"/>
-          <input v-model="lastName" class="form-row__input" type="text" placeholder="Nom*"/>
+          <input v-model="firstName" class="form-row__input" type="text" placeholder="Prénom*" @keyup.enter="submitForm"/>
+          <input v-model="lastName" class="form-row__input" type="text" placeholder="Nom*" @keyup.enter="submitForm"/>
         </div>
 
         <div class="form-row" v-if="mode == 'create'">
-          <input v-model="maidenName" class="form-row__input" type="text" placeholder="Nom de jeune fille"/>
-          <input v-model="phone" class="form-row__input" type="tel" placeholder="Numéro de téléphone"/>
+          <input v-model="maidenName" class="form-row__input" type="text" placeholder="Nom de jeune fille" @keyup.enter="submitForm"/>
+          <input v-model="phone" class="form-row__input" type="tel" placeholder="Numéro de téléphone" @keyup.enter="submitForm"/>
         </div>
 
         <div class="form-row">
-          <input v-model="email" class="form-row__input" type="text" placeholder="Adresse mail*"/>
+          <input v-model="email" class="form-row__input" type="text" placeholder="Adresse mail*" @keyup.enter="submitForm"/>
         </div>
 
         <div class="form-row">
-          <input v-model="password" class="form-row__input" type="password" placeholder="Mot de passe*"/>
+          <input v-model="password" class="form-row__input" type="password" placeholder="Mot de passe*" @keyup.enter="submitForm"/>
         </div>
 
         <div class="form-row" v-if="mode == 'create'">
-          <input v-model="password_confirmation" class="form-row__input" type="password" placeholder="Confirmer mot de passe*"/>
+          <input v-model="password_confirmation" class="form-row__input" type="password" placeholder="Confirmer mot de passe*" @keyup.enter="submitForm"/>
         </div>
 
         <div class="form-row" v-if="mode == 'create'">
@@ -222,7 +228,7 @@
 
         <!-- Button form -->
         <div class="form-row">
-          <button @click="login()" class="button" :class="{'button--disabled' : !validatedFields}" :disabled="!validatedFields" v-if="mode == 'login'">
+          <button class="button" :class="{'button--disabled' : !validatedFields}" :disabled="!validatedFields" v-if="mode == 'login'">
             <span v-if="status == 'loading'">Connexion en cours...</span>
             <span v-else>Connexion</span>
           </button>
@@ -231,7 +237,7 @@
             <span v-else>Créer mon compte</span>
           </button>
         </div>
-      </form>
+
     </div>
   </main>
 
