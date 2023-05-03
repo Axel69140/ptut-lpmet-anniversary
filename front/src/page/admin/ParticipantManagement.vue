@@ -31,9 +31,9 @@
 
     const items: Item[] = participants.value;
 
-    onMounted(() => {
+    onMounted(async () => {
         // set datatable
-        getUsers();
+        await getUsers();
         getParticipants();        
     });    
 
@@ -48,19 +48,25 @@
     };
 
     const getUsers = () => {    
+        allUsers = [];
         userService.getUsers().then((response) => {             
-            allUsers.push(... response.data);   
+            allUsers.push(... response.data);     
         });
     };
 
     const getParticipantByEMail = (participantMail) => {  
         participantService.getParticipantByEMail(participantMail).then((response) => { 
-            console.log(response);
-            
-            participantEdit = true;     
-            firstName.value = response.data.firstName;
-            lastName.value = response.data.lastName;
-            email.value = response.data.email;
+            participantEdit = true;    
+
+            if (response.data[0].roles) {
+                mode = 'edit_user';                           
+            } else {
+                mode = 'edit_guest';
+                id.value = response.data[0].id;
+                firstName.value = response.data[0].firstName;
+                lastName.value = response.data[0].lastName;
+                email.value = response.data[0].email;                
+            }            
         });
     };
 
@@ -89,9 +95,9 @@
         });
     };
 
-    const editParticipant = () => {        
+    const editGuest = () => {        
         isLoading.value = true; 
-        participantService.editParticipant(email.value, {
+        guestService.editGuest(id.value, {
             firstName: firstName.value,
             lastName: lastName.value,
             email: email.value
@@ -141,7 +147,7 @@
                 createGuest,
                 getParticipantByEMail,
                 resetForm,
-                editParticipant,
+                editGuest,
                 deleteParticipants
             }
         }
@@ -208,9 +214,14 @@
                     </div>
 
                     <div class="modal-body">
-                        <div id="nav-modal">
-                            <a href="#" :class="{active: mode === 'no_create'}" @click="mode = 'no_create'" id="nav-modal-link-1">À partir d'un utilisateur existant</a>
+                        <div id="nav-modal" v-if="mode === 'no_create' || mode === 'create'">
+                            <a href="#" :class="{active: mode === 'no_create' }" @click="mode = 'no_create'" id="nav-modal-link-1">À partir d'un utilisateur existant</a>
                             <a href="#" :class="{active: mode === 'create'}" @click="mode = 'create'" id="nav-modal-link-2">Inviter une nouvelle personne</a>
+                        </div>
+
+                        <div v-if="mode === 'edit_user' || mode === 'edit_guest'">
+                            <p v-if="mode === 'edit_user'" id="nav-modal-link-3">À partir d'un utilisateur existant</p>
+                            <p v-if="mode === 'edit_guest'" id="nav-modal-link-4">Modifier le participant</p>
                         </div>
                         
                         <input v-model="id" type="hidden"/>
@@ -222,7 +233,7 @@
                             </select>
                         </div>
 
-                        <div v-if="mode === 'create'">
+                        <div v-if="mode === 'create' || mode === 'edit_guest'">
                             <div class="form-row">
                                 <input v-model="firstName" class="form-row__input" type="text" placeholder="Prénom*"/>
                             </div>
@@ -235,13 +246,15 @@
                                 <input v-model="email" class="form-row__input" type="text" placeholder="Adresse mail*"/>
                             </div>
                         </div>   
+
+                        <button v-if="mode === 'edit_user'" type="button" class="btn-modal-alert btn-custom mt-4" @click="deleteParticipants()" data-bs-dismiss="modal">Supprimer</button>
                     </div>
 
                     <div class="modal-footer">
                         <button type="button" class="btn-modal-neutre btn-custom" data-bs-dismiss="modal" @click="resetForm()">Fermer</button>
                         <button v-if="!participantEdit && mode === 'no_create'" type="button" class="btn-modal-valid btn-custom" @click="createParticipantByUser()" data-bs-dismiss="modal">Enregistrer</button>
                         <button v-if="!participantEdit && mode === 'create'" type="button" class="btn-modal-valid btn-custom" @click="createGuest()" data-bs-dismiss="modal">Enregistrer</button>
-                        <button v-if="participantEdit" type="button" class="btn-modal-valid btn-custom" @click="editParticipant()" data-bs-dismiss="modal">Enregistrer</button>
+                        <button v-if="participantEdit && mode === 'edit_guest'" type="button" class="btn-modal-valid btn-custom" @click="editGuest()" data-bs-dismiss="modal">Enregistrer</button>
                     </div>
                 </div>
             </div>
@@ -319,6 +332,20 @@ h1 {
     color: black;
     padding: 0 0 4px 0;
     margin: 0 0 0 4px;
+    font-weight: bold;
+}
+
+#nav-modal-link-3 {
+    width: 100%;
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+}
+
+#nav-modal-link-4 {
+    width: 100%;
+    text-decoration: none;
+    color: black;
     font-weight: bold;
 }
 
