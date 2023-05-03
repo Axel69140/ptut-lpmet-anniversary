@@ -13,6 +13,7 @@
     let isLoading = ref(true);
     let articleEdit = false;
     let imageUrl = ref('');
+    let fileHandle = null;
     const id = ref('');
     const title = ref('');
     const content = ref('');
@@ -63,6 +64,9 @@
 
     const createArticle = () => {        
         isLoading.value = true; 
+        if(imageUrl.value != ''){
+            saveImage();
+        }
         articleService.createArticle({
             title: title.value,
             content: content.value,
@@ -77,6 +81,9 @@
 
     const editArticle = () => {        
         isLoading.value = true; 
+        if(imageUrl.value != ''){
+            saveImage();
+        }
         articleService.editArticle(id.value, {
             title: title.value,
             content: content.value,
@@ -160,6 +167,56 @@
         const file = event.dataTransfer.files[0];
         previewImage(event,true);
     };
+
+    function saveImage() {
+        const input = document.getElementById("imageFile");
+        const file = input.files[0];
+        
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function () {
+            const imageData = reader.result.split(',')[1];
+            const blob = b64toBlob(imageData, 'image/png');
+            const imageFile = new File([blob], 'image.png', { type: 'image/png' });
+            
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/');
+            xhr.setRequestHeader('Content-Type', 'application/octet-stream');
+            console.log(xhr);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    console.log('Image saved successfully');
+                } else {
+                    console.error('Failed to save image');
+                }
+            };
+            xhr.send(imageFile);
+        };
+    };
+
+    function b64toBlob(b64Data, contentType, sliceSize) {
+        contentType = contentType || '';
+        sliceSize = sliceSize || 512;
+
+        const byteCharacters = atob(b64Data);
+        const byteArrays = [];
+
+        for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+            const slice = byteCharacters.slice(offset, offset + sliceSize);
+
+            const byteNumbers = new Array(slice.length);
+            for (let i = 0; i < slice.length; i++) {
+            byteNumbers[i] = slice.charCodeAt(i);
+            }
+
+            const byteArray = new Uint8Array(byteNumbers);
+
+            byteArrays.push(byteArray);
+        }
+
+        const blob = new Blob(byteArrays, {type: contentType});
+        return blob;
+    }
     
     defineComponent({
         name: 'articleManagement',

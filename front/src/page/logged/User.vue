@@ -1,15 +1,23 @@
 <script>
     import axios from 'axios';   
-    import Footer from '../../components/Footer.vue';     
+    import Footer from '../../components/Footer.vue';    
+    import { userService } from '../../services/user.services'; 
 
     export default {
         name: 'user',
-        data: () => ({ users: [] }),       
+        data: () => ({ 
+            users: [],
+            isLoading: true 
+        }),       
         computed: {            
         },
         methods: {      
         },
-        mounted() {                      
+        mounted() {        
+            userService.getUserById(1).then(response => {
+                this.users = response.data;
+                this.isLoading = false;
+            });
         },
         components: {
             Footer
