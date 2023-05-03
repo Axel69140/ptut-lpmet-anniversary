@@ -66,9 +66,10 @@ const routes = [
         { path: '', name: 'Evènement', component: Event },
         { path: 'registration', name: 'Formulaire d\'inscription à l\'évènement', component: EventForm, beforeEnter: isUserConnected },
         { path: 'invitation', name: 'Formulaire d\'ajout d\'un invité', component: GuestForm, beforeEnter: isUserConnected },
-        { path: 'users', name: 'Utilisateurs qui participe à l\'évènement', component: Users, beforeEnter: isUserConnected,
-          children : [ 
-            { path: ':id', component: User, beforeEnter: isUserConnected } 
+        { path: 'users', name: 'Utilisateurs qui participe à l\'évènement', beforeEnter: isUserConnected,
+          children : [             
+            { path: '', component: Users },
+            { path: ':id', component: User } 
           ] 
         },
         { path: 'activity/form', name: 'Formulaire d\'activité', component: ActivityForm, beforeEnter: isUserConnected }

@@ -11,6 +11,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\User;
 use Symfony\Component\HttpFoundation\Response;
@@ -251,7 +253,7 @@ class UserController extends AbstractController
 
     // Create user
     #[Route('/register', name: 'app_api_user_post', methods: ['POST'])]
-    public function register(Request $request, UserRepository $userRepository, UserPasswordHasherInterface $userPasswordHasher, ValidatorInterface $validator, EntryDataService $entryDataService, GuestRepository $guestRepository, EntityManagerInterface $em): JsonResponse
+    public function register(Request $request, UserRepository $userRepository, UserPasswordHasherInterface $userPasswordHasher, ValidatorInterface $validator, EntryDataService $entryDataService, GuestRepository $guestRepository, EntityManagerInterface $em, MailerInterface $mailer): JsonResponse
     {
         try {
 
@@ -296,6 +298,21 @@ class UserController extends AbstractController
                 ], 400);
             }
             $userRepository->save($user, true);
+
+            // Send confirmation email about that the user is concreted create
+            $email = (new Email())
+                ->from('hello@example.com')
+                ->to($user->getEmail())
+                //->cc('cc@example.com')
+                //->bcc('bcc@example.com')
+                //->replyTo('fabien@example.com')
+                //->priority(Email::PRIORITY_HIGH)
+                ->subject('L\'utilisateur a bien été créé !')
+                //->text('Sending emails is fun again!')
+                ->html('<p>See Twig integration for better HTML integration!</p>');
+
+            $mailer->send($email);
+
             return $this->json($user, 201, [], ['groups' => ['user-return']]);
 
         } catch (\Exception $e) {

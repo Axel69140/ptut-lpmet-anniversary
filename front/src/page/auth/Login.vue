@@ -157,79 +157,81 @@
       </div>  
 
       <!-- Input form -->
-      <div class="form-row" v-if="mode == 'create'">
-        <input v-model="firstName" class="form-row__input" type="text" placeholder="Prénom*"/>
-        <input v-model="lastName" class="form-row__input" type="text" placeholder="Nom*"/>
-      </div>
-
-      <div class="form-row" v-if="mode == 'create'">
-        <input v-model="maidenName" class="form-row__input" type="text" placeholder="Nom de jeune fille"/>
-        <input v-model="phone" class="form-row__input" type="tel" placeholder="Numéro de téléphone"/>
-      </div>
-
-      <div class="form-row">
-        <input v-model="email" class="form-row__input" type="text" placeholder="Adresse mail*"/>
-      </div>
-
-      <div class="form-row">
-        <input v-model="password" class="form-row__input" type="password" placeholder="Mot de passe*"/>
-      </div>
-
-      <div class="form-row" v-if="mode == 'create'">
-        <input v-model="password_confirmation" class="form-row__input" type="password" placeholder="Confirmer mot de passe*"/>
-      </div>
-
-      <div class="form-row" v-if="mode == 'create'">
-        <label for="activeYears">Année d'activité à l'IUT*</label>
-        <select v-model="activeYears" name="activeYears" id="activeYears" class="form-row__input">
-          <option value="">-</option>
-          <option v-for="year in range(1993, 2023)" v-bind:key="year" v-bind:value="year">{{ year }}</option>
-        </select>
-
-        <span>/</span>
-
-        <select v-model="activeYears2" name="activeYears2" id="activeYears2" class="form-row__input">
-          <option value="">-</option>
-          <option v-for="year in range(1993, 2023)" v-bind:key="year" v-bind:value="year">{{ year }}</option>
-        </select>
-      </div>
-
-      <div class="form-row" v-if="mode == 'create'">
-        <input v-model="_function" class="form-row__input" type="text" placeholder="Fonction"/>
-        <input v-model="link" class="form-row__input" type="text" placeholder="Lien linkedIn"/>
-      </div>      
-
-      <div class="form-row" v-if="mode == 'create'">
-        <textarea v-model="note" class="form-row__input" placeholder="Note"/>
-      </div>      
-
-      <div class="form-row" v-if="mode == 'create'">
-        <label for="isParticipated">Je participe à l'événement</label>
-        <div class="cntr">
-          <input v-model="isParticipated" type="checkbox" id="isParticipated" class="hidden-xs-up">
-          <label for="isParticipated" class="cbx"></label>
+      <form>
+        <div class="form-row" v-if="mode == 'create'">
+          <input v-model="firstName" class="form-row__input" type="text" placeholder="Prénom*"/>
+          <input v-model="lastName" class="form-row__input" type="text" placeholder="Nom*"/>
         </div>
-      </div>
 
-      <div class="form-row" v-if="mode == 'create'">
-        <label for="isPublic">Je souhaite afficher publiquement mes informations</label>
-        <div class="cntr">
-          <input v-model="isPublic" type="checkbox" id="isPublic" class="hidden-xs-up">
-          <label for="isPublic" class="cbx"></label>
+        <div class="form-row" v-if="mode == 'create'">
+          <input v-model="maidenName" class="form-row__input" type="text" placeholder="Nom de jeune fille"/>
+          <input v-model="phone" class="form-row__input" type="tel" placeholder="Numéro de téléphone"/>
         </div>
-      </div>       
 
-      <!-- Button form -->
-      <div class="form-row">
-        <button @click="login()" class="button" :class="{'button--disabled' : !validatedFields}" :disabled="!validatedFields" v-if="mode == 'login'">
-          <span v-if="status == 'loading'">Connexion en cours...</span>
-          <span v-else>Connexion</span>
-        </button>
-        <button @click="createAccount()" class="button" :class="{'button--disabled' : !validatedFields}" :disabled="!validatedFields" v-else>
-          <span v-if="status == 'loading'">Création en cours...</span>
-          <span v-else>Créer mon compte</span>
-        </button>
-      </div>
+        <div class="form-row">
+          <input v-model="email" class="form-row__input" type="text" placeholder="Adresse mail*"/>
+        </div>
+
+        <div class="form-row">
+          <input v-model="password" class="form-row__input" type="password" placeholder="Mot de passe*"/>
+        </div>
+
+        <div class="form-row" v-if="mode == 'create'">
+          <input v-model="password_confirmation" class="form-row__input" type="password" placeholder="Confirmer mot de passe*"/>
+        </div>
+
+        <div class="form-row" v-if="mode == 'create'">
+          <label for="activeYears">Année d'activité à l'IUT*</label>
+          <select v-model="activeYears" name="activeYears" id="activeYears" class="form-row__input">
+            <option value="">-</option>
+            <option v-for="year in range(1993, 2023)" v-bind:key="year" v-bind:value="year">{{ year }}</option>
+          </select>
+
+          <span>/</span>
+
+          <select v-model="activeYears2" name="activeYears2" id="activeYears2" class="form-row__input">
+            <option value="">-</option>
+            <option v-for="year in range(1993, 2023)" v-bind:key="year" v-bind:value="year">{{ year }}</option>
+          </select>
+        </div>
+
+        <div class="form-row" v-if="mode == 'create'">
+          <input v-model="_function" class="form-row__input" type="text" placeholder="Fonction"/>
+          <input v-model="link" class="form-row__input" type="text" placeholder="Lien linkedIn"/>
+        </div>      
+
+        <div class="form-row" v-if="mode == 'create'">
+          <textarea v-model="note" class="form-row__input" placeholder="Note"/>
+        </div>      
+
+        <div class="form-row" v-if="mode == 'create'">
+          <label for="isParticipated">Je participe à l'événement</label>
+          <div class="cntr">
+            <input v-model="isParticipated" type="checkbox" id="isParticipated" class="hidden-xs-up">
+            <label for="isParticipated" class="cbx"></label>
+          </div>
+        </div>
+
+        <div class="form-row" v-if="mode == 'create'">
+          <label for="isPublic">Je souhaite afficher publiquement mes informations</label>
+          <div class="cntr">
+            <input v-model="isPublic" type="checkbox" id="isPublic" class="hidden-xs-up">
+            <label for="isPublic" class="cbx"></label>
+          </div>
+        </div>       
+
+        <!-- Button form -->
+        <div class="form-row">
+          <button @click="login()" class="button" :class="{'button--disabled' : !validatedFields}" :disabled="!validatedFields" v-if="mode == 'login'">
+            <span v-if="status == 'loading'">Connexion en cours...</span>
+            <span v-else>Connexion</span>
+          </button>
+          <button @click="createAccount()" class="button" :class="{'button--disabled' : !validatedFields}" :disabled="!validatedFields" v-else>
+            <span v-if="status == 'loading'">Création en cours...</span>
+            <span v-else>Créer mon compte</span>
+          </button>
+        </div>
+      </form>
     </div>
   </main>
 

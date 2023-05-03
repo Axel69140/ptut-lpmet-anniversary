@@ -52,7 +52,6 @@
 
 <template>
     <main>
-        <h1>Timeline</h1>
         <ul class="allTimelineSteps">
             <li v-for="timelineStep in timelineSteps" :key="timelineStep.id" class="stepWithBorder">
                 <div v-if="timelineStep.media_id" class="stepWithPicture">
