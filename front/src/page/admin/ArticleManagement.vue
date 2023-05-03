@@ -168,7 +168,7 @@
         previewImage(event,true);
     };
 
-    function saveImage() {
+    /*function saveImage() {
         const input = document.getElementById("imageFile");
         const file = input.files[0];
         
@@ -216,7 +216,7 @@
 
         const blob = new Blob(byteArrays, {type: contentType});
         return blob;
-    }
+    }*/
     
     defineComponent({
         name: 'articleManagement',
