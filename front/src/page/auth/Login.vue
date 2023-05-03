@@ -237,6 +237,13 @@
           </div>
         </div>       
 
+        <!-- <VueRecaptcha
+          :sitekey="siteKey"
+          :load-recaptcha-script="true"
+          @verify="handleSuccess"
+          @error="handleError"
+        ></VueRecaptcha> -->
+
         <!-- Button form -->
         <div class="form-row">
           <button class="button" @click="login()" :class="{'button--disabled' : !validatedFields}" :disabled="!validatedFields" v-if="mode == 'login'">
