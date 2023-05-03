@@ -100,7 +100,7 @@ class GuestController extends AbstractController
 
                 return $this->json([
                     'error' => 'Email already used'
-                ], 403);
+                ], 409);
 
             }
 
@@ -165,19 +165,19 @@ class GuestController extends AbstractController
 
                 return $this->json([
                     'error' => 'Email already used'
-                ], 403);
+                ], 409);
 
             } else if((count($existingEntities) === 1) && (get_class($guestToUpdate) !== get_class($existingEntities[0]))) {
 
                 return $this->json([
                     'error' => 'Email already used'
-                ], 403);
+                ], 409);
 
             } else if ((count($existingEntities) === 1) && (get_class($guestToUpdate) === get_class($existingEntities[0])) && ($existingEntities[0]->getId() !== $guestToUpdate->getId())) {
 
                 return $this->json([
                     'error' => 'Email already used'
-                ], 403);
+                ], 409);
 
             }
 

@@ -6,6 +6,7 @@ use App\Entity\Settings;
 use App\Repository\ActivityRepository;
 use App\Repository\AnecdoteRepository;
 use App\Repository\SettingsRepository;
+use App\Repository\UserRepository;
 use App\Service\ExportDataService;
 use Doctrine\ORM\EntityManagerInterface;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -122,17 +123,17 @@ class SettingsController extends AbstractController
 
     // Export all datas
     #[Route('/export-csv', name: 'app_settings_export_csv', methods: ['GET'])]
-    public function exportCSV(AnecdoteRepository $anecdoteRepository, ActivityRepository $activityRepository, ExportDataService $exportDataService, EntityManagerInterface $em): JsonResponse
+    public function exportCSV(AnecdoteRepository $anecdoteRepository, ActivityRepository $activityRepository, ExportDataService $exportDataService, EntityManagerInterface $em, UserRepository $userRepository): JsonResponse
     {
         try {
 
-            $exportDataService->exportAllCSV([$anecdoteRepository, $activityRepository], $em);
+            $exportDataService->exportAllCSV([$userRepository], $em);
             return $this->json('Done', 200);
 
         } catch (\Exception $e) {
 
             return $this->json([
-                'error' => 'Server error'
+                'error' => 'Server error' . $e->getMessage()
             ], 500);
 
         }
