@@ -31,9 +31,9 @@
 
     const items: Item[] = participants.value;
 
-    onMounted(() => {
+    onMounted(async () => {
         // set datatable
-        getUsers();
+        await getUsers();
         getParticipants();        
     });    
 

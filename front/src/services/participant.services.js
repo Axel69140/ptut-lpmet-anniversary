@@ -19,7 +19,7 @@ const editParticipant = (participantMail, participant) => {
 const deleteParticipants = (emails) => {    
     return Axios.delete('https://127.0.0.1:8000/participants/many', {
         data: {
-            emails: emails
+            email: emails
         }          
     });
 }
