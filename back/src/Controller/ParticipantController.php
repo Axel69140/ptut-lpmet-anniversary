@@ -98,7 +98,8 @@ class ParticipantController extends AbstractController
             if(!empty($usersToDelete))
             {
                 foreach ($usersToDelete as $user) {
-                    $entityManager->remove($user);
+                    $user->setIsParticipated(true);
+                    $entityManager->persist($user);
                 }
             }
 
