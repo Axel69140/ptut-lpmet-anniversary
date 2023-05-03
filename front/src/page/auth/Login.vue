@@ -97,6 +97,7 @@
             self.login();
           }, function (error) {
             if(error) {
+              console.log(error)
               self.alreadyUseMail = true;
               this.loading = false;
             }

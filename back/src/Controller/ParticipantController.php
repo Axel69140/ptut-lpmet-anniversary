@@ -46,18 +46,16 @@ class ParticipantController extends AbstractController
 
             $guest = $guestRepository->findBy(['email' => $email]);
 
-            if(!$guest)
+            if($guest)
             {
                 return $this->json($guest, 200, [], ['groups' => ['participant-return']]);
             }
 
             $user = $userRepository->findBy(['email' => $email, 'isParticipated' => true]);
 
-            if(!$user)
+            if($user)
             {
-
                 return $this->json($user, 200, [], ['groups' => ['participant-return']]);
-
             } else {
 
                 return $this->json([
@@ -98,7 +96,8 @@ class ParticipantController extends AbstractController
             if(!empty($usersToDelete))
             {
                 foreach ($usersToDelete as $user) {
-                    $entityManager->remove($user);
+                    $user->setIsParticipated(false);
+                    $entityManager->persist($user);
                 }
             }
 
