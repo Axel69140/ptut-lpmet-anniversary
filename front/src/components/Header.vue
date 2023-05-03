@@ -128,7 +128,7 @@
 </template>
 
 <style scoped>
-@media (min-width: 1550px) {  
+@media (min-width: 1600px) {  
   .navbar {
     position: absolute;
     display: flex;
@@ -170,7 +170,7 @@
   }  
 }
 
-@media (max-width: 1549px) {  
+@media (max-width: 1599px) {  
   .navbar {
     position: absolute;
     display: flex;
@@ -407,7 +407,7 @@
   padding-bottom: 12px;
 }
 
-@media (min-width: 1550px) {
+@media (min-width: 1600px) {
   .navbar-expand-xxxl {
     flex-flow: row nowrap;
     justify-content: flex-start;
