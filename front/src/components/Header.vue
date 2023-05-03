@@ -1,10 +1,11 @@
 <script>
     import { accountService } from '../services/account.services';
     import Axios from '../services/caller.services';
+    import { ref } from 'vue'
 
     export default {
         name: 'header',
-        data: () => ({ user: null, isAdmin: false }),       
+        data: () => ({ user: null, isAdmin: ref(false) }),       
         computed: {  
           getFirstName: function() {
             return accountService.getFirstName();
@@ -54,7 +55,7 @@
             <a class="nav-link dropdown-toggle" href="/" id="dropdown3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ getFirstName }} {{ getLastName }}</a>
             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown3">
               <a class="dropdown-item" href="" @click="logout()">Déconnexion</a>
-              <div v-if="isAdmin">
+              <div :v-if="isAdmin">
                 <a class="dropdown-item" href="/admin">Gestion administrateur</a>
                 <a class="dropdown-item" href="/admin/user">Gestion des utilisateurs</a>
                 <a class="dropdown-item" href="/admin/participant">Gestion des participants</a>
@@ -107,7 +108,7 @@
             <a class="nav-link dropdown-toggle" href="/" id="dropdown3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ getFirstName }} {{ getLastName }}</a>   
             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown3">
               <a class="dropdown-item" href="" @click="logout()">Déconnexion</a>
-              <div v-if="isAdmin">
+              <div :v-if="isAdmin">
                 <a class="dropdown-item" href="/admin">Gestion administrateur</a>
                 <a class="dropdown-item" href="/admin/user">Gestion des utilisateurs</a>
                 <a class="dropdown-item" href="/admin/participant">Gestion des participants</a>

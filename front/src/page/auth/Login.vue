@@ -8,7 +8,7 @@
     name: 'login',
     data: () => ({ mode: 'login', loading: false, email: '', firstName: '', lastName: '', maidenName: '', password: '', password_confirmation: '', phone: '', 
                   activeYears: '', activeYears2: '',_function: '', link: '', note: '', isParticipated: '', isPublic: '', showMessage: false, 
-                  invalidMail: false, invalidPassword: false, notSimilarPassword: false, alreadyUseMail: false, invalidYears: false, settings: [],}),       
+                  invalidMail: false, invalidPassword: false, notSimilarPassword: false, alreadyUseMail: false, invalidYears: false, invalidCredentials: false, settings: []}),       
     mounted() {
       if (accountService.getToken()) {
         this.$router.push('/');
@@ -65,8 +65,9 @@
           password: this.password,
         }).then(function () {
           self.$router.push('/');          
-          this.loading = false;
+          self.loading = false;
         }, function (error) {
+          self.invalidCredentials = true;
         })
       },
       createAccount() {
@@ -173,6 +174,10 @@
           Année d'activité à l'IUT invalide
       </div>  
 
+      <div class="alert alert-danger" role="alert" v-if="mode != 'create' && invalidCredentials">
+          Désolé, mais les informations d'identification que vous avez fournies sont invalides. Veuillez vérifier que votre adresse e-mail et votre mot de passe sont corrects et correspondent entre eux. Si vous continuez à rencontrer des problèmes, veuillez réinitialiser votre mot de passe ou contacter notre service d'assistance pour obtenir de l'aide supplémentaire.
+      </div> 
+
       <!-- Input form -->
         <div class="form-row" v-if="mode == 'create'">
           <input v-model="firstName" class="form-row__input" type="text" placeholder="Prénom*" @keyup.enter="submitForm"/>
@@ -238,6 +243,13 @@
             <label for="isPublic" class="cbx"></label>
           </div>
         </div>       
+
+        <!-- <VueRecaptcha
+          :sitekey="siteKey"
+          :load-recaptcha-script="true"
+          @verify="handleSuccess"
+          @error="handleError"
+        ></VueRecaptcha> -->
 
         <!-- Button form -->
         <div class="form-row">
