@@ -50,6 +50,11 @@
 
             filter(array,nbr) {
                 return _.chunk(array,nbr);
+            },
+
+            userDetails(idUser){
+                console.log("test");
+                this.$router.push('/event/users/'+idUser);
             }
         },
         mounted() {    
@@ -98,18 +103,18 @@
             </div>
             <div class="users">
                 <ul v-for="(chunk, index) in filter(filteredUsers, 6)" :key="index" class="usersPart">
-                    <li v-for="(user, i) in chunk" :key="i" class="user">
+                    <li v-for="(user, i) in chunk" :key="i" class="user" @click="userDetails(user.id)">
                         <img src="https://media.istockphoto.com/id/1200677760/fr/photo/verticale-de-jeune-homme-de-sourire-beau-avec-des-bras-crois%C3%A9s.jpg?s=612x612&w=0&k=20&c=0TDS1aTXZzWLzI_X9eGBhqS_QZAz49zKEDKT8xsHZfU=" width="198" height="198">
                         <div class="fullName">
                             <div class="firstName">{{ user.firstName }}</div>   
-                            <div v-if="user.isPublic" class="lastName">{{ user.lastName }}</div>
+                            <div v-if="user.isPublicProfil" class="lastName">{{ user.lastName }}</div>
                             <div v-else class="lastName">{{ obfuscateName(user.lastName) }}</div>
                         </div>
                         <div v-if="user.activeYears[1]" class="activeYears">Année à l'IUT <strong>{{ user.activeYears[0] }} - {{ user.activeYears[1] }}</strong></div>
                         <div v-else class="activeYears">Année à l'IUT <strong>{{ user.activeYears[0] }}</strong></div>
-                        <div v-if="user.isPublic && user.function != 'autre'" class="function">En tant qu'{{ user.function }}</div>
-                        <div v-if="user.isParticipated" class="isParticipated" >participe</div>
-                        <div v-else class="isNotParticipated">participe pas</div>
+                        <div v-if="user.isPublicProfil && user.function != 'autre'" class="function">En tant qu'{{ user.function }}</div>
+                        <div v-if="user.isParticipated" class="isParticipated" >Participe à l'évènement</div>
+                        <div v-else class="isNotParticipated">Ne participe pas à l'évènement</div>
                     </li>
                 </ul>
             </div>

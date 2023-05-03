@@ -5,9 +5,9 @@
 
   export default {
     name: 'login',
-    data: () => ({ mode: 'login', email: '', firstName: '', lastName: '', maidenName: '', password: '', password_confirmation: '', phone: '', 
+    data: () => ({ mode: 'login', loading: false, email: '', firstName: '', lastName: '', maidenName: '', password: '', password_confirmation: '', phone: '', 
                   activeYears: '', activeYears2: '',_function: '', link: '', note: '', isParticipated: '', isPublic: '', showMessage: false, 
-                  invalidMail: false, invalidPassword: false, notSimilarPassword: false, alreadyUseMail: false, invalidYears: false}),       
+                  invalidMail: false, invalidPassword: false, notSimilarPassword: false, alreadyUseMail: false, invalidYears: false, invalidCredentials: false}),       
     mounted() {
       if (accountService.getToken()) {
         this.$router.push('/');
@@ -37,6 +37,13 @@
       ...mapState(['status'])
     },
     methods: {
+      submitForm() {
+        if (this.mode == 'login') {
+          this.login();
+        } else {
+          this.createAccount();
+        }
+      },
       range(start, end) {
         return Array(end - start + 1).fill().map((_, index) => start + index);
       },
@@ -47,16 +54,20 @@
         this.mode = 'login';
       },      
       login() {
+        this.loading = true;
         const self = this;
         this.$store.dispatch('login', {
           email: this.email,
           password: this.password,
         }).then(function () {
-          self.$router.push('/');
+          self.$router.push('/');          
+          self.loading = false;
         }, function (error) {
+          self.invalidCredentials = true;
         })
       },
       createAccount() {
+        this.loading = true;
         this.validateEmail();
         this.validatePassword();
         this.validateYears();
@@ -83,8 +94,11 @@
           }, function (error) {
             if(error) {
               self.alreadyUseMail = true;
+              this.loading = false;
             }
           })
+        } else {
+          this.loading = false;
         }
       },
       validateEmail: function() {
@@ -156,80 +170,85 @@
           Année d'activité à l'IUT invalide
       </div>  
 
+      <div class="alert alert-danger" role="alert" v-if="mode != 'create' && invalidCredentials">
+          Désolé, mais les informations d'identification que vous avez fournies sont invalides. Veuillez vérifier que votre adresse e-mail et votre mot de passe sont corrects et correspondent entre eux. Si vous continuez à rencontrer des problèmes, veuillez réinitialiser votre mot de passe ou contacter notre service d'assistance pour obtenir de l'aide supplémentaire.
+      </div> 
+
       <!-- Input form -->
-      <div class="form-row" v-if="mode == 'create'">
-        <input v-model="firstName" class="form-row__input" type="text" placeholder="Prénom*"/>
-        <input v-model="lastName" class="form-row__input" type="text" placeholder="Nom*"/>
-      </div>
-
-      <div class="form-row" v-if="mode == 'create'">
-        <input v-model="maidenName" class="form-row__input" type="text" placeholder="Nom de jeune fille"/>
-        <input v-model="phone" class="form-row__input" type="tel" placeholder="Numéro de téléphone"/>
-      </div>
-
-      <div class="form-row">
-        <input v-model="email" class="form-row__input" type="text" placeholder="Adresse mail*"/>
-      </div>
-
-      <div class="form-row">
-        <input v-model="password" class="form-row__input" type="password" placeholder="Mot de passe*"/>
-      </div>
-
-      <div class="form-row" v-if="mode == 'create'">
-        <input v-model="password_confirmation" class="form-row__input" type="password" placeholder="Confirmer mot de passe*"/>
-      </div>
-
-      <div class="form-row" v-if="mode == 'create'">
-        <label for="activeYears">Année d'activité à l'IUT*</label>
-        <select v-model="activeYears" name="activeYears" id="activeYears" class="form-row__input">
-          <option value="">-</option>
-          <option v-for="year in range(1993, 2023)" v-bind:key="year" v-bind:value="year">{{ year }}</option>
-        </select>
-
-        <span>/</span>
-
-        <select v-model="activeYears2" name="activeYears2" id="activeYears2" class="form-row__input">
-          <option value="">-</option>
-          <option v-for="year in range(1993, 2023)" v-bind:key="year" v-bind:value="year">{{ year }}</option>
-        </select>
-      </div>
-
-      <div class="form-row" v-if="mode == 'create'">
-        <input v-model="_function" class="form-row__input" type="text" placeholder="Fonction"/>
-        <input v-model="link" class="form-row__input" type="text" placeholder="Lien linkedIn"/>
-      </div>      
-
-      <div class="form-row" v-if="mode == 'create'">
-        <textarea v-model="note" class="form-row__input" placeholder="Note"/>
-      </div>      
-
-      <div class="form-row" v-if="mode == 'create'">
-        <label for="isParticipated">Je participe à l'événement</label>
-        <div class="cntr">
-          <input v-model="isParticipated" type="checkbox" id="isParticipated" class="hidden-xs-up">
-          <label for="isParticipated" class="cbx"></label>
+        <div class="form-row" v-if="mode == 'create'">
+          <input v-model="firstName" class="form-row__input" type="text" placeholder="Prénom*" @keyup.enter="submitForm"/>
+          <input v-model="lastName" class="form-row__input" type="text" placeholder="Nom*" @keyup.enter="submitForm"/>
         </div>
-      </div>
 
-      <div class="form-row" v-if="mode == 'create'">
-        <label for="isPublic">Je souhaite afficher publiquement mes informations</label>
-        <div class="cntr">
-          <input v-model="isPublic" type="checkbox" id="isPublic" class="hidden-xs-up">
-          <label for="isPublic" class="cbx"></label>
+        <div class="form-row" v-if="mode == 'create'">
+          <input v-model="maidenName" class="form-row__input" type="text" placeholder="Nom de jeune fille" @keyup.enter="submitForm"/>
+          <input v-model="phone" class="form-row__input" type="tel" placeholder="Numéro de téléphone" @keyup.enter="submitForm"/>
         </div>
-      </div>       
 
-      <!-- Button form -->
-      <div class="form-row">
-        <button @click="login()" class="button" :class="{'button--disabled' : !validatedFields}" :disabled="!validatedFields" v-if="mode == 'login'">
-          <span v-if="status == 'loading'">Connexion en cours...</span>
-          <span v-else>Connexion</span>
-        </button>
-        <button @click="createAccount()" class="button" :class="{'button--disabled' : !validatedFields}" :disabled="!validatedFields" v-else>
-          <span v-if="status == 'loading'">Création en cours...</span>
-          <span v-else>Créer mon compte</span>
-        </button>
-      </div>
+        <div class="form-row">
+          <input v-model="email" class="form-row__input" type="text" placeholder="Adresse mail*" @keyup.enter="submitForm"/>
+        </div>
+
+        <div class="form-row">
+          <input v-model="password" class="form-row__input" type="password" placeholder="Mot de passe*" @keyup.enter="submitForm"/>
+        </div>
+
+        <div class="form-row" v-if="mode == 'create'">
+          <input v-model="password_confirmation" class="form-row__input" type="password" placeholder="Confirmer mot de passe*" @keyup.enter="submitForm"/>
+        </div>
+
+        <div class="form-row" v-if="mode == 'create'">
+          <label for="activeYears">Année d'activité à l'IUT*</label>
+          <select v-model="activeYears" name="activeYears" id="activeYears" class="form-row__input">
+            <option value="">-</option>
+            <option v-for="year in range(1993, 2023)" v-bind:key="year" v-bind:value="year">{{ year }}</option>
+          </select>
+
+          <span>/</span>
+
+          <select v-model="activeYears2" name="activeYears2" id="activeYears2" class="form-row__input">
+            <option value="">-</option>
+            <option v-for="year in range(1993, 2023)" v-bind:key="year" v-bind:value="year">{{ year }}</option>
+          </select>
+        </div>
+
+        <div class="form-row" v-if="mode == 'create'">
+          <input v-model="_function" class="form-row__input" type="text" placeholder="Fonction"/>
+          <input v-model="link" class="form-row__input" type="text" placeholder="Lien linkedIn"/>
+        </div>      
+
+        <div class="form-row" v-if="mode == 'create'">
+          <textarea v-model="note" class="form-row__input" placeholder="Note"/>
+        </div>      
+
+        <div class="form-row" v-if="mode == 'create'">
+          <label for="isParticipated">Je participe à l'événement</label>
+          <div class="cntr">
+            <input v-model="isParticipated" type="checkbox" id="isParticipated" class="hidden-xs-up">
+            <label for="isParticipated" class="cbx"></label>
+          </div>
+        </div>
+
+        <div class="form-row" v-if="mode == 'create'">
+          <label for="isPublic">Je souhaite afficher publiquement mes informations</label>
+          <div class="cntr">
+            <input v-model="isPublic" type="checkbox" id="isPublic" class="hidden-xs-up">
+            <label for="isPublic" class="cbx"></label>
+          </div>
+        </div>       
+
+        <!-- Button form -->
+        <div class="form-row">
+          <button class="button" @click="login()" :class="{'button--disabled' : !validatedFields}" :disabled="!validatedFields" v-if="mode == 'login'">
+            <span v-if="loading">Connexion en cours...</span>
+            <span v-else>Connexion</span>
+          </button>
+          <button @click="createAccount()" class="button" :class="{'button--disabled' : !validatedFields}" :disabled="!validatedFields" v-else>
+            <span v-if="loading">Création en cours...</span>
+            <span v-else>Créer mon compte</span>
+          </button>
+        </div>
+
     </div>
   </main>
 

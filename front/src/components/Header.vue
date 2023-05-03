@@ -42,7 +42,7 @@
     <div class="nav-top">
     </div>
 
-    <nav class="navbar navbar-expand-xxl">       
+    <nav class="navbar navbar-expand-xxxl">       
       <div class="nav-img">
         <a href="/"><img src="/img/logoIUTBlanc.png" alt="Logo de l'IUT Lyon 1" class="img-nav"></a>
       </div>  
@@ -74,6 +74,9 @@
 
       <div class="collapse navbar-collapse navbar-custom" id="navbar">
         <ul class="navbar-nav mr-auto navbar-ul">
+          <li class="nav-item">
+            <a class="nav-link" href="/">Accueil</a>            
+          </li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="/event" id="dropdown0" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Événement</a>
             <div class="dropdown-menu" aria-labelledby="dropdown0">
@@ -122,7 +125,7 @@
 </template>
 
 <style scoped>
-@media (min-width: 1400px) {  
+@media (min-width: 1550px) {  
   .navbar {
     position: absolute;
     display: flex;
@@ -164,7 +167,7 @@
   }  
 }
 
-@media (max-width: 1399px) {  
+@media (max-width: 1549px) {  
   .navbar {
     position: absolute;
     display: flex;
@@ -399,5 +402,21 @@
   padding-top: 12px;
   border-bottom: 1px solid #eceef0;
   padding-bottom: 12px;
+}
+
+@media (min-width: 1550px) {
+  .navbar-expand-xxxl {
+    flex-flow: row nowrap;
+    justify-content: flex-start;
+  }
+
+  .navbar-expand-xxxl .navbar-collapse {
+    display: flex !important;
+    flex-basis: auto !important;
+  }
+
+  .navbar-expand-xxxl .navbar-nav {
+    flex-direction: row;
+  }
 }
 </style>
