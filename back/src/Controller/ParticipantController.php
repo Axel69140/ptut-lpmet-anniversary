@@ -39,7 +39,7 @@ class ParticipantController extends AbstractController
     }
 
     // Get one participant
-    #[Route('/{id}', name: 'app_api_participant_get_one', methods: ['GET'])]
+    #[Route('/{email}', name: 'app_api_participant_get_one', methods: ['GET'])]
     public function getParticipantByEmail(string $email, GuestRepository $guestRepository, UserRepository $userRepository): JsonResponse
     {
         try {

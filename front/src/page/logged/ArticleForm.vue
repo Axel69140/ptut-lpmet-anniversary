@@ -126,7 +126,6 @@ input.upload {
     max-width: 50%;
     max-height: 80%;
     margin: 2%;
-    background-color: red;
 }
 .yesImage{
     width: 50%;

@@ -89,107 +89,124 @@
 </template>
 
 <style scoped>
-*{
-    margin: 0;
-    padding: 0;
-    border: none;
-}
+    *{
+        margin: 0;
+        padding: 0;
+        border: none;
+    }
 
-.stepWithoutPicture{
-    background-color: #fff;
-    border: 5px solid var(--third);
-    border-radius: 10px;
-    width: 90%;
-    padding: 15px;
-    margin: 0 20px;
-}
+    .footer{
+        position: inherit;
+    }
 
-.stepWithPicture{
-    background-color: #fff;
-    border: 5px solid var(--third);
-    border-radius: 10px;
-    width: 90%;
-    padding: 15px;
-    margin: 0 20px;
-}
+    .stepWithoutPicture{
+        background-color: #fff;
+        border: 5px solid var(--third);
+        border-radius: 10px;
+        width: 90%;
+        padding: 15px;
+        margin: 0 20px;
+    }
 
-li{
-    max-width: 50%;
-    display: flex;
-    flex-direction: column;
-}
+    .stepWithPicture{
+        background-color: #fff;
+        border: 5px solid var(--third);
+        border-radius: 10px;
+        width: 90%;
+        padding: 15px;
+        margin: 0 20px;
+    }
 
-li:nth-child(odd){
-    display: flex;
-    flex-direction: row-reverse;
-    margin-left: 50%;
-}
+    li{
+        max-width: 50%;
+        display: flex;
+        flex-direction: column;
+    }
 
-li:nth-child(even){
-    margin-right: 50%;
-}
+    li:nth-child(odd){
+        display: flex;
+        flex-direction: row-reverse;
+        margin-left: 50%;
+    }
 
-.stepWithBorder{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-}
+    li:nth-child(even){
+        margin-right: 50%;
+    }
 
-.dateStep{
-    color: var(--primary);
-}
+    .stepWithBorder{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
 
-.spans{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 1px;
-}
-span.barre{
-    content: "";
-    border: var(--primary) solid 4px;
-    height: 100%;
-}
+    .dateStep{
+        color: var(--primary);
+    }
 
-span.cercle{
-    content: "";
-    border: solid 5px;
-    border-radius: 50px;
-    color: var(--primary);
-    background-color: var(--secondary);
-    min-width: 40px;
-    min-height: 40px;
-}
+    .spans{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 1px;
+    }
+    span.barre{
+        content: "";
+        border: var(--primary) solid 4px;
+        height: 100%;
+    }
 
-.headerStep{
-    display: flex;
-    justify-content: space-between;
-}
+    span.cercle{
+        content: "";
+        border: solid 5px;
+        border-radius: 50px;
+        color: var(--primary);
+        background-color: var(--secondary);
+        min-width: 40px;
+        min-height: 40px;
+    }
 
-.imageStep{
-    margin: 10px 20px 10px 0;
-    max-width: 250px;
-    max-height: 200px;
-}
+    .headerStep{
+        display: flex;
+        justify-content: space-between;
+    }
 
-.floatImage{
-    float: left;
-}
+    .imageStep{
+        margin: 10px 20px 10px 0;
+        max-width: 250px;
+        max-height: 200px;
+    }
 
-.contentStep{
-    font-family: Avenir, Helvetica, Arial, sans-serif;
-    text-align: justify;
-}
+    .floatImage{
+        float: left;
+    }
 
-.mainStep{
-    margin: 25px 0 0 0;
-}
+    .contentStep{
+        font-family: Avenir, Helvetica, Arial, sans-serif;
+        text-align: justify;
+    }
 
-.endCercle{
-    margin: 0 50%;
-}
+    .mainStep{
+        margin: 25px 0 0 0;
+    }
 
-.allTimelineSteps {
-    margin-top: 100px;
-}
+    .endCercle{
+        margin: 0 50%;
+    }
+
+    @media (max-width: 600px) {
+        h2{
+            font-size: larger;
+        }
+        .headerStep{
+            flex-direction: column;
+        }
+    }
+
+    @media (max-width: 450px){
+        h2{
+            font-weight: bold;
+            font-size: medium;
+        }
+    }
+
 </style>

@@ -3,16 +3,19 @@
 namespace App\Controller;
 
 use App\Entity\Settings;
+use App\Repository\ActivityRepository;
 use App\Repository\AnecdoteRepository;
 use App\Repository\SettingsRepository;
 use App\Service\ExportDataService;
 use Doctrine\ORM\EntityManagerInterface;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use App\Service\EntryDataService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/settings')]
@@ -119,11 +122,11 @@ class SettingsController extends AbstractController
 
     // Export all datas
     #[Route('/export-csv', name: 'app_settings_export_csv', methods: ['GET'])]
-    public function exportCSV(AnecdoteRepository $anecdoteRepository, ExportDataService $exportDataService): JsonResponse
+    public function exportCSV(AnecdoteRepository $anecdoteRepository, ActivityRepository $activityRepository, ExportDataService $exportDataService, EntityManagerInterface $em): JsonResponse
     {
         try {
 
-            $exportDataService->exportAllCSV($anecdoteRepository);
+            $exportDataService->exportAllCSV([$anecdoteRepository, $activityRepository], $em);
             return $this->json('Done', 200);
 
         } catch (\Exception $e) {
