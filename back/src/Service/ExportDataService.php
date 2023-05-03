@@ -49,10 +49,13 @@ class ExportDataService
                     foreach ($entities as $entity) {
                         $entityDatas = [];
                         foreach ((array)$entity as $value) {
-                            if (!$value) {
-                                array_push($entityDatas, 'null');
+                            if ($value === null) {
+                                array_push($entityDatas, ' - ');
                             } else if (gettype($value) === 'object') {
-                                if (ClassUtils::getClass($value) === 'App\Entity\User') {
+                                if(!ClassUtils::getClass($value))
+                                {
+                                    array_push($entityDatas, ' - ');
+                                }else if (ClassUtils::getClass($value) === 'App\Entity\User') {
                                     array_push($entityDatas, '(' . $value->getId() . ') ' . $value->getFirstName() . ' ' . $value->getLastName());
                                 } else if (ClassUtils::getClass($value) === 'App\Entity\Media') {
                                     array_push($entityDatas, '(' . $value->getId() . ') ' . $value->getName());
@@ -60,16 +63,15 @@ class ExportDataService
                                     array_push($entityDatas, $value->format('H:i:s'));
                                 } else if (ClassUtils::getClass($value) === 'Doctrine\ORM\PersistentCollection') {
                                     if (!$value[0]) {
-                                        array_push($entityDatas, 'null');
+                                        array_push($entityDatas, '-');
                                     } else {
-
                                         if (ClassUtils::getClass($value[0]) === 'App\Entity\User' || ClassUtils::getClass($value[0]) === 'App\Entity\Guest') {
                                             $users = "";
                                             foreach ($value as $item) {
                                                 $users = $users . '(' . $item->getId() . ') ' . $item->getFirstName() . ' ' . $item->getLastName() . ' ';
                                             }
                                             array_push($entityDatas, $users);
-                                        } else if (ClassUtils::getClass($value[0]) === 'App\Entity\Media') {
+                                        } else if (ClassUtils::getClass($value[0]) === 'App\Entity\Media' || ClassUtils::getClass($value[0]) === 'App\Entity\Activity') {
                                             $medias = "";
                                             foreach ($value as $item) {
                                                 $medias = $medias . '(' . $item->getId() . ') ' . $item->getName() . ' ';
@@ -87,18 +89,22 @@ class ExportDataService
                                                 $anecdotes = $anecdotes . '(' . $item->getId() . ') ';
                                             }
                                             array_push($entityDatas, $anecdotes);
+                                        } else {
+                                            array_push($entityDatas, ' - ');
                                         }
                                     }
+                                } else {
+                                    array_push($entityDatas, ' - ');
                                 }
                             } else if (gettype($value) === 'array') {
                                 $strings = "";
                                 foreach ($value as $item) {
-                                    $strings = $strings . $item;
+                                    $strings = $strings . ' ' . $item;
                                 }
                                 array_push($entityDatas, $strings);
 
                             } else if (gettype($value) === 'boolean') {
-                                if ($value === 0) {
+                                if ($value === false) {
                                     array_push($entityDatas, '0');
                                 } else {
                                     array_push($entityDatas, '1');

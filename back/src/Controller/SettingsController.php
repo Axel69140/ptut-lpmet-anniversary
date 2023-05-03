@@ -127,7 +127,7 @@ class SettingsController extends AbstractController
     {
         try {
 
-            $exportDataService->exportAllCSV([$userRepository], $em);
+            $exportDataService->exportAllCSV([$userRepository, $activityRepository, $anecdoteRepository], $em);
             return $this->json('Done', 200);
 
         } catch (\Exception $e) {

@@ -54,6 +54,7 @@
           <div v-if="this.$store.state.user.token" class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="/" id="dropdown3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ getFirstName }} {{ getLastName }}</a>
             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown3">
+              <a class="dropdown-item" href="/profil">Profil</a>
               <a class="dropdown-item" href="" @click="logout()">Déconnexion</a>
               <div :v-if="isAdmin">
                 <a class="dropdown-item" href="/admin">Gestion administrateur</a>
@@ -107,6 +108,7 @@
           <div v-if="this.$store.state.user.token" class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="/" id="dropdown3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ getFirstName }} {{ getLastName }}</a>   
             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown3">
+              <a class="dropdown-item" href="/profil">Profil</a>
               <a class="dropdown-item" href="" @click="logout()">Déconnexion</a>
               <div :v-if="isAdmin">
                 <a class="dropdown-item" href="/admin">Gestion administrateur</a>
