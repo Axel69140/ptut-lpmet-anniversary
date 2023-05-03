@@ -9,20 +9,23 @@
             users: [],
             idUser: 1,
             email: '',
-            name: '',
+            firstName: '',
+            lastName: '',
         }),       
         computed: {            
         },
         methods: {     
             async saveGuest() {
-                if (this.name !== undefined && this.name !== '' && this.email !== undefined && this.email !== '') {
+                if (this.firstName !== undefined && this.firstName !== '' && this.email !== undefined && this.email !== '' && this.lastName !== undefined && this.lastName !== '') {
                     await guestService.createGuest({
-                        name: this.name,
+                        firstName: this.firstName,
+                        lastName: this.lastName,
                         email: this.email,
                         invitedBy: this.idUser,
                     });
 
-                    this.name = '';
+                    this.firstName = '';
+                    this.lastName = ' ';
                     this.email = '';
                     alert("Merci de votre contribution. Votre invité(e) à bien été pris en compte.");
                     this.$router.push('../event');
@@ -48,8 +51,12 @@
         <p class="informations"></p>
         <div class="formulaireInvite">
             <div class="divNameTZ">
+                <label class="labelFirstName">Prénom</label>
+                <input type="text" class="nameTextZone" v-model="firstName">
+            </div>
+            <div class="divNameTZ">
                 <label class="labelName">Nom</label>
-                <input type="text" class="nameTextZone" v-model="name">
+                <input type="text" class="nameTextZone" v-model="lastName">
             </div>
             <div class="divEmailTZ">
                 <label class="labelEmail">Email</label>
@@ -79,6 +86,10 @@ label.labelImage{
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.labelFirstName{
+    margin-right: 10px;
 }
 input.upload {
     position: absolute;
@@ -113,11 +124,11 @@ input.upload {
     background-color: #fff;
 }
 .labelEmail{
-    margin:  20px 15px 0 0;
+    margin:  20px 25px 0 0;
 }
 
 .labelName{
-    margin-right: 28px;
+    margin-right: 38px;
 }
 
 
@@ -142,13 +153,11 @@ input.upload {
 .footer{
     position: inherit;
 }
-.divEmailTZ{
-    margin: 20px 0;
-}
 .emailTextZone, .nameTextZone{
     width: 60%;
     border-radius: 20px;
     padding: 1%;
+    margin: 20px;
     border: solid 4px var(--primary);
 }
 
