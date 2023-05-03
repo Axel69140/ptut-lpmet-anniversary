@@ -5,7 +5,7 @@
 
   export default {
     name: 'login',
-    data: () => ({ mode: 'login', email: '', firstName: '', lastName: '', maidenName: '', password: '', password_confirmation: '', phone: '', 
+    data: () => ({ mode: 'login', loading: false, email: '', firstName: '', lastName: '', maidenName: '', password: '', password_confirmation: '', phone: '', 
                   activeYears: '', activeYears2: '',_function: '', link: '', note: '', isParticipated: '', isPublic: '', showMessage: false, 
                   invalidMail: false, invalidPassword: false, notSimilarPassword: false, alreadyUseMail: false, invalidYears: false}),       
     mounted() {
@@ -54,16 +54,19 @@
         this.mode = 'login';
       },      
       login() {
+        this.loading = true;
         const self = this;
         this.$store.dispatch('login', {
           email: this.email,
           password: this.password,
         }).then(function () {
-          self.$router.push('/');
+          self.$router.push('/');          
+          this.loading = false;
         }, function (error) {
         })
       },
       createAccount() {
+        this.loading = true;
         this.validateEmail();
         this.validatePassword();
         this.validateYears();
@@ -90,8 +93,11 @@
           }, function (error) {
             if(error) {
               self.alreadyUseMail = true;
+              this.loading = false;
             }
           })
+        } else {
+          this.loading = false;
         }
       },
       validateEmail: function() {
@@ -228,12 +234,12 @@
 
         <!-- Button form -->
         <div class="form-row">
-          <button class="button" :class="{'button--disabled' : !validatedFields}" :disabled="!validatedFields" v-if="mode == 'login'">
-            <span v-if="status == 'loading'">Connexion en cours...</span>
+          <button class="button" @click="login()" :class="{'button--disabled' : !validatedFields}" :disabled="!validatedFields" v-if="mode == 'login'">
+            <span v-if="loading">Connexion en cours...</span>
             <span v-else>Connexion</span>
           </button>
           <button @click="createAccount()" class="button" :class="{'button--disabled' : !validatedFields}" :disabled="!validatedFields" v-else>
-            <span v-if="status == 'loading'">Création en cours...</span>
+            <span v-if="loading">Création en cours...</span>
             <span v-else>Créer mon compte</span>
           </button>
         </div>

@@ -18,8 +18,7 @@
                     if(!article.isValidate){
                         this.articles.push(article);
                     }
-                });
-                console.log(this.articles);  
+                }); 
             });                 
         },
         components: {
