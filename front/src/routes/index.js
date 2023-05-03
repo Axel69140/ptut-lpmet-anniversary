@@ -2,7 +2,6 @@ import Home from '../page/unlogged/Home.vue';
 import Login from '../page/auth/Login.vue';
 import Article from '../page/unlogged/Article.vue';
 import Articles from '../page/unlogged/Articles.vue';
-import Contact from '../page/unlogged/Contact.vue';
 import MentionsLegales from '../page/unlogged/MentionsLegales.vue';
 import Plan from '../page/unlogged/Plan.vue';
 import Event from '../page/unlogged/Event.vue';
@@ -51,7 +50,6 @@ const isUserConnected = (to, from, next) => {
 const routes = [
     { path: '/', name: 'Accueil', component: Home },
     { path: '/login', name: 'Connexion', component: Login },
-    { path: '/contact', name: 'Contact', component: Contact },
     { path: '/mentions-legales', name: 'Mentions légales', component: MentionsLegales },
     { path: '/plan', name: 'Plan d\'accès', component: Plan },
     { path: '/articles',
