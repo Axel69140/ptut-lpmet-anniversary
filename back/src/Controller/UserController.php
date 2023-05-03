@@ -300,18 +300,18 @@ class UserController extends AbstractController
             $userRepository->save($user, true);
 
             // Send confirmation email about that the user is concreted create
-            $email = (new Email())
-                ->from('hello@example.com')
-                ->to($user->getEmail())
-                //->cc('cc@example.com')
-                //->bcc('bcc@example.com')
-                //->replyTo('fabien@example.com')
-                //->priority(Email::PRIORITY_HIGH)
-                ->subject('L\'utilisateur a bien été créé !')
-                //->text('Sending emails is fun again!')
-                ->html('<p>See Twig integration for better HTML integration!</p>');
-
-            $mailer->send($email);
+//            $email = (new Email())
+//                ->from('hello@example.com')
+//                ->to($user->getEmail())
+//                //->cc('cc@example.com')
+//                //->bcc('bcc@example.com')
+//                //->replyTo('fabien@example.com')
+//                //->priority(Email::PRIORITY_HIGH)
+//                ->subject('L\'utilisateur a bien été créé !')
+//                //->text('Sending emails is fun again!')
+//                ->html('<p>See Twig integration for better HTML integration!</p>');
+//
+//            $mailer->send($email);
 
             return $this->json($user, 201, [], ['groups' => ['user-return']]);
 
