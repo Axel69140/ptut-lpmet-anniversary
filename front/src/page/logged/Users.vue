@@ -5,6 +5,7 @@
     import Footer from '../../components/Footer.vue';
     import Loader from '../../components/Loader.vue';
     import { userService } from '../../services/user.services';
+    import { settingService } from '../../services/setting.service';
 
     export default {
         name: 'home',
@@ -14,6 +15,7 @@
             minNumber: 1993,
             maxNumber: 2023,
             users: [],
+            settings: [],
             isLoading: true
          }),       
         computed: {  
@@ -38,7 +40,6 @@
                         filtered = filtered.filter(user => (user.activeYears[0] <= this.minNumber && user.activeYears[1] >= this.minNumber)||(user.activeYears[0] == this.minNumber));
                     }
                 }                
-
                 return filtered;
             }
         },
@@ -53,13 +54,16 @@
             },
 
             userDetails(idUser){
-                console.log("test");
                 this.$router.push('/event/users/'+idUser);
             }
         },
         mounted() {    
             userService.getUsers().then(response => {
                 this.users = response.data;
+                this.isLoading = false;
+            });     
+            settingService.getSettings().then(response => {
+                this.settings = response.data;
                 this.isLoading = false;
             });     
         },
@@ -75,6 +79,7 @@
 <template>
     <Loader :isLoading="isLoading" class="loader-basique" />
     <main v-if="!isLoading">
+        
         <h1>Participants</h1>
         <div class="fullPage">
             <div class="filters">
@@ -85,15 +90,14 @@
                     </label>
                     
                 </div>
-                <div class="filterFunction">
+                <div v-if="settings.length > 0" class="filterFunction">
                     <label>fonction au sein de l'IUT</label>
                     <select id="inputFunction" v-model="selectedOption" name="inputFunction">
                         <option value="tous">tous</option>
-                        <option value="élève">élève</option>
-                        <option value="enseignant">enseignant</option>
-                        <option value="autre">autre</option>
+                        <option v-for="fct in settings[0].allowedFunctions.slice(1)" :value="fct">{{ fct }}</option>
                     </select>
                 </div>
+
                 <div class="filterYear form-row">
                     <label for="inputYear1">Année au sein de l'IUT de</label>
                     <input id="monInput" type="number" name="monInput" min="1993" max="2023" class="form-row__input" v-model="minNumber">

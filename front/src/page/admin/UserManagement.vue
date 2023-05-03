@@ -5,9 +5,11 @@
     import Footer from '../../components/Footer.vue';    
     import Loader from '../../components/Loader.vue';
     import { userService } from '../../services/user.services';
+    import { settingService } from '../../services/setting.service';
 
     const searchValue = ref('');
     let users = ref([]);
+    let settings = ref([]);
     const itemsSelected = ref<Item[]>([]);
     let isLoading = ref(true);
     let userEdit = false;
@@ -48,8 +50,12 @@
 
     const items: Item[] = users.value;
 
-    onMounted(() => {
+    onMounted (async() => {
+        await settingService.getSettings().then(response => {
+            settings.value = response.data;
+        });
         getUsers(); 
+         
     });    
 
     const getUsers = () => {    
@@ -83,6 +89,8 @@
             isParticipated.value = response.data.participated;
             isPublic.value = response.data.publicProfil; 
         });
+        
+        console.log(settings.value[0].allowedFunctions);
     };
 
     const createUser = () => {    
@@ -359,9 +367,11 @@
                                 <option v-for="year in range(1993, 2023)" v-bind:key="year" v-bind:value="year">{{ year }}</option>
                             </select>
                         </div>
-
-                        <div class="form-row">
-                            <input v-model="_function" class="form-row__input" type="text" placeholder="Fonction"/>
+                        
+                        <div v-if="settings.length > 0" class="form-row">
+                            <select v-model="_function" class="form-row__input" type="select" placeholder="Fonction">
+                                <option v-for="fct in settings[0].allowedFunctions.slice(1)" :value="fct">{{ fct }}</option>
+                            </select>
                             <input v-model="link" class="form-row__input" type="text" placeholder="Lien linkedIn"/>
                         </div>      
 
