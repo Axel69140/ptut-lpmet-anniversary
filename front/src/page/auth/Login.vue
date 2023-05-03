@@ -2,12 +2,13 @@
   import { mapState } from 'vuex';
   import Footer from '../../components/Footer.vue';
   import { accountService } from '../../services/account.services'; 
+  import { settingService } from '../../services/setting.service';
 
   export default {
     name: 'login',
     data: () => ({ mode: 'login', loading: false, email: '', firstName: '', lastName: '', maidenName: '', password: '', password_confirmation: '', phone: '', 
                   activeYears: '', activeYears2: '',_function: '', link: '', note: '', isParticipated: '', isPublic: '', showMessage: false, 
-                  invalidMail: false, invalidPassword: false, notSimilarPassword: false, alreadyUseMail: false, invalidYears: false}),       
+                  invalidMail: false, invalidPassword: false, notSimilarPassword: false, alreadyUseMail: false, invalidYears: false, settings: [],}),       
     mounted() {
       if (accountService.getToken()) {
         this.$router.push('/');
@@ -16,6 +17,9 @@
       if (this.$route.query.isConnected) {
         this.showMessage = true;
       }
+      settingService.getSettings().then(response => {
+            this.settings = response.data;
+      });
     },
     computed: {
       validatedFields: function () {
@@ -208,7 +212,10 @@
         </div>
 
         <div class="form-row" v-if="mode == 'create'">
-          <input v-model="_function" class="form-row__input" type="text" placeholder="Fonction"/>
+          <label class="form-row__label">Fonction</label>
+          <select id="function" class="form-row__input" v-model="selectedOption" name="inputFunction">
+            <option v-for="fct in settings[0].allowedFunctions.slice(1)" :value="fct">{{ fct }}</option>
+          </select>
           <input v-model="link" class="form-row__input" type="text" placeholder="Lien linkedIn"/>
         </div>      
 
@@ -337,5 +344,14 @@ h1 {
 
 span {
     font-size: 20px;
+}
+
+@media (max-width: 600px) {
+  .card{
+    width: auto;
+  }
+  .form-row{
+    flex-direction: column;
+  }
 }
 </style>
