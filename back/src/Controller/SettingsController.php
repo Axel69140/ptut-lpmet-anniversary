@@ -31,8 +31,7 @@ class SettingsController extends AbstractController
 
             $settings = $settingsRepository->findAll();
 
-            if(!$settings)
-            {
+            if (!$settings) {
                 $this->resetSettings($settingsRepository);
                 $settings = $settingsRepository->findAll();
             }
@@ -57,8 +56,7 @@ class SettingsController extends AbstractController
 
             $settings = $settingsRepository->findAll();
 
-            if(!$settings)
-            {
+            if (!$settings) {
                 $defaultSettings = new Settings();
                 $defaultSettings->setAllowedFunctions(["", "Enseignant", "Eleve", "Autre"])
                     ->setMaxNumberGuests(4);
@@ -79,7 +77,7 @@ class SettingsController extends AbstractController
         }
     }
 
-    // Update user
+    // Update settings
     #[Route('/update', name: 'app_api_settings_update', methods: ['PATCH'])]
     #[IsGranted('ROLE_ADMIN', statusCode: 403, message: 'Vous n\'avez pas les droits suffisants')]
     public function updateSettings(Request $request, SettingsRepository $settingsRepository, EntryDataService $entryDataService, ValidatorInterface $validator, EntityManagerInterface $em): JsonResponse
@@ -88,8 +86,7 @@ class SettingsController extends AbstractController
 
             $content = json_decode($request->getContent(), true);
             $settingsToUpdate = $settingsRepository->findAll();
-            if(!$settingsToUpdate)
-            {
+            if (!$settingsToUpdate) {
                 $this->resetSettings($settingsRepository);
                 $settingsToUpdate = $settingsRepository->findAll();
             }
@@ -121,14 +118,61 @@ class SettingsController extends AbstractController
         }
     }
 
-    // Export all datas
-    #[Route('/export-csv', name: 'app_settings_export_csv', methods: ['GET'])]
-    public function exportCSV(AnecdoteRepository $anecdoteRepository, ActivityRepository $activityRepository, ExportDataService $exportDataService, EntityManagerInterface $em, UserRepository $userRepository): JsonResponse
+    // Export datas
+    #[Route('/export-csv', name: 'app_settings_export_csv', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN', statusCode: 403, message: 'Vous n\'avez pas les droits suffisants')]
+    public function exportCSV(Request $request, ExportDataService $exportDataService, EntityManagerInterface $em): JsonResponse
     {
         try {
 
-            $exportDataService->exportAllCSV([$userRepository, $activityRepository, $anecdoteRepository], $em);
-            return $this->json('Done', 200);
+            $content = json_decode($request->getContent(), true);
+
+            if($content)
+            {
+                foreach ($content as $key => $item) {
+                    if ($key === "datasToExport") {
+                        $datasToExport = $item;
+                    } else if ($key === "exportParticipant") {
+                        $exportParticipant = $item;
+                    } else {
+                        return $this->json([
+                            'error' => 'Unknown keys'
+                        ], 403);
+                    }
+                }
+
+                if (!$datasToExport || ($exportParticipant !== false && $exportParticipant !== true)) {
+                    return $this->json([
+                        'error' => 'No repository provided or asking for much properties'
+                    ], 403);
+                }
+
+                $repos = [];
+
+                foreach ($datasToExport as $data) {
+                    try {
+                        $repo = $em->getRepository("App\Entity\\" . $data);
+                        array_push($repos, $repo);
+                    } catch (\Exception $e) {
+                        return $this->json([
+                            'error' => 'Can\'t find repo'
+                        ], 400);
+                    }
+                }
+
+                $fileToReturn = $exportDataService->exportAllCSV($repos, $em, $exportParticipant);
+                if ($fileToReturn === null) {
+                    return $this->json([
+                        'error' => 'A problem has been encounter during export'
+                    ], 400);
+                } else {
+                    return $this->json($fileToReturn, 200);
+                }
+            } else {
+                return $this->json([
+                    'error' => 'No content provided'
+                ], 403);
+            }
 
         } catch (\Exception $e) {
 

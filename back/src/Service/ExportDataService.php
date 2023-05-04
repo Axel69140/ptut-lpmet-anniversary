@@ -6,13 +6,15 @@ use Doctrine\Common\Util\ClassUtils;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use ReflectionClass;
+use App\Repository\UserRepository;
 
 class ExportDataService
 {
 
-    public function exportAllCSV($repositories, $em)
+    public function exportAllCSV($repositories, $em, $participants)
     {
         try {
+            $path = 'Exports/';
 
             $spreadsheet = new Spreadsheet();
 
@@ -121,8 +123,42 @@ class ExportDataService
                 }
             }
 
+            if($participants)
+            {
+
+                $activeSheet = $spreadsheet->createSheet();
+                $activeSheet->setTitle('Participants');
+
+                $datas = [];
+
+                $users = $em->getRepository('App\Entity\User')->findBy(['isParticipated' => true]);
+                $guests = $em->getRepository('App\Entity\Guest')->findAll();
+
+                array_push($datas, ["id", "Email", "Nom", "Prénom"]);
+
+                if($users)
+                {
+                    foreach ($users as $user)
+                    {
+                        array_push($datas, [$user->getId(), $user->getEmail(), $user->getLastName(), $user->getFirstName()]);
+                    }
+                }
+
+                if($guests)
+                {
+                    foreach ($guests as $guest)
+                    {
+                        array_push($datas, [$guest->getId(), $guest->getEmail(), $guest->getLastName(), $guest->getFirstName()]);
+                    }
+                }
+
+                $activeSheet->fromArray($datas);
+            }
+
             $writer = new Xlsx($spreadsheet);
-            $writer->save('export' . uniqid() . '.xlsx');
+            $saveName = $path . 'export-' . uniqid() . '.xlsx';
+            $writer->save($saveName);
+            return ['fileToDownload' => $saveName];
 
         } catch (\Exception $e) {
             return null;

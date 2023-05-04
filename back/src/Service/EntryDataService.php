@@ -76,35 +76,25 @@ class EntryDataService
             $setter = 'set' . ucfirst($key);
             $getter = 'get' . ucfirst($key);
 
-            
             // Vérification de l'existence de la méthode setter pour la propriété
             if (!method_exists($entity::class, $setter) || !method_exists($entity::class, $getter)) {
-                var_dump($key);
-                var_dump('not method exists');
                 return null;
             }
 
-            // Get the reflection class of your entity
             $reflectionClass = new ReflectionClass($entity::class);
 
-            // Get the setter method you're interested in
+            // Récupération de la méthode set
             $setterMethod = $reflectionClass->getMethod($setter);
 
-            // Get the type hint of the first parameter of the method
+            // Récupération du type voulu par le setter
             $parameterType = $setterMethod->getParameters()[0]->getType();
             $parameterTypeName = $parameterType->getName();
 
-            // If the type hint is a class or interface, get its name
-//            if ($parameterType && !$parameterType->isBuiltin()) {
-//                $parameterTypeName = $parameterTypeName;
-//            }
-
-            // Check if type are different
             if (!$this->isDifferentType($value, $parameterType)) {
                 return null;
             }
 
-            //Check if function is correct
+            // Check si la fonction pour les users est correcte
             if ($entity::class === User::class) {
 
                 $settingsRepository = $em->getRepository('App\Entity\Settings');
@@ -116,13 +106,7 @@ class EntryDataService
 
             // Appel de la méthode setter pour modifier la propriété
             try {
-                if (str_contains($parameterTypeName, 'App\Entity')) {                    
-
-//                    if (!$metadata->hasAssociation($key)) {
-//                        throw new \InvalidArgumentException(sprintf('The entity %s does not have an association named %s', $parameterTypeName, $key));
-//                    }
-
-//                    $targetEntity = $metadata->getAssociationTargetClass($key);
+                if (str_contains($parameterTypeName, 'App\Entity')) {
 
                     $entityRepository = $em->getRepository($parameterTypeName);
                     $entityToAffiliate = $entityRepository->findOneBy(['id' => $value]);
