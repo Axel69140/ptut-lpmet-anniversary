@@ -121,7 +121,7 @@
       <h3 class="titleActivity">Les activités présentent à l'évènement</h3>
       <ul class="listeActivities">
         <li v-for="activity in activities">
-          <div v-if="!activity.isValidate">
+          <div v-if="activity.isValidate">
             <h3>{{ activity.name }}</h3>
             <p class="descriptionActivity">{{ activity.description }}</p>
           </div>

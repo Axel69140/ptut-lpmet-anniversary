@@ -2,6 +2,7 @@
     import Footer from '../../components/Footer.vue';     
     import { saveAs } from 'file-saver';
     import axios from 'axios';
+    import Axios from '../../services/caller.services';
     import { accountService } from '../../services/account.services';
     import { articleService } from '../../services/article.services';
 
@@ -28,23 +29,22 @@
                         title: this.title,
                         creator: this.idUser,
                     });
-                    this.saveImage();
+                   // this.saveImage();
                     this.content = '';
                     this.title = '';
                     alert("Merci de votre contribution. Votre article à bien été pris en compte, après sa validation il apparaitra sur le site.");
-                    //this.$router.push('../event');
+                    this.$router.push('../event');
                 }
             },
 
             async saveImage() {
-                const formData = new FormData();
-                formData.append('username', this.username);
-                formData.append('email', this.email);
+                /*const formData = new FormData();
+                
                 formData.append('file', this.file);
-
-                axios.post('/medias/create', formData).then(response => {
+                console.log(formData);
+                Axios.post('/medias/create', formData).then(response => {
                     console.log("test");
-                });
+                });*/
             },
 
             previewImage(event, isDrop) {
