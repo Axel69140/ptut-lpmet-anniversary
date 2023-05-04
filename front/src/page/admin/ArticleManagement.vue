@@ -22,6 +22,7 @@
     let allUsers = [];
 
     const headers: Header[] = [
+        { text: "Validé", value: "isValidate", sortable: true },
         { text: "Utilisateur", value: "creator", sortable: true },
         { text: "Titre", value: "title", sortable: true },
         { text: "Contenu", value: "content", sortable: true }
@@ -141,6 +142,17 @@
         });
     };
 
+    const validateArticle = (articleId) => {
+        isLoading.value = true; 
+        articleService.editArticle(articleId, {
+            isValidate: true
+        }).then(async (response) => { 
+            await getArticles(); 
+            resetForm(); 
+            isLoading.value = false; 
+        }); 
+    }
+
     const range = (start, end) => {
         return Array(end - start + 1).fill().map((_, index) => start + index);
     }  
@@ -242,7 +254,8 @@
                 editArticle,
                 deleteArticle,
                 deleteArticles,
-                getUsers
+                getUsers,
+                validateArticle
             }
         }
     });
@@ -262,6 +275,7 @@
 
                 <div v-if="itemsSelected.length === 1">
                     <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#formModal" @click="getArticleById(itemsSelected[0].id)">Modifier la news</a>
+                    <a class="btn-custom btn-datatable" type="button" @click="validateArticle(itemsSelected[0].id)">Valider l'article</a>
                     <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#deleteModal">Supprimer la news</a>
                 </div>
 
@@ -291,6 +305,10 @@
 
                 <template #item-creator="item">
                     {{ item.creator.firstName }} {{ item.creator.lastName }}                   
+                </template>
+
+                <template #item-isValidate="item">
+                    {{ item.isValidate === true ? 'Oui' : 'Non' }}
                 </template>
             </EasyDataTable>
         </div>
