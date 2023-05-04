@@ -130,9 +130,18 @@
     };    
 
     const exportData = () => {
-        timelineService.exportTimelineData().then(async (response) => { 
-            // upload le pdf reçu     
-        })
+        timelineService.exportTimelineData().then(async (response) => {
+            const downloadUrl = response.data.fileToDownload;
+            const serverUrl = import.meta.env.VITE_URL_API;
+            const fullDownloadUrl = serverUrl + '/' + downloadUrl;    
+            const filename = 'export_timeline.xlsx';        
+            const link = document.createElement('a');
+            link.href = fullDownloadUrl;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link); 
+        });
     };
 
     const range = (start, end) => {

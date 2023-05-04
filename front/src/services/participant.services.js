@@ -1,20 +1,20 @@
 import Axios from '../services/caller.services';
 
 const getParticipants = () => {    
-    return Axios.get('https://127.0.0.1:8000/participants');
+    return Axios.get(import.meta.env.VITE_URL_API + '/participants');
 }
 
 const getParticipantByEMail = (participantMail) => {    
-    return Axios.get('https://127.0.0.1:8000/participants/' + participantMail);
+    return Axios.get(import.meta.env.VITE_URL_API + '/participants/' + participantMail);
 }
 
 const createParticipant = (participant) => {    
-    return Axios.post('https://127.0.0.1:8000/participants/create', participant);
+    return Axios.post(import.meta.env.VITE_URL_API + '/participants/create', participant);
 }
 
 
 const deleteParticipants = (emails) => {    
-    return Axios.delete('https://127.0.0.1:8000/participants/many', {
+    return Axios.delete(import.meta.env.VITE_URL_API + '/participants/many', {
         data: {
             email: emails
         }          
@@ -22,7 +22,10 @@ const deleteParticipants = (emails) => {
 }
 
 const exportParticipantData = () => {    
-    return Axios.get('https://127.0.0.1:8000/participants/export');
+    return Axios.post(import.meta.env.VITE_URL_API + '/settings/export-csv', {
+        datasToExport: ["Guest", "User"],
+        exportParticipant: true
+    });
 }
 
 export const participantService = {

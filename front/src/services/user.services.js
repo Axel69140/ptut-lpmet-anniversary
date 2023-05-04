@@ -1,31 +1,31 @@
 import Axios from '../services/caller.services';
 
 const getUsers = () => {    
-    return Axios.get('https://127.0.0.1:8000/users');
+    return Axios.get(import.meta.env.VITE_URL_API + '/users');
 }
 
 const getUserById = (userId) => {    
-    return Axios.get('https://127.0.0.1:8000/users/' + userId);
+    return Axios.get(import.meta.env.VITE_URL_API + '/users/' + userId);
 }
 
 const getGuestsByUser = (userId) => {
-    return Axios.get('https://127.0.0.1:8000/users/' + userId + '/guests');
+    return Axios.get(import.meta.env.VITE_URL_API + '/users/' + userId + '/guests');
 }
 
 const createUser = (user) => {    
-    return Axios.post('https://127.0.0.1:8000/users/register', user);
+    return Axios.post(import.meta.env.VITE_URL_API + '/users/register', user);
 }
 
 const editUser = (userId, user) => {    
-    return Axios.patch('https://127.0.0.1:8000/users/' + userId, user);
+    return Axios.patch(import.meta.env.VITE_URL_API + '/users/' + userId, user);
 }
 
 const deleteUser = (userId) => {    
-    return Axios.delete('https://127.0.0.1:8000/users/' + userId);
+    return Axios.delete(import.meta.env.VITE_URL_API + '/users/' + userId);
 }
 
 const deleteUsers = (ids) => {    
-    return Axios.delete('https://127.0.0.1:8000/users/many', {
+    return Axios.delete(import.meta.env.VITE_URL_API + '/users/many', {
         data: {
             id: ids
         }          
@@ -33,11 +33,14 @@ const deleteUsers = (ids) => {
 }
 
 const clearUserTable = () => {    
-    return Axios.delete('https://127.0.0.1:8000/users/clear');
+    return Axios.delete(import.meta.env.VITE_URL_API + '/users/clear');
 }
 
 const exportUserData = () => {    
-    return Axios.get('https://127.0.0.1:8000/users/export');
+    return Axios.post(import.meta.env.VITE_URL_API + '/settings/export-csv', {
+        datasToExport: ["User"],
+        exportParticipant: false
+    });
 }
 
 export const userService = {

@@ -1,27 +1,27 @@
 import Axios from '../services/caller.services';
 
 const getArticles = () => {    
-    return Axios.get('https://127.0.0.1:8000/articles');
+    return Axios.get(import.meta.env.VITE_URL_API + '/articles');
 }
 
 const getArticleById = (articleId) => {    
-    return Axios.get('https://127.0.0.1:8000/articles/' + articleId);
+    return Axios.get(import.meta.env.VITE_URL_API + '/articles/' + articleId);
 }
 
 const createArticle = (article) => {    
-    return Axios.post('https://127.0.0.1:8000/articles/create', article);
+    return Axios.post(import.meta.env.VITE_URL_API + '/articles/create', article);
 }
 
 const editArticle = (articleId, article) => {    
-    return Axios.patch('https://127.0.0.1:8000/articles/' + articleId, article);
+    return Axios.patch(import.meta.env.VITE_URL_API + '/articles/' + articleId, article);
 }
 
 const deleteArticle = (articleId) => {    
-    return Axios.delete('https://127.0.0.1:8000/articles/' + articleId);
+    return Axios.delete(import.meta.env.VITE_URL_API + '/articles/' + articleId);
 }
 
 const deleteArticles = (ids) => {    
-    return Axios.delete('https://127.0.0.1:8000/articles/many', {
+    return Axios.delete(import.meta.env.VITE_URL_API + '/articles/many', {
         data: {
             id: ids
         }          
@@ -29,11 +29,14 @@ const deleteArticles = (ids) => {
 }
 
 const clearArticleTable = () => {    
-    return Axios.delete('https://127.0.0.1:8000/articles/clear');
+    return Axios.delete(import.meta.env.VITE_URL_API + '/articles/clear');
 }
 
 const exportArticleData = () => {    
-    return Axios.get('https://127.0.0.1:8000/articles/export');
+    return Axios.post(import.meta.env.VITE_URL_API + '/settings/export-csv', {
+        datasToExport: ["Article"],
+        exportParticipant: true
+    });
 }
 
 export const articleService = {

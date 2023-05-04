@@ -170,12 +170,21 @@
         }).catch(err => {
             console.log("Error : Impossible de vider la table utilisateur");
         });
-    };    
+    };   
 
     const exportData = () => {
-        userService.exportUserData().then(async (response) => { 
-            // upload le pdf reçu     
-        })
+        userService.exportUserData().then(async (response) => {
+            const downloadUrl = response.data.fileToDownload;
+            const serverUrl = import.meta.env.VITE_URL_API;
+            const fullDownloadUrl = serverUrl + '/' + downloadUrl;    
+            const filename = 'export_user.xlsx';        
+            const link = document.createElement('a');
+            link.href = fullDownloadUrl;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link); 
+        });
     };
 
     const range = (start, end) => {
