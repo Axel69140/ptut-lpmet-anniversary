@@ -25,7 +25,6 @@ export default {
 
         // reset content input
         this.content = '';
-        alert("Votre anecdote à bien été pris en compte après sa validation elle apparaitra lors de l'évènement du 30ième anniversaire du département informatique.");
         this.$router.push('../event');
       }
     }

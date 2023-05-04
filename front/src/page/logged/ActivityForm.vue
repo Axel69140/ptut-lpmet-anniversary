@@ -16,12 +16,14 @@
             totalStartHour: '',
             idUser: 1,
             validInput: false,
+            invalidHoraire: false,
 
          }),       
         computed: {            
         },
         methods: {     
             async parameterActivity() {
+                this.invalidHoraire = false;
                 if (this.description !== undefined && this.description !== '' && this.name !== undefined && this.name !== '') {
                     if(this.isAllDay){
                         this.totalDuration = "23:59:00Z";
@@ -40,7 +42,7 @@
                         this.validInput = true;
                     }
                     else{
-                        alert("Horaire");
+                        this.invalidHoraire = true;
                     }
                     if(this.validInput){
                         await activityService.createActivity({
@@ -52,7 +54,6 @@
 
                         this.description = '';
                         this.name = '';
-                        alert("Merci de votre contribution. Votre activité à bien été pris en compte, après sa validation il apparaitra sur le site.");
                         this.validInput = false;
                         this.$router.push('../event');
                     }
@@ -72,6 +73,9 @@
 <template>
     <main>
         <h1>Proposer une activité</h1>
+        <div class="alert alert-danger" role="alert" v-if="invalidHoraire">
+            Horaire manquante
+        </div>
         <p class="informations"></p>
         <div class="formulaireActivite">
             <div class="divTitleTZ">

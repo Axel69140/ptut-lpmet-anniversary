@@ -11,14 +11,18 @@
             email: '',
             firstName: '',
             lastName: '',
+            invalidMail: false,
+            invalidInfo: false,
         }),       
         computed: {            
         },
         methods: {     
             async saveGuest() {
+                this.invalidMail = false;
+                this.invalidInfo = false;
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 if (this.email && !emailRegex.test(this.email)) {
-                    alert('Email invalide');
+                    this.invalidMail = true;
                 } else {
                     if (this.firstName !== undefined && this.firstName !== '' && this.email !== undefined && this.email !== '' && this.lastName !== undefined && this.lastName !== '') {
                     await guestService.createGuest({
@@ -31,11 +35,10 @@
                     this.firstName = '';
                     this.lastName = ' ';
                     this.email = '';
-                    alert("Merci de votre contribution. Votre invité(e) à bien été pris en compte.");
                     this.$router.push('../event');
                     }
                     else{
-                        alert('Il manque des informations');
+                        this.invalidInfo = true;
                     }
                 }
                 
@@ -54,6 +57,12 @@
 <template>
     <main>
         <h1>Ajouter un(e) invité(e)</h1>
+        <div class="alert alert-danger" role="alert" v-if="invalidMail">
+            Adresse mail invalide
+        </div>
+        <div class="alert alert-danger" role="alert" v-if="invalidInfo">
+            Informations manquantes
+        </div>
         <p class="informations"></p>
         <div class="formulaireInvite">
             <div class="divNameTZ">

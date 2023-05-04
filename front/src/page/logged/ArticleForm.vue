@@ -32,7 +32,6 @@
                    // this.saveImage();
                     this.content = '';
                     this.title = '';
-                    alert("Merci de votre contribution. Votre article à bien été pris en compte, après sa validation il apparaitra sur le site.");
                     this.$router.push('../event');
                 }
             },
