@@ -27,7 +27,7 @@ import { accountService } from '../services/account.services';
 // Check if user is admin
 const isAdmin = (to, from, next) => {
     if (accountService.getToken()) {
-      Axios.get(`https://127.0.0.1:8000/users/${accountService.getId()}/role`).then((response) => {
+      Axios.get(`${import.meta.env.VITE_URL_API}/users/${accountService.getId()}/role`).then((response) => {
         if (response.data && response.data.role[0] === 'ROLE_ADMIN') {
           next()
         } else {
