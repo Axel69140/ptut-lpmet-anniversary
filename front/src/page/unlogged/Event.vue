@@ -25,7 +25,6 @@
     async mounted() {      
       await activityService.getActivities().then((response) => {
         this.activities = response.data;
-        console.log(this.activities);
       });      
 
       const idUser = await accountService.getId();

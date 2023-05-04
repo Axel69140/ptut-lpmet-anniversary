@@ -54,7 +54,6 @@
                 }else{
                     file = event.target.files[0];
                 }
-                console.log(file);
                 if (!file) return;
                 const reader = new FileReader();
                 reader.onload = (event) => {
@@ -66,7 +65,6 @@
             dropHandler(event) {
                 event.preventDefault();
                 const file = event.dataTransfer.files[0];
-                console.log(file);
                 this.previewImage(event,true);
             },
         },

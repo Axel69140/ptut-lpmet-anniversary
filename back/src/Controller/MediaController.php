@@ -14,7 +14,6 @@ class MediaController extends AbstractController
     #[Route('/create', name: 'app_media_create', methods: ['POST'])]
     public function index(Request $request): JsonResponse
     {
-        dd("r");
         try{
             // Get the uploaded file
             $file = $request->files->get('file');
