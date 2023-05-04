@@ -266,7 +266,7 @@
     </div>
   </main>
 
-  <Footer :class="{'create-footer' : mode == 'create'}" />
+  <Footer/>
 </template>
   
 <style scoped>
@@ -276,11 +276,17 @@ main {
   justify-content: center;  
   padding-top: 80px;
   background-image: url("/img/bg-login.webp");
+  background-image: url(/img/bg-login.webp);
+  background-size: cover; 
+  background-repeat: no-repeat; 
+  background-position: center center;
+  margin-bottom: -20px;
 }
 
-.create-footer {
+footer {
   position: inherit;
 }
+
 .card {
   max-width: 100%;
   width: 540px;
