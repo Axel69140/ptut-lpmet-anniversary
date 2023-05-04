@@ -1,5 +1,7 @@
 <script>  
     import Footer from '../../components/Footer.vue';     
+    import { saveAs } from 'file-saver';
+    import axios from 'axios';
     import { accountService } from '../../services/account.services';
     import { articleService } from '../../services/article.services';
 
@@ -11,6 +13,10 @@
             content: '',
             title: '', 
             imageUrl: null,
+            username: '',
+            email: '',
+            file: null
+
         }),       
         computed: {            
         },
@@ -20,15 +26,27 @@
                     await articleService.createArticle({
                         content: this.content,
                         title: this.title,
-                        id_user: this.idUser,
+                        creator: this.idUser,
                     });
-
+                    this.saveImage();
                     this.content = '';
                     this.title = '';
                     alert("Merci de votre contribution. Votre article à bien été pris en compte, après sa validation il apparaitra sur le site.");
-                    this.$router.push('../event');
+                    //this.$router.push('../event');
                 }
             },
+
+            async saveImage() {
+                const formData = new FormData();
+                formData.append('username', this.username);
+                formData.append('email', this.email);
+                formData.append('file', this.file);
+
+                axios.post('/medias/create', formData).then(response => {
+                    console.log("test");
+                });
+            },
+
             previewImage(event, isDrop) {
                 let file = null;
                 if(isDrop){
@@ -43,6 +61,7 @@
                     this.imageUrl = event.target.result;
                 };
                 reader.readAsDataURL(file);
+                this.file = event.target.files[0];
             },
             dropHandler(event) {
                 event.preventDefault();
@@ -65,26 +84,31 @@
     <main>
         <h1>Proposer une news</h1>
         <p class="informations"></p>
-        <div class="formulaireArticle">
-            <div class="divTitleTZ">
-                <label class="labelTitle">Titre de la news</label>
-                <input type="text" class="titleTextZone" v-model="title">
+        <form @submit.prevent="handleSubmit">
+            <div class="formulaireArticle">
+                <div class="divTitleTZ">
+                    <label class="labelTitle">Titre de la news</label>
+                    <input type="text" class="titleTextZone" v-model="title">
+                </div>
+                <div class="divContentTZ">
+                    <label class="labelContent">Contenu de la news</label>
+                    <textarea class="contentTextZone" rows="10" cols="100" v-model="content"></textarea>
+                </div>
+                <div class="divImage">
+                    <label v-if="!imageUrl" for="imageFile" class="labelImage dropzone" @drop="dropHandler" @dragover.prevent>Ajouter une image à la news</label>
+                    <label  v-if="imageUrl" for="imageFile" class="labelImage dropzone" @drop="dropHandler" @dragover.prevent>Changer d'image
+                        <img :src="imageUrl" v-if="imageUrl" class="imagePreview">
+                    </label>
+                    <input class="upload" id="imageFile" name="imageFile" ref="fileInput" type="file" accept=".png, .jpeg, .jpg, .webp" @change="this.previewImage($event,false)">
+                </div>
+                <div class="sendButton">
+                    <button @click="parameterArticle()" type="submit" class="btn-custom">Envoyer la news</button>
+                </div>
             </div>
-            <div class="divContentTZ">
-                <label class="labelContent">Contenu de la news</label>
-                <textarea class="contentTextZone" rows="10" cols="100" v-model="content"></textarea>
-            </div>
-            <div class="divImage">
-                <label v-if="!imageUrl" for="imageFile" class="labelImage dropzone" @drop="dropHandler" @dragover.prevent>Ajouter une image à la news</label>
-                <label  v-if="imageUrl" for="imageFile" class="labelImage dropzone" @drop="dropHandler" @dragover.prevent>Changer d'image
-                    <img :src="imageUrl" v-if="imageUrl" class="imagePreview">
-                </label>
-                <input class="upload" id="imageFile" name="imageFile" type="file" accept=".png, .jpeg, .jpg, .webp" @change="this.previewImage($event,false)">
-            </div>
-            <div class="sendButton">
-                <button @click="parameterArticle()" class="btn-custom">Envoyer la news</button>
-            </div>
-        </div>
+        
+        </form>
+
+
     </main>
     
     <Footer class="footer" />
