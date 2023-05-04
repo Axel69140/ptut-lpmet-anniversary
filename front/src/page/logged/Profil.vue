@@ -32,7 +32,6 @@ import { ref } from 'vue';
                 return Array(end - start + 1).fill().map((_, index) => start + index);
             },
             save(){
-                console.log(this.isPublicProfil);
                 userService.editUser(this.idUser,{
                     email: this.email,
                     firstName: this.firstName,

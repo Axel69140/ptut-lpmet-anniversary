@@ -4,7 +4,7 @@ import { router } from '../routes';
 import { accountService } from './account.services';
 
 const Axios = axios.create({
-    baseURL: 'https://127.0.0.1:8000'
+    baseURL: import.meta.env.VITE_URL_API
 })
 
 Axios.interceptors.request.use(request => {    
@@ -25,10 +25,6 @@ Axios.interceptors.response.use(response => {
     if (error.response.status === 401) {
         store.commit('logout');
         router.push('/login');
-    }
-
-    if (error.response.status === 404) {
-        
     }
 });
 

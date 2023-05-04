@@ -131,11 +131,20 @@
             console.log("Error : Impossible de vider la table activité");
         });
     };    
-
+    
     const exportData = () => {
-        activityService.exportActivityData().then(async (response) => { 
-            // upload le pdf reçu     
-        })
+        activityService.exportActivityData().then(async (response) => {
+            const downloadUrl = response.data.fileToDownload;
+            const serverUrl = import.meta.env.VITE_URL_API;
+            const fullDownloadUrl = serverUrl + '/' + downloadUrl;    
+            const filename = 'export_activity.xlsx';        
+            const link = document.createElement('a');
+            link.href = fullDownloadUrl;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link); 
+        });
     };
 
     const resetForm = () => {

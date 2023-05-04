@@ -16,7 +16,11 @@
         },
         methods: {     
             async saveGuest() {
-                if (this.firstName !== undefined && this.firstName !== '' && this.email !== undefined && this.email !== '' && this.lastName !== undefined && this.lastName !== '') {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (this.email && !emailRegex.test(this.email)) {
+                    alert('Email invalide');
+                } else {
+                    if (this.firstName !== undefined && this.firstName !== '' && this.email !== undefined && this.email !== '' && this.lastName !== undefined && this.lastName !== '') {
                     await guestService.createGuest({
                         firstName: this.firstName,
                         lastName: this.lastName,
@@ -29,10 +33,12 @@
                     this.email = '';
                     alert("Merci de votre contribution. Votre invité(e) à bien été pris en compte.");
                     this.$router.push('../event');
+                    }
+                    else{
+                        alert('Il manque des informations');
+                    }
                 }
-                else{
-                    alert('Il manque des informations');
-                }
+                
             }
         },
         async mounted() {
@@ -60,7 +66,7 @@
             </div>
             <div class="divEmailTZ">
                 <label class="labelEmail">Email</label>
-                <input type="text" class="emailTextZone"  v-model="email">
+                <input type="email" class="emailTextZone"  v-model="email">
             </div>
             <div class="sendButton">
                 <button @click="saveGuest()" class="btn-custom">Ajouter l'invité(e)</button>

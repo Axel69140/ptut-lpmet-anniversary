@@ -1,27 +1,27 @@
 import Axios from '../services/caller.services';
 
 const getTimelineSteps = () => {    
-    return Axios.get('https://127.0.0.1:8000/timelinesteps');
+    return Axios.get(import.meta.env.VITE_URL_API + '/timelinesteps');
 }
 
 const getTimelineStepById = (timelineStepId) => {    
-    return Axios.get('https://127.0.0.1:8000/timelinesteps/' + timelineStepId);
+    return Axios.get(import.meta.env.VITE_URL_API + '/timelinesteps/' + timelineStepId);
 }
 
 const createTimelineStep = (timeline) => {    
-    return Axios.post('https://127.0.0.1:8000/timelinesteps/create', timeline);
+    return Axios.post(import.meta.env.VITE_URL_API + '/timelinesteps/create', timeline);
 }
 
 const editTimelineStep = (timelineStepId, timeline) => {    
-    return Axios.patch('https://127.0.0.1:8000/timelinesteps/' + timelineStepId, timeline);
+    return Axios.patch(import.meta.env.VITE_URL_API + '/timelinesteps/' + timelineStepId, timeline);
 }
 
 const deleteTimelineStep = (timelineStepId) => {    
-    return Axios.delete('https://127.0.0.1:8000/timelinesteps/' + timelineStepId);
+    return Axios.delete(import.meta.env.VITE_URL_API + '/timelinesteps/' + timelineStepId);
 }
 
 const deleteTimelineSteps = (ids) => {    
-    return Axios.delete('https://127.0.0.1:8000/timelinesteps/many', {
+    return Axios.delete(import.meta.env.VITE_URL_API + '/timelinesteps/many', {
         data: {
             id: ids
         }          
@@ -29,11 +29,14 @@ const deleteTimelineSteps = (ids) => {
 }
 
 const clearTimelineTable = () => {    
-    return Axios.delete('https://127.0.0.1:8000/timelinesteps/clear');
+    return Axios.delete(import.meta.env.VITE_URL_API + '/timelinesteps/clear');
 }
 
 const exportTimelineData = () => {    
-    return Axios.get('https://127.0.0.1:8000/timelinesteps/export');
+    return Axios.post(import.meta.env.VITE_URL_API + '/settings/export-csv', {
+        datasToExport: ["TimelineStep"],
+        exportParticipant: false
+    });
 }
 
 export const timelineService = {

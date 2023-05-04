@@ -1,27 +1,27 @@
 import Axios from '../services/caller.services';
 
 const getActivities = () => {    
-    return Axios.get('https://127.0.0.1:8000/activities');
+    return Axios.get(import.meta.env.VITE_URL_API + '/activities');
 }
 
 const getActivityById = (activityId) => {    
-    return Axios.get('https://127.0.0.1:8000/activities/' + activityId);
+    return Axios.get(import.meta.env.VITE_URL_API + '/activities/' + activityId);
 }
 
 const createActivity = (activity) => {    
-    return Axios.post('https://127.0.0.1:8000/activities/create', activity);
+    return Axios.post(import.meta.env.VITE_URL_API + '/activities/create', activity);
 }
 
 const editActivity = (activityId, activity) => {    
-    return Axios.patch('https://127.0.0.1:8000/activities/' + activityId, activity);
+    return Axios.patch(import.meta.env.VITE_URL_API + '/activities/' + activityId, activity);
 }
 
 const deleteActivity = (activityId) => {    
-    return Axios.delete('https://127.0.0.1:8000/activities/' + activityId);
+    return Axios.delete(import.meta.env.VITE_URL_API + '/activities/' + activityId);
 }
 
 const deleteActivities = (ids) => {    
-    return Axios.delete('https://127.0.0.1:8000/activities/many', {
+    return Axios.delete(import.meta.env.VITE_URL_API + '/activities/many', {
         data: {
             id: ids
         }          
@@ -29,11 +29,14 @@ const deleteActivities = (ids) => {
 }
 
 const clearActivityTable = () => {    
-    return Axios.delete('https://127.0.0.1:8000/activities/clear');
+    return Axios.delete(import.meta.env.VITE_URL_API + '/activities/clear');
 }
 
 const exportActivityData = () => {    
-    return Axios.get('https://127.0.0.1:8000/activities/export');
+    return Axios.post(import.meta.env.VITE_URL_API + '/settings/export-csv', {
+        datasToExport: ["Activity"],
+        exportParticipant: true
+    });
 }
 
 export const activityService = {

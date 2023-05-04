@@ -127,9 +127,18 @@
     };    
 
     const exportData = () => {
-        articleService.exportArticleData().then(async (response) => { 
-            // upload le pdf reçu     
-        })
+        articleService.exportArticleData().then(async (response) => {
+            const downloadUrl = response.data.fileToDownload;
+            const serverUrl = import.meta.env.VITE_URL_API;
+            const fullDownloadUrl = serverUrl + '/' + downloadUrl;    
+            const filename = 'export_erticle.xlsx';        
+            const link = document.createElement('a');
+            link.href = fullDownloadUrl;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link); 
+        });
     };
 
     const range = (start, end) => {
@@ -152,7 +161,6 @@
         }else{
             file = event.target.files[0];
         }
-        console.log(file);
         if (!file) return;
         const reader = new FileReader();
         reader.onload = (event) => {

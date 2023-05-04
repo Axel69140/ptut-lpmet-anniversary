@@ -18,7 +18,7 @@
     const firstName = ref('');
     const lastName = ref('');
     const email = ref('');
-    let mode = 'no_create';
+    let mode = ref('no_create');
     const selectedUser = ref('');
     let allUsers = [];
 
@@ -59,9 +59,9 @@
             participantEdit = true;    
 
             if (response.data[0].roles) {
-                mode = 'edit_user';                           
+                mode.value = 'edit_user';                           
             } else {
-                mode = 'edit_guest';
+                mode.value = 'edit_guest';
                 id.value = response.data[0].id;
                 firstName.value = response.data[0].firstName;
                 lastName.value = response.data[0].lastName;
@@ -121,9 +121,18 @@
     };
 
     const exportData = () => {
-        participantService.exportParticipantData().then(async (response) => { 
-            // upload le pdf reçu     
-        })
+        participantService.exportParticipantData().then(async (response) => {
+            const downloadUrl = response.data.fileToDownload;
+            const serverUrl = import.meta.env.VITE_URL_API;
+            const fullDownloadUrl = serverUrl + '/' + downloadUrl;    
+            const filename = 'export_participant.xlsx';        
+            const link = document.createElement('a');
+            link.href = fullDownloadUrl;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link); 
+        });
     };
 
     const resetForm = () => {

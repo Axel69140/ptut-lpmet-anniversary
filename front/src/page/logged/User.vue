@@ -17,15 +17,12 @@
             },
         },
         mounted() {
-            console.log("test");  
             const url = window.location.pathname;
             const match = url.match(/\/users\/(\d+)/);
             const userId = match && match[1];
-            console.log("test");
             userService.getUserById(userId).then(response => {
                 this.user = response.data;
                 this.isLoading = false;
-                console.log(response.data);
             });
         },
         components: {

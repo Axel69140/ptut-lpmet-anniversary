@@ -1,4 +1,3 @@
-import Axios from '../services/caller.services'
 import store from '../store'
 
 const logout = () => {
