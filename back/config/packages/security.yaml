@@ -31,7 +31,11 @@ security:
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/profile, roles: ROLE_USER }
         - { path: ^/users/login, roles: PUBLIC_ACCESS }
-        - { path: ^/users/register, roles: PUBLIC_ACCESS }
+        - { path: ^/users/register, roles: PUBLIC_ACCESS }*
+        - { path: ^/settings, roles: PUBLIC_ACCESS }
+        - { path: ^/settings/create, roles: ROLE_ADMIN }
+        - { path: ^/settings/update, roles: ROLE_ADMIN }
+        - { path: ^/settings/export-csv, roles: ROLE_ADMIN }
         - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
 
 when@test:

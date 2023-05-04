@@ -18,7 +18,7 @@
         this.showMessage = true;
       }
       settingService.getSettings().then(response => {
-            this.settings = response.data;
+          this.settings = response.data;
       });
     },
     computed: {

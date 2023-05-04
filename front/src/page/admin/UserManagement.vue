@@ -28,11 +28,11 @@
     const note = ref('');
     const isParticipated = ref('');
     const isPublic = ref('');
-    let invalidMail = false;
-    let invalidPassword = false;
-    let notSimilarPassword = false;
-    let alreadyUseMail = false;
-    let invalidYears = false;
+    let invalidMail = ref(false);
+    let invalidPassword = ref(false);
+    let notSimilarPassword = ref(false);
+    let alreadyUseMail = ref(false);
+    let invalidYears = ref(false);
 
     const headers: Header[] = [
         { text: "Prénom", value: "firstName", sortable: true },
@@ -193,31 +193,31 @@
     const validateEmail = () => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (email && !emailRegex.test(email.value)) {
-          invalidMail = true;
+          invalidMail.value = true;
         } else {
-          invalidMail = false;
+          invalidMail.value = false;
         }
     }
 
     const validatePassword = () => {
         const regex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
         if (password.value === password_confirmation.value) {
-          notSimilarPassword = false;
+          notSimilarPassword.value = false;
           if (!regex.test(password.value)) {
-            invalidPassword = true    
+            invalidPassword.value = true    
           } else {
-            invalidPassword = false;
+            invalidPassword.value = false;
           }          
         } else {
-          notSimilarPassword = true;
+          notSimilarPassword.value = true;
         }
     }
       
     const validateYears = () => {
         if (activeYears.value > activeYears2.value) {
-          invalidYears = true;
+          invalidYears.value = true;
         } else {
-          invalidYears = false;
+          invalidYears.value = false;
         }
     }
 
