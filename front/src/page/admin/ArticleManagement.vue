@@ -161,7 +161,6 @@
         }else{
             file = event.target.files[0];
         }
-        console.log(file);
         if (!file) return;
         const reader = new FileReader();
         reader.onload = (event) => {

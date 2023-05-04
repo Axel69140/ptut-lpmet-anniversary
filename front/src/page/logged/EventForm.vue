@@ -37,23 +37,19 @@ export default {
       }
     },
     deleteGuest(guestId){
-      console.log(guestId);
       guestService.deleteGuest(guestId);
       this.$router.push('../event');
     }
   },
   async mounted() {
     const idUser = await accountService.getId();
-    console.log(idUser);
     this.user = await userService.getUserById(idUser);
     const guests = await userService.getGuestsByUser(idUser);
     this.settings = await settingService.getSettings();
-    console.log(guests);
     if(this.user.data.isParticipated){
       this.isInputChecked = true;
     }
     this.guests = guests;
-    console.log(this.user);
     
     const second = 1000,
       minute = second * 60,

@@ -15,7 +15,7 @@
         mounted() { 
             articleService.getArticles().then((articles) => { 
                 articles.data.forEach(article => {
-                    if(!article.isValidate){
+                    if(article.isValidate){
                         this.articles.push(article);
                     }
                 }); 

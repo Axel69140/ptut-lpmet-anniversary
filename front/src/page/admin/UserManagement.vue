@@ -90,7 +90,6 @@
             isPublic.value = response.data.publicProfil; 
         });
         
-        console.log(settings.value[0].allowedFunctions);
     };
 
     const createUser = () => {    

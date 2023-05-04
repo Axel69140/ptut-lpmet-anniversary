@@ -18,7 +18,6 @@ export default {
   methods: {
     async parameterAnecdote() {
       if (this.content !== undefined && this.content !== '') {
-        console.log(this.idUser);
         await anecdoteService.createAnecdote({
           content: this.content,
           creator: this.idUser,
