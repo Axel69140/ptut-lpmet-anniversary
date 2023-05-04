@@ -5,6 +5,7 @@ import Footer from '../../components/Footer.vue';
 import { userService } from '../../services/user.services';
 import { accountService } from '../../services/account.services';
 import { guestService } from '../../services/guest.service';
+import { settingService } from '../../services/setting.service';
 import Loader from '../../components/Loader.vue';
 
 export default {
@@ -12,6 +13,7 @@ export default {
   data: () => ({ 
     guests: {},
     user:[],
+    settings:[],
     isInputChecked: false,
     isLoading: true
   }),       
@@ -45,6 +47,7 @@ export default {
     console.log(idUser);
     this.user = await userService.getUserById(idUser);
     const guests = await userService.getGuestsByUser(idUser);
+    this.settings = await settingService.getSettings();
     console.log(guests);
     if(this.user.data.isParticipated){
       this.isInputChecked = true;
@@ -142,12 +145,16 @@ export default {
         <div class="invitation" v-for="guest in guests.data">
           <div class="guest">
             <div class="name">
+              <p>Prénom : </p>
+              <p>{{ guest.lastName }}</p>
+            </div>
+            <div class="name">
               <p>Nom : </p>
-              <p>{{ guest.name }}</p>
+              <p>{{ guest.firstName }}</p>
             </div>
             <div class="email">
               <p>Email : </p>
-              <p>{{ guest.email }}{{ guest.id }}</p>
+              <p>{{ guest.email }}</p>
             </div>
             <div class="info" >
               <p class="deleteGuest" v-bind:class="guest.id" v-on:click="deleteGuest(guest.id)">Supprimer</p>
@@ -155,7 +162,7 @@ export default {
           </div>
           
         </div>
-        <div v-if="guests.data < 1 && isInputChecked" class="invitation" id="addGuest" @click="addGuest()"><!-- Settings à la place du 1 -->
+        <div v-if="guests.data.length < settings.data[0].allowedFunctions.length && isInputChecked" class="invitation" id="addGuest" @click="addGuest()"><!-- Settings à la place du 1 -->
           <p class="infoAddGuets">Invité une personne à l'évènement</p>
           <p class="iconAdd">+</p>
         </div>
