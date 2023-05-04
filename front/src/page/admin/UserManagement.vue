@@ -63,8 +63,8 @@
             items.splice(0, items.length);
             const usersResponse = response.data;
             usersResponse.forEach(user => {
-                user.publicProfil = user.publicProfil == true ? "Oui" : "Non";
-                user.participated = user.participated == true ? "Oui" : "Non";
+                user.publicProfil = user.isPublicProfil == true ? "Oui" : "Non";
+                user.participated = user.isParticipated == true ? "Oui" : "Non";
             });         
             users.value.push(... usersResponse);
             itemsSelected.value = [];  
