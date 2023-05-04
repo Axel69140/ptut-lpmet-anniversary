@@ -49,7 +49,7 @@
                             description: this.description,
                             name: this.name,
                             duration: this.totalDuration,
-                            id_user: this.idUser,
+                            creator: this.idUser,
                         });
 
                         this.description = '';
