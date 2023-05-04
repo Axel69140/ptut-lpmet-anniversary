@@ -1,6 +1,6 @@
 <script>
-    import axios from 'axios';   
-    import Footer from '../../components/Footer.vue';     
+    import Footer from '../../components/Footer.vue';
+    import { timelineService } from '../../services/timeline.services';     
 
     export default {
         name: 'home',
@@ -31,7 +31,7 @@
             }
         },
         mounted() {    
-            axios.get('https://127.0.0.1:8000/timelinesteps').then(response => {
+            timelineService.getTimelineSteps().then(response => {
                 for (let i = 0; i < response.data.length -1; i++) {
                     if(response.data[i].date > response.data[i+1].date){
                         let tmp = response.data[i];
@@ -41,7 +41,7 @@
                     }
                 }
                 this.timelineSteps = response.data;
-            });        
+            });
         },
         components: {
             Footer
