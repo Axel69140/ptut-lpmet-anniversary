@@ -21,6 +21,7 @@
     let totalDuration = '';
 
     const headers: Header[] = [
+        { text: "Validé", value: "isValidate", sortable: true },
         { text: "Nom de l'activité", value: "name", sortable: true },
         { text: "Utilisateur", value: "creator", sortable: true },
         { text: "Description", value: "description", sortable: true },
@@ -131,12 +132,32 @@
             console.log("Error : Impossible de vider la table activité");
         });
     };    
-
+    
     const exportData = () => {
-        activityService.exportActivityData().then(async (response) => { 
-            // upload le pdf reçu     
-        })
+        activityService.exportActivityData().then(async (response) => {
+            const downloadUrl = response.data.fileToDownload;
+            const serverUrl = import.meta.env.VITE_URL_API;
+            const fullDownloadUrl = serverUrl + '/' + downloadUrl;    
+            const filename = 'export_activity.xlsx';        
+            const link = document.createElement('a');
+            link.href = fullDownloadUrl;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link); 
+        });
     };
+
+    const validateActivity = (activityId) => {
+        isLoading.value = true; 
+        activityService.editActivity(activityId, {
+            isValidate: true
+        }).then(async (response) => { 
+            await getActivities(); 
+            resetForm(); 
+            isLoading.value = false; 
+        }); 
+    }
 
     const resetForm = () => {
         name.value = '';
@@ -181,7 +202,8 @@
                 resetForm,
                 editActivity,
                 deleteActivity,
-                deleteActivities
+                deleteActivities,
+                validateActivity
             }
         }
     });
@@ -197,10 +219,11 @@
                 <input class="searchBar" type="text" placeholder="Rechercher..." v-model="searchValue">
                 <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#clearModal">Vider la table activité</a>
                 <a class="btn-custom btn-datatable" @click="exportData()">Exporter la liste des activités</a>
-                <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#formModal">Créer un activité</a>
+                <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#formModal">Créer un activité</a>               
 
                 <div v-if="itemsSelected.length === 1">
                     <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#formModal" @click="getActivityById(itemsSelected[0].id)">Modifier l'activité</a>
+                    <a class="btn-custom btn-datatable" type="button" @click="validateActivity(itemsSelected[0].id)">Valider l'activité</a>
                     <a class="btn-custom btn-datatable" type="button" data-bs-toggle="modal" data-bs-target="#deleteModal">Supprimer l'activité</a>
                 </div>
 
@@ -234,6 +257,10 @@
 
                 <template #item-duration="item">
                     {{ displayHour(item.duration) }}                 
+                </template>
+
+                <template #item-isValidate="item">
+                    {{ item.isValidate === true ? 'Oui' : 'Non' }}
                 </template>
             </EasyDataTable>
         </div>
