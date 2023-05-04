@@ -89,7 +89,7 @@ class Activity
         return $this;
     }
 
-    public function isValidate(): ?bool
+    public function getIsValidate(): ?bool
     {
         return $this->isValidate;
     }

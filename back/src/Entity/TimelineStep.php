@@ -70,7 +70,7 @@ class TimelineStep
         return $this;
     }
 
-    public function isIsValidate(): ?bool
+    public function getIsValidate(): ?bool
     {
         return $this->isValidate;
     }
