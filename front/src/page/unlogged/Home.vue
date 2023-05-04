@@ -32,15 +32,18 @@
         },
         mounted() {    
             timelineService.getTimelineSteps().then(response => {
+              if(response.data.length > 0)
+              {
                 for (let i = 0; i < response.data.length -1; i++) {
-                    if(response.data[i].date > response.data[i+1].date){
-                        let tmp = response.data[i];
-                        response.data[i] = response.data[i+1];
-                        response.data[i+1] = tmp;
-                        i=0;
-                    }
+                  if(response.data[i].date > response.data[i+1].date){
+                    let tmp = response.data[i];
+                    response.data[i] = response.data[i+1];
+                    response.data[i+1] = tmp;
+                    i=0;
+                  }
                 }
                 this.timelineSteps = response.data;
+              }
             });
         },
         components: {
@@ -54,14 +57,14 @@
     <main>
         <ul class="allTimelineSteps">
             <li v-for="timelineStep in timelineSteps" :key="timelineStep.id" class="stepWithBorder">
-                <div v-if="timelineStep.media_id" class="stepWithPicture">
+                <div v-if="timelineStep.media" class="stepWithPicture">
                     <div class="headerStep">
                         <h2>{{ timelineStep.title }}</h2>
                         <p class="dateStep">{{ getMonthFromDateString(timelineStep.date) }}</p>
                     </div>
                     <div class="mainStep">
                         <div class="floatImage">
-                            <img class="imageStep" src={{ timelineStep.media }}>
+                            <img class="imageStep" :src="timelineStep.media.path">
                         </div>
                         <p class="contentStep">{{ timelineStep.content }}</p>
                         

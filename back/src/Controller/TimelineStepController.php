@@ -27,7 +27,7 @@ class TimelineStepController extends AbstractController
 
             $timelineSteps = $timelineStepRepository->findAll();
             
-            return $this->json($timelineSteps, 200);
+            return $this->json($timelineSteps, 200, [], ['groups' => ['timelineStep-return']]);
 
         } catch (\Exception $e) {
 
@@ -52,7 +52,7 @@ class TimelineStepController extends AbstractController
                 ], 404);
             }
 
-            return $this->json($timelineStep, 200);
+            return $this->json($timelineStep, 200, [], ['groups' => ['timelineStep-return']]);
 
         } catch (\Exception $e) {
 
@@ -87,7 +87,7 @@ class TimelineStepController extends AbstractController
             }
 
             $timelineStepRepository->save($timelineStep, true);
-            return $this->json($timelineStep, 201);
+            return $this->json($timelineStep, 201, [], ['groups' => ['timelineStep-return']]);
 
         } catch (\Exception $e) {
 
@@ -150,7 +150,7 @@ class TimelineStepController extends AbstractController
             }
 
             $em->flush();
-            return $this->json([], 200);
+            return $this->json([], 200, [], ['groups' => ['timelineStep-return']]);
 
         } catch (\Exception $e) {
 
@@ -191,7 +191,7 @@ class TimelineStepController extends AbstractController
             }
 
             $timelineStepRepository->save($timeLineStepToUpdate, true);
-            return $this->json($timeLineStepToUpdate, 200);
+            return $this->json($timeLineStepToUpdate, 200, [], ['groups' => ['timelineStep-return']]);
 
         } catch (\Exception $e) {
 
@@ -232,7 +232,7 @@ class TimelineStepController extends AbstractController
 
             $entityManager->flush();
 
-            return $this->json([], 204);
+            return $this->json([], 204, [], ['groups' => ['timelineStep-return']]);
 
         } catch (\Exception $e) {
 
@@ -256,7 +256,7 @@ class TimelineStepController extends AbstractController
                 $timelineStepRepository->remove($timelineStep, true);
             }
 
-            return $this->json([], 204);
+            return $this->json([], 204, [], ['groups' => ['timelineStep-return']]);
 
         } catch (\Exception $e) {
 
@@ -282,7 +282,7 @@ class TimelineStepController extends AbstractController
             }
 
             $timelineStepRepository->remove($timelineStepToDelete, true);
-            return $this->json([], 204);
+            return $this->json([], 204, [], ['groups' => ['timelineStep-return']]);
 
         } catch (\Exception $e) {
 

@@ -5,27 +5,34 @@ namespace App\Entity;
 use App\Repository\TimelineStepRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: TimelineStepRepository::class)]
 class TimelineStep
 {
+    #[Groups(['timelineStep-return'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups(['timelineStep-return'])]
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $date = null;
 
+    #[Groups(['timelineStep-return'])]
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
+    #[Groups(['timelineStep-return'])]
     #[ORM\Column(type: Types::TEXT)]
     private ?string $content = null;
 
+    #[Groups(['timelineStep-return'])]
     #[ORM\Column]
     private ?bool $isValidate = false;
 
+    #[Groups(['timelineStep-return'])]
     #[ORM\OneToOne(inversedBy: 'timelineStep', cascade: ['persist', 'remove'])]
     private ?Media $media = null;
 
