@@ -1,6 +1,6 @@
 # Notice de déploiement du logiciel
 ```
-git clone https://github.com/charlesrongier/microService.git
+git clone https://github.com/Axel69140/ptut-lpmet-anniversary.git
 ```
 
 ## Création de la base de données
@@ -61,7 +61,31 @@ npm run dev
 
 En regardant dans la console une url se lance, récupérer celle-ci (exemple : http://127.0.0.1:3000).
 
+## Installer Postman 
+
+Télécharger Postman.
+
+https://www.postman.com/downloads/
+
+Importer la collection lp-anniversary ainsi que l'environnement lp-anniversary disponible sur le dépôt Git.
+
+Pour importer la collection sur Postman, il faut cliquer sur Collections à gauche puis sur IMPORT en haut à gauche de l'application et la même chose pour l'environnement.
+
+Dans l'environnement coller l'url récupéré précédemment dans INITIAL VALUE et dans CURRENT VALUE.
+
+
+## Documentation
+
+https://documenter.getpostman.com/view/23639194/2s93XsYS3A
+
+## Finalisation
+
+Avant de pouvoir utiliser le site il vous faudra initialiser les paramètres par défaut de l'administrateur via une requête pré-enregistré dans notre collection lp-anniversary sur Postman.
+La requête est dipsponible sous le nom de : getSettings.
+
+### Profitez bien de notre projet :)
+
 # Notice utilisateurs
 
 
-### Profitez bien de notre projet :)
+
