@@ -1,0 +1,1892 @@
+{
+	"info": {
+		"_postman_id": "997957fc-687d-423b-a413-bb032a83ab3e",
+		"name": "lp-anniversary",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23639194"
+	},
+	"item": [
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "registerUser",
+					"request": {
+						"auth": {
+							"type": "bearer"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"talarondelphine@test.com\",\r\n    \"roles\": [\"ROLE_ADMIN\"],\r\n    \"password\": \"azerty\",\r\n    \"firstName\": \"Delphine\",\r\n    \"lastName\": \"Talaron\",\r\n    \"maidenName\": \"Bernard\",\r\n    \"phoneNumber\": \"0687121212\",\r\n    \"note\": \"Petite note\",\r\n    \"isParticipated\": false,\r\n    \"isPublicProfil\": true,\r\n    \"activeYears\": [2019, 2022],\r\n    \"function\": \"Enseignant\",\r\n    \"link\": null\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{urlServeur}}/users/register",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"users",
+								"register"
+							]
+						},
+						"description": "Requête visant à inscrire un Utilisateur sur le site.\n\nParamètre en entrée : un tableau contenant au moins tous les champs nécessaire pour un Utilisateur (avec chaque clé qui représente un champ de l'entité).\n\nEn sortie : une erreur si un problème est survenue, l'entité créée si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Test de récupération du token\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.environment.set(\"token\", jsonData.token);\r",
+									"    pm.environment.set(\"role\", jsonData.role);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"talarondelphine@test.com\",\r\n    \"password\": \"azerty\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{urlServeur}}/users/login",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"users",
+								"login"
+							]
+						},
+						"description": "Requête visant à connecter un utilisateur.\n\nParamètre en entrée : un email et un mot de passe.\n\nEn sortie : une erreur si un problème est survenue, l'entité connectée avec un token unique attestant sa connexion si les informations sont correctes."
+					},
+					"response": []
+				},
+				{
+					"name": "getUser",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{urlServeur}}/users/13",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"users",
+								"13"
+							]
+						},
+						"description": "Requête visant à récupérer un utilisateur du site.\n\nParamètre en entrée : un id.\n\nEn sortie : une erreur si un problème est survenue, l'entité trouvée si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "getGuests",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{urlServeur}}/users/1/guests",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"users",
+								"1",
+								"guests"
+							]
+						},
+						"description": "Requête visant à récupérer tous les Invités d'un Utilisateur.  \n\nParamètre en entrée : un id de User.\n\nEn sortie : une erreur si un problème est survenue, une liste de Guest si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "getUsers",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{urlServeur}}/users",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"users"
+							]
+						},
+						"description": "Requête visant à récupérer tous les Utilisateurs du site.  \n\nParamètre en entrée : -\n\nEn sortie : une erreur si un problème est survenue, la liste de tous les utilisateurs si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "getUserParticipate",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{urlServeur}}/users/participate",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"users",
+								"participate"
+							]
+						},
+						"description": "Requête visant à récupérer tous les Utilisateurs participant à l'événement.  \n\nParamètre en entrée : -\n\nEn sortie : une erreur si un problème est survenue, une liste d'Utilisateurs si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "getRoleUser",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{urlServeur}}/users/1/role",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"users",
+								"1",
+								"role"
+							]
+						},
+						"description": "Requête visant à récupérer le rôle d'un Utilisateur.  \n\nParamètre en entrée : un id Utilisateur.\n\nEn sortie : une erreur si un problème est survenue, le rôle de l'Utilisateur sous forme de String si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "getMediasUser",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{urlServeur}}/users/medias?limite=30",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"users",
+								"medias"
+							],
+							"query": [
+								{
+									"key": "limite",
+									"value": "30"
+								}
+							]
+						},
+						"description": "Requête visant à récupérer toutes les photos des Utilisateurs.  \n\nParamètre en entrée : une limite, celle du nombre de photos récupérées.\n\nEn sortie : une erreur si un problème est survenue, une liste de Media si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "getMediaUser",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{urlServeur}}/users/10/media",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"users",
+								"10",
+								"media"
+							]
+						},
+						"description": "Requête visant à récupérer la photo d'un Utilisateur.  \n\nParamètre en entrée : un id Utilisateur.\n\nEn sortie : une erreur si un problème est survenue, un Media si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "getUserExport",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{urlServeur}}/users/export",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"users",
+								"export"
+							]
+						},
+						"description": "Requête visant à exporter sous forme d'un fichier Excel les données Utilisateur.  \n\nParamètre en entrée : -\n\nEn sortie : une erreur si un problème est survenue, un message de confirmation si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "updateUser",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{    \r\n    \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{urlServeur}}/users/35",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"users",
+								"35"
+							]
+						},
+						"description": "Requête visant à modifier un Utilisateur.\n\nParamètre en entrée : un id User et un tableau contenant les champs à modifier (avec pour clé le nom des propriétés à modifier).\n\nEn sortie : une erreur si un problème est survenue, l'entité modifier si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "deleteUser",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{urlServeur}}/users/16",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"users",
+								"16"
+							]
+						},
+						"description": "Requête visant à supprimer un Utilisateur du site.  \n\nParamètre en entrée : un id Utilisateur.\n\nEn sortie : une erreur si un problème est survenue, un message de validation si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "deleteUsers",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\" : [1, 2]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{urlServeur}}/users/many",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"users",
+								"many"
+							]
+						},
+						"description": "Requête visant à supprimer plusieurs Utilisateurs du site.  \n\nParamètre en entrée : un tableau d'id Utilisateur.\n\nEn sortie : une erreur si un problème est survenue, un message de validation si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "clearUsers",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{urlServeur}}/users/clear",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"users",
+								"clear"
+							]
+						},
+						"description": "Requête visant à supprimer tous les Utilisateurs du site.  \n\nParamètre en entrée : -\n\nEn sortie : une erreur si un problème est survenue, un message de validation si tout s'est bien passé."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "guest",
+			"item": [
+				{
+					"name": "createGuest",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstName\": \"Mensoif\",\r\n    \"lastName\": \"Gerard\",\r\n    \"email\": \"test11111111@test.com\",\r\n    \"invitedBy\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{urlServeur}}/guests/create",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"guests",
+								"create"
+							]
+						},
+						"description": "Requête visant à inscrire un Invité sur le site.  \n\nParamètre en entrée : un tableau contenant au moins tous les champs nécessaire pour un Guest (avec chaque clé qui représente un champ de l'entité).\n\nEn sortie : une erreur si un problème est survenue, l'entité créée si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "getGuest",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{urlServeur}}/guests/23",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"guests",
+								"23"
+							]
+						},
+						"description": "Requête visant à récupérer un Invité.\n\nParamètre en entrée : un id de Guest.\n\nEn sortie : une erreur si un problème est survenue, l'entité trouvée si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "getGuests",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{urlServeur}}/guests",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"guests"
+							]
+						},
+						"description": "Requête visant à récupérer tous les Invités du site.\n\nParamètre en entrée : -\n\nEn sortie : une erreur si un problème est survenue, une liste de Guests si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "updateGuests",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{    \r\n    \"name\": \"Charles\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{urlServeur}}/guests/23",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"guests",
+								"23"
+							]
+						},
+						"description": "Requête visant à modifier un Invité.\n\nParamètre en entrée : un id Guest et un tableau contenant les champs à modifier (avec pour clé le nom des propriétés à modifier).\n\nEn sortie : une erreur si un problème est survenue, l'entité modifier si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "deleteGuest",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{urlServeur}}/guests/22",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"guests",
+								"22"
+							]
+						},
+						"description": "Requête visant à supprimer un Invité.\n\nParamètre en entrée : un id Guest.\n\nEn sortie : une erreur si un problème est survenue, un message de validation si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "clearGuests",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{urlServeur}}/guests/clear",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"guests",
+								"clear"
+							]
+						},
+						"description": "Requête visant à supprimer tous les Invités du site.\n\nParamètre en entrée : -\n\nEn sortie : une erreur si un problème est survenue, un message de validation si tout s'est bien passé."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "participant",
+			"item": [
+				{
+					"name": "getParticipant",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{urlServeur}}/guests/1",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"guests",
+								"1"
+							]
+						},
+						"description": "Requête visant à récupérer un Participant.\n\nParamètre en entrée : un email.\n\nEn sortie : une erreur si un problème est survenue, une entité User ou Guest si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "getParticipants",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{urlServeur}}/guests",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"guests"
+							]
+						},
+						"description": "Requête visant à récupérer plusieurs Participants.\n\nParamètre en entrée : une liste d'email.\n\nEn sortie : une erreur si un problème est survenue, une liste d'entité si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "updateParticipants",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{    \r\n    \"firstName\": \"Charles\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{urlServeur}}/guests/1",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"guests",
+								"1"
+							]
+						},
+						"description": "Requête visant à modifier un Invité ou un Utilisateur.\n\nParamètre en entrée : un email et un tableau contenant les champs à modifier (avec pour clé le nom des propriétés à modifier).\n\nEn sortie : une erreur si un problème est survenue, l'entité modifier si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "deleteParticipant",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{urlServeur}}/participants/1",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"participants",
+								"1"
+							]
+						},
+						"description": "Requête visant à supprimer un Participant.\n\nParamètre en entrée : un email.\n\nEn sortie : une erreur si un problème est survenue, un message de validation si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "clearParticipants",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{urlServeur}}/guests/1",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"guests",
+								"1"
+							]
+						},
+						"description": "Requête visant à supprimer tous les Participant.\n\nParamètre en entrée : -\n\nEn sortie : une erreur si un problème est survenue, un message de validation si tout s'est bien passé."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "settings",
+			"item": [
+				{
+					"name": "getSettings",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{urlServeur}}/settings",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"settings"
+							]
+						},
+						"description": "Requête visant à récupérer les Paramètres du site.\n\nParamètre en entrée : -\n\nEn sortie : une erreur si un problème est survenue, une entité Setting si touts'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "resetSettings",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{urlServeur}}/settings/reset",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"settings",
+								"reset"
+							]
+						},
+						"description": "Requête visant à ré-initialiser les Paramètres du site.\n\nParamètre en entrée : -\n\nEn sortie : une erreur si un problème est survenue, une entité Setting si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "updateSettings",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{    \r\n    \"allowedFunctions\": [\"Enseignant\", \"Eleve\", \"Autres\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{urlServeur}}/settings/update",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"settings",
+								"update"
+							]
+						},
+						"description": "Requête visant à modifier les Paramètres du site.\n\nParamètre en entrée : un tableau qui comporte les propriétés à modifier (chaque clé du tableau correspond à une propriété de l'entité).\n\nEn sortie : une erreur si un problème est survenue, une entité Setting si tout s'est bien passé."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "activity",
+			"item": [
+				{
+					"name": "createActivity",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Football\",\r\n    \"description\": \"C'est une superbe activité !\",\r\n    \"duration\": \"01:00:00\",\r\n    \"creator\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{urlServeur}}/activities/create",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"activities",
+								"create"
+							]
+						},
+						"description": "Requête visant à créer une Activité sur le site.  \n\nParamètre en entrée : un tableau contenant au moins tous les champs nécessaire pour une Activité (avec chaque clé qui représente un champ de l'entité).\n\nEn sortie : une erreur si un problème est survenue, l'entité créée si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "getActivity",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{urlServeur}}/activities/2",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"activities",
+								"2"
+							]
+						},
+						"description": "Requête visant à récupérer une activité.\n\nParamètre en entrée : un id Activity\n\nEn sortie : une erreur si un problème est survenue, l'entité Activity trouvée si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "getActivities",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{urlServeur}}/activities",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"activities"
+							]
+						},
+						"description": "Requête visant à récupérer toutes les Activités du site.\n\nParamètre en entrée : -\n\nEn sortie : une erreur si un problème est survenue, une liste d'Activity si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "updateActivity",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{    \r\n    \"isValidate\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{urlServeur}}/activities/1",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"activities",
+								"1"
+							]
+						},
+						"description": "Requête visant à modifier une Activité.\n\nParamètre en entrée : un id Activity et un tableau contenant les champs à modifier (avec pour clé le nom des propriétés à modifier).\n\nEn sortie : une erreur si un problème est survenue, l'entité modifier si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "deleteActivity",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{urlServeur}}/activities/2",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"activities",
+								"2"
+							]
+						},
+						"description": "Requête visant à supprimer une activité.\n\nParamètre en entrée : un id Activity\n\nEn sortie : une erreur si un problème est survenue, un message de confirmation si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "deleteActivities",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\" : [3, 4]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{urlServeur}}/activities/many",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"activities",
+								"many"
+							]
+						},
+						"description": "Requête visant à supprimer plusieurs Activités.\n\nParamètre en entrée : une liste d'id Activity.\n\nEn sortie : une erreur si un problème est survenue, un message de confirmation si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "clearActivities",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{urlServeur}}/activities/clear",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"activities",
+								"clear"
+							]
+						},
+						"description": "Requête visant à supprimer toutes les Activités.\n\nParamètre en entrée : -\n\nEn sortie : une erreur si un problème est survenue, un message de confirmation si tout s'est bien passé."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "article",
+			"item": [
+				{
+					"name": "createArticle",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Le département informatique fête son anniversaire\",\r\n    \"content\": \"Le département informatique fête son anniversaire cette année !\",\r\n    \"creator\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{urlServeur}}/articles/create",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"articles",
+								"create"
+							]
+						},
+						"description": "Requête visant à créer un Article sur le site.  \n\nParamètre en entrée : un tableau contenant au moins tous les champs nécessaire pour un Article (avec chaque clé qui représente un champ de l'entité).\n\nEn sortie : une erreur si un problème est survenue, l'entité créée si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "getArticle",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{urlServeur}}/articles/1",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"articles",
+								"1"
+							]
+						},
+						"description": "Requête visant à récupérer un Article.\n\nParamètre en entrée : un id Article.\n\nEn sortie : une erreur si un problème est survenue, l'entité Article trouvée si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "getArticles",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{urlServeur}}/articles",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"articles"
+							]
+						},
+						"description": "Requête visant à récupérer plusieurs Articles.\n\nParamètre en entrée : une liste d'id Articles.\n\nEn sortie : une erreur si un problème est survenue, une liste d'entité Article trouvée si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "updateArticle",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{    \r\n    \"title\": \"test\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{urlServeur}}/articles/1",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"articles",
+								"1"
+							]
+						},
+						"description": "Requête visant à modifier un Article.\n\nParamètre en entrée : un id Article et un tableau contenant les champs à modifier (avec pour clé le nom des propriétés à modifier).\n\nEn sortie : une erreur si un problème est survenue, l'entité modifier si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "deleteArticle",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{urlServeur}}/articles/3",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"articles",
+								"3"
+							]
+						},
+						"description": "Requête visant à supprimer un Article.\n\nParamètre en entrée : un id Article.\n\nEn sortie : une erreur si un problème est survenue, un message de confirmation si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "deleteArticles",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\" : [1, 2]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{urlServeur}}/articles/many",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"articles",
+								"many"
+							]
+						},
+						"description": "Requête visant à supprimer plusieurs Articles.\n\nParamètre en entrée : une liste d'id Articles.\n\nEn sortie : une erreur si un problème est survenue, un message de confirmation si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "clearArticles",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{urlServeur}}/articles/clear",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"articles",
+								"clear"
+							]
+						},
+						"description": "Requête visant à supprimer tous les Articles du site.\n\nParamètre en entrée : -\n\nEn sortie : une erreur si un problème est survenue, un message de confirmation si tout s'est bien passé."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "anecdote",
+			"item": [
+				{
+					"name": "createAnecdote",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"content\": \"Mon anercdote génial !\",\r\n    \"creator\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{urlServeur}}/anecdotes/create",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"anecdotes",
+								"create"
+							]
+						},
+						"description": "Requête visant à créer une Anecdote sur le site.  \n\nParamètre en entrée : un tableau contenant au moins tous les champs nécessaire pour une Anecdote (avec chaque clé qui représente un champ de l'entité).\n\nEn sortie : une erreur si un problème est survenue, l'entité créée si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "getAnecdote",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{urlServeur}}/anecdotes/3",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"anecdotes",
+								"3"
+							]
+						},
+						"description": "Requête visant à récupérer une Anecdote.\n\nParamètre en entrée : un id Anecdote.\n\nEn sortie : une erreur si un problème est survenue, l'entité Anecdote trouvée si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "getAnecdotes",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{urlServeur}}/anecdotes",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"anecdotes"
+							]
+						},
+						"description": "Requête visant à récupérer toutes les Anecdotes.\n\nParamètre en entrée : -\n\nEn sortie : une erreur si un problème est survenue, une liste d'entité Anecdote trouvée si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "updateAnecdote",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{    \r\n    \"content\": \"Superbe anecdote 2 !\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{urlServeur}}/anecdotes/3",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"anecdotes",
+								"3"
+							]
+						},
+						"description": "Requête visant à modifier une Anecdote.\n\nParamètre en entrée : un id Anecdote et un tableau contenant les champs à modifier (avec pour clé le nom des propriétés à modifier).\n\nEn sortie : une erreur si un problème est survenue, l'entité modifier si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "deleteAnecdote",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{urlServeur}}/anecdotes/1",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"anecdotes",
+								"1"
+							]
+						},
+						"description": "Requête visant à supprimer une Anecdote.\n\nParamètre en entrée : un id Anecdote.\n\nEn sortie : une erreur si un problème est survenue, un message de confirmation si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "deleteAnecdotes",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\" : [2, 3]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{urlServeur}}/anecdotes/many",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"anecdotes",
+								"many"
+							]
+						},
+						"description": "Requête visant à supprimer plusieurs Anecdote.\n\nParamètre en entrée : une liste d'id Anecdote.\n\nEn sortie : une erreur si un problème est survenue, un message de confirmation si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "clearAnecdotes",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{urlServeur}}/anecdotes/clear",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"anecdotes",
+								"clear"
+							]
+						},
+						"description": "Requête visant à supprimer toutes les Anecdotes du site.\n\nParamètre en entrée : -\n\nEn sortie : une erreur si un problème est survenue, un message de confirmation si tout s'est bien passé."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "timelineStep",
+			"item": [
+				{
+					"name": "createTimelineStep",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Gala de l'IUT\",\r\n    \"date\": \"2023-01-01\",\r\n    \"content\": \"Gala de l'IUT, superbe soirée !\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{urlServeur}}/timelinesteps/create",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"timelinesteps",
+								"create"
+							]
+						},
+						"description": "Requête visant à créer une étape de frise chronologique sur le site.  \n\nParamètre en entrée : un tableau contenant au moins tous les champs nécessaire pour une TimelineStep (avec chaque clé qui représente un champ de l'entité).\n\nEn sortie : une erreur si un problème est survenue, l'entité créée si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "getTimelineStep",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{urlServeur}}/timelinesteps/1",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"timelinesteps",
+								"1"
+							]
+						},
+						"description": "Requête visant à récupérer une étape de la frise chronologique.\n\nParamètre en entrée : un id de TimelineStep.\n\nEn sortie : une erreur si un problème est survenue, l'entité TimelineStep trouvée si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "getTimelineSteps",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{urlServeur}}/timelinesteps",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"timelinesteps"
+							]
+						},
+						"description": "Requête visant à récupérer toutes étapes de la frise chronologique.\n\nParamètre en entrée : -\n\nEn sortie : une erreur si un problème est survenue, une liste de TimelineStep si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "updateTimelineStep",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{    \r\n    \"title\": \"Soirée du gala1 de l'IUT\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{urlServeur}}/timelinesteps/1",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"timelinesteps",
+								"1"
+							]
+						},
+						"description": "Requête visant à modifier un Invité.\n\nParamètre en entrée : un id TimelineStep et un tableau contenant les champs à modifier (avec pour clé le nom des propriétés à modifier).\n\nEn sortie : une erreur si un problème est survenue, l'entité modifier si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "updateTimelineSteps",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{    \r\n    \"ids\": [8,9],\r\n    \"title\": \"yolo1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{urlServeur}}/timelinesteps/update-many",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"timelinesteps",
+								"update-many"
+							]
+						},
+						"description": "Requête visant à modifier plusieurs étapes à la fois.\n\nParamètre en entrée : un tableau avec les champs à modifier (chaque clé du tableau doit être une propriété de l'entité).\n\nEn sortie : une erreur si un problème est survenue, la liste des entités modifiées si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "deleteTimelineStep",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{urlServeur}}/timelinesteps/3",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"timelinesteps",
+								"3"
+							]
+						},
+						"description": "Requête visant à supprimer une étape de la frise chronologique.\n\nParamètre en entrée : un id de TimelineStep.\n\nEn sortie : une erreur si un problème est survenue, un message de validation si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "deleteTimelineSteps",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\" : [8, 9]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{urlServeur}}/timelinesteps/many",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"timelinesteps",
+								"many"
+							]
+						},
+						"description": "Requête visant à supprimer plusieurs étapes de la frise chronologique.\n\nParamètre en entrée : une liste d'id de TimelineStep.\n\nEn sortie : une erreur si un problème est survenue, un message de validation si tout s'est bien passé."
+					},
+					"response": []
+				},
+				{
+					"name": "clearTimelineSteps",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{urlServeur}}/timelinesteps/clear",
+							"host": [
+								"{{urlServeur}}"
+							],
+							"path": [
+								"timelinesteps",
+								"clear"
+							]
+						},
+						"description": "Requête visant à supprimer toutes les étapes de la frise chronologique.\n\nParamètre en entrée : -\n\nEn sortie : une erreur si un problème est survenue, un message de validation si tout s'est bien passé."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Export",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"datasToExport\": [\"User\", \"Guest\"],\r\n    \"exportParticipant\": false\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{urlServeur}}/settings/export-csv",
+					"host": [
+						"{{urlServeur}}"
+					],
+					"path": [
+						"settings",
+						"export-csv"
+					]
+				},
+				"description": "Requête visant à exporter les données des entités passées en paramètres.\n\nParamètre en entrée : une liste d'entité et un bool pour savoir s'il faut exporter les participants.\n\nEn sortie : une erreur si un problème est survenue, un message de validation si tout s'est bien passé."
+			},
+			"response": []
+		}
+	]
+}
