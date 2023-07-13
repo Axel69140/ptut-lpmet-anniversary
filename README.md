@@ -87,5 +87,8 @@ La requête est disponible sous le nom de : getSettings.
 
 # Notice utilisateurs
 
+## Administrateur
+
+## Utilisateur
 
 
