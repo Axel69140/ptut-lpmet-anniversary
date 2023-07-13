@@ -80,8 +80,8 @@ https://documenter.getpostman.com/view/23639194/2s93XsYS3A
 
 ## Finalisation
 
-Avant de pouvoir utiliser le site il vous faudra initialiser les paramètres par défaut de l'administrateur via une requête pré-enregistré dans notre collection lp-anniversary sur Postman.
-La requête est dipsponible sous le nom de : getSettings.
+Avant de pouvoir utiliser le site, il vous faudra initialiser les paramètres par défaut de l'administrateur via une requête pré-enregistré dans notre collection lp-anniversary sur Postman.
+La requête est disponible sous le nom de : getSettings.
 
 ### Profitez bien de notre projet :)
 
