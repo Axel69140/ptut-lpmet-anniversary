@@ -84,11 +84,3 @@ Avant de pouvoir utiliser le site, il vous faudra initialiser les paramètres pa
 La requête est disponible sous le nom de : getSettings.
 
 ### Profitez bien de notre projet :)
-
-# Notice utilisateurs
-
-## Administrateur
-
-## Utilisateur
-
-
